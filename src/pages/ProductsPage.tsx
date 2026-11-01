@@ -109,8 +109,17 @@ export const ProductsPage: React.FC = () => {
 
         {/* Products Grid */}
         {loading ? (
-          <div className="py-20 text-center font-mono text-xs text-forest">
-            ĐANG TẢI DANH MỤC TÁC PHẨM...
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 py-4">
+            {[1, 2, 3].map((n) => (
+              <div key={n} className="bg-paper-warm border border-paper-border corner-frame overflow-hidden p-0 space-y-4 shadow-sm">
+                <div className="aspect-[4/3] heritage-shimmer" />
+                <div className="p-6 space-y-3">
+                  <div className="h-4 w-24 heritage-shimmer" />
+                  <div className="h-6 w-3/4 heritage-shimmer" />
+                  <div className="h-3 w-full heritage-shimmer" />
+                </div>
+              </div>
+            ))}
           </div>
         ) : products.length === 0 ? (
           <div className="py-20 text-center space-y-3 bg-paper-warm border border-paper-border p-8">

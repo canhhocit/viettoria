@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import { QrCode, Menu, X, Shield } from 'lucide-react';
 
@@ -8,6 +8,15 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ onOpenQRModal }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
+  const [isScrolled, setIsScrolled] = useState<boolean>(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 40);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const navLinks = [
     { to: '/', label: 'Trang Chủ' },
@@ -18,21 +27,39 @@ export const Header: React.FC<HeaderProps> = ({ onOpenQRModal }) => {
   ];
 
   return (
-    <header className="sticky top-0 z-40 atelier-navbar text-paper">
+    <header 
+      className={`sticky top-0 z-40 atelier-navbar text-paper transition-all duration-300 ${
+        isScrolled ? 'py-1 shadow-2xl bg-forest-dark/95' : 'py-0'
+      }`}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
+        <div 
+          className={`flex items-center justify-between transition-all duration-300 ${
+            isScrolled ? 'h-14 sm:h-16' : 'h-20'
+          }`}
+        >
           {/* Brand Logo & Atelier Identity */}
-          <Link to="/" className="flex items-center gap-3.5 group focus:outline-none">
-            <span className="w-10 h-10 flex items-center justify-center border border-brass/60 bg-forest-dark text-brass font-serif font-bold text-xl group-hover:border-brass-light transition-colors shadow-inner">
+          <Link to="/" className="flex items-center gap-3 group focus:outline-none">
+            <span 
+              className={`flex items-center justify-center border border-brass/60 bg-forest-dark text-brass font-serif font-bold transition-all duration-300 shadow-inner ${
+                isScrolled ? 'w-8 h-8 text-base' : 'w-10 h-10 text-xl'
+              } group-hover:border-brass-light`}
+            >
               V
             </span>
             <div className="flex flex-col">
-              <span className="font-serif text-2xl font-bold tracking-widest text-paper group-hover:text-brass-light transition-colors leading-none">
+              <span 
+                className={`font-serif font-bold tracking-widest text-paper group-hover:text-brass-light transition-all duration-300 leading-none ${
+                  isScrolled ? 'text-lg sm:text-xl' : 'text-2xl'
+                }`}
+              >
                 VIETTORIA
               </span>
-              <span className="text-[10px] font-mono tracking-editorial uppercase text-brass font-medium mt-1">
-                Phygital Heritage Collectibles
-              </span>
+              {!isScrolled && (
+                <span className="text-[10px] font-mono tracking-editorial uppercase text-brass font-medium mt-1 hidden sm:block transition-opacity duration-200">
+                  Phygital Heritage Collectibles
+                </span>
+              )}
             </div>
           </Link>
 
@@ -60,7 +87,9 @@ export const Header: React.FC<HeaderProps> = ({ onOpenQRModal }) => {
             {/* Quick QR Scanner Button */}
             <button
               onClick={onOpenQRModal}
-              className="inline-flex items-center gap-2 px-4 py-2 border border-brass text-brass hover:bg-brass hover:text-forest transition-colors font-mono text-xs uppercase tracking-wider font-semibold shadow-sm"
+              className={`inline-flex items-center gap-2 border border-brass text-brass hover:bg-brass hover:text-forest transition-colors font-mono uppercase tracking-wider font-semibold shadow-sm ${
+                isScrolled ? 'px-3 py-1.5 text-[11px]' : 'px-4 py-2 text-xs'
+              }`}
               title="Mở trình quét tem QR trên đế mô hình"
             >
               <QrCode className="w-4 h-4" />
@@ -70,7 +99,9 @@ export const Header: React.FC<HeaderProps> = ({ onOpenQRModal }) => {
             {/* Admin CMS Portal Link */}
             <Link
               to="/admin/dashboard"
-              className="hidden md:inline-flex items-center gap-1.5 px-3 py-2 bg-forest-dark border border-paper/20 hover:border-brass text-paper/70 hover:text-brass text-xs font-mono uppercase tracking-wider transition-colors"
+              className={`hidden md:inline-flex items-center gap-1.5 bg-forest-dark border border-paper/20 hover:border-brass text-paper/70 hover:text-brass font-mono uppercase tracking-wider transition-colors ${
+                isScrolled ? 'px-2.5 py-1.5 text-[11px]' : 'px-3 py-2 text-xs'
+              }`}
               title="Cổng quản trị nội dung CMS"
             >
               <Shield className="w-3.5 h-3.5" />

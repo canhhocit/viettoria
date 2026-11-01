@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { publicApi } from '../services/api';
 import type { Product, Collection, BlogPost } from '../types';
+import { PageLoadingHeritage } from '../components/common/HeritageSkeleton';
 
 export const HomePage: React.FC = () => {
   const [heroProduct, setHeroProduct] = useState<Product | null>(null);
@@ -31,11 +32,7 @@ export const HomePage: React.FC = () => {
   }, []);
 
   if (loading) {
-    return (
-      <div className="min-h-[70vh] flex items-center justify-center bg-paper text-forest font-mono text-xs">
-        ĐANG KHỞI TẠO KHÔNG GIAN DI SẢN...
-      </div>
-    );
+    return <PageLoadingHeritage message="Đang khởi tạo không gian di sản kiến trúc..." />;
   }
 
   return (

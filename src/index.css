@@ -107,3 +107,68 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #966E2F;
 }
+
+/* Page & Section Fade-Up Animation */
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fadeSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Heritage Paper & Brass Shimmer Loading */
+@keyframes heritageShimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.heritage-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(243, 239, 230, 0.8) 0%,
+    rgba(226, 207, 168, 0.4) 50%,
+    rgba(243, 239, 230, 0.8) 100%
+  );
+  background-size: 200% 100%;
+  animation: heritageShimmer 1.8s infinite linear;
+}
+
+.heritage-shimmer-dark {
+  background: linear-gradient(
+    90deg,
+    rgba(20, 40, 32, 0.8) 0%,
+    rgba(184, 138, 68, 0.25) 50%,
+    rgba(20, 40, 32, 0.8) 100%
+  );
+  background-size: 200% 100%;
+  animation: heritageShimmer 1.8s infinite linear;
+}
+
+/* Antique Magnifier Cursor for Inspection Viewer */
+.cursor-magnifier {
+  cursor: zoom-in;
+}
+
+/* WCAG 2.2 AA Accessibility Guard: Prefers Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

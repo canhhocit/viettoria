@@ -10,6 +10,8 @@ import type { Product } from '../types';
 import { ArchitecturalViewer } from '../components/common/ArchitecturalViewer';
 import { AudioPlayer } from '../components/common/AudioPlayer';
 import { StoryBlockRenderer } from '../components/story/StoryBlockRenderer';
+import { ScaleRuler } from '../components/common/ScaleRuler';
+import { PageLoadingHeritage } from '../components/common/HeritageSkeleton';
 
 export const ProductDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -29,11 +31,7 @@ export const ProductDetailPage: React.FC = () => {
   }, [slug]);
 
   if (loading) {
-    return (
-      <div className="min-h-[70vh] flex items-center justify-center bg-paper text-forest font-mono text-xs">
-        ĐANG TẢI DỮ LIỆU DI SẢN KIẾN TRÚC...
-      </div>
-    );
+    return <PageLoadingHeritage message="Đang tải dữ liệu khảo cứu di sản kiến trúc..." />;
   }
 
   if (!product) {
@@ -168,6 +166,14 @@ export const ProductDetailPage: React.FC = () => {
             </div>
           </section>
         )}
+
+        {/* Interactive Scale Ruler & Hand Perspective */}
+        <section className="space-y-4">
+          <ScaleRuler 
+            modelSpecs={product.modelSpecs} 
+            heritageName={product.name} 
+          />
+        </section>
 
         {/* Technical Specifications Sheet */}
         <section className="py-12 bg-paper-warm border border-paper-border corner-frame p-6 sm:p-10 space-y-6">

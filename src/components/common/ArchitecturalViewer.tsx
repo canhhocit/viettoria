@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Maximize2, Eye, ShieldCheck, Ruler, Layers } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Maximize2, Eye, ShieldCheck, Ruler, Layers, X, ZoomIn } from 'lucide-react';
 import type { Product } from '../../types';
 
 interface ArchitecturalViewerProps {
@@ -9,6 +9,17 @@ interface ArchitecturalViewerProps {
 export const ArchitecturalViewer: React.FC<ArchitecturalViewerProps> = ({ product }) => {
   const [selectedAngle, setSelectedAngle] = useState(0);
   const [isZoomModalOpen, setIsZoomModalOpen] = useState(false);
+
+  // Close zoom modal on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsZoomModalOpen(false);
+    };
+    if (isZoomModalOpen) {
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isZoomModalOpen]);
 
   // Gallery angles combining hero and gallery images
   const angles = [
@@ -50,11 +61,15 @@ export const ArchitecturalViewer: React.FC<ArchitecturalViewerProps> = ({ produc
       </div>
 
       {/* Main Photographic Inspection Viewport */}
-      <div className="relative aspect-[4/3] sm:aspect-[16/10] overflow-hidden bg-forest-dark flex items-center justify-center group">
+      <div 
+        onClick={() => setIsZoomModalOpen(true)}
+        className="relative aspect-[4/3] sm:aspect-[16/10] overflow-hidden bg-forest-dark flex items-center justify-center group cursor-zoom-in"
+        title="Nhấp để soi chi tiết cấu kiện"
+      >
         <img
           src={currentImage.src}
           alt={`${product.name} - ${currentImage.title}`}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
         />
 
         {/* Blueprint Grid Lines Overlay Subtle */}
@@ -64,9 +79,17 @@ export const ArchitecturalViewer: React.FC<ArchitecturalViewerProps> = ({ produc
         />
 
         {/* Top-Right Badge: Authenticity Guarantee */}
-        <div className="absolute top-4 right-4 bg-forest/90 backdrop-blur-sm border border-brass/50 px-3 py-1.5 text-paper text-[10px] font-mono uppercase tracking-widest flex items-center gap-1.5 shadow-md">
+        <div className="absolute top-4 right-4 bg-forest/90 backdrop-blur-sm border border-brass/50 px-3 py-1.5 text-paper text-[10px] font-mono uppercase tracking-widest flex items-center gap-1.5 shadow-md pointer-events-none">
           <ShieldCheck className="w-3.5 h-3.5 text-brass" />
           <span>Tư Liệu Thực Địa Chuẩn Xác</span>
+        </div>
+
+        {/* Center Hover Magnifier Hint */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+          <div className="bg-forest-dark/80 border border-brass/60 px-4 py-2 text-paper text-xs font-mono tracking-widest uppercase flex items-center gap-2 shadow-2xl backdrop-blur-sm">
+            <ZoomIn className="w-4 h-4 text-brass" />
+            <span>Soi Chi Tiết Cấu Kiện</span>
+          </div>
         </div>
 
         {/* Bottom Floating Bar */}
@@ -77,7 +100,10 @@ export const ArchitecturalViewer: React.FC<ArchitecturalViewerProps> = ({ produc
           </div>
 
           <button
-            onClick={() => setIsZoomModalOpen(true)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsZoomModalOpen(true);
+            }}
             className="p-2.5 bg-forest/85 hover:bg-brass hover:text-forest text-paper border border-brass/40 pointer-events-auto transition-colors shadow-lg"
             title="Phóng to chi tiết khảo cứu"
           >
@@ -107,17 +133,27 @@ export const ArchitecturalViewer: React.FC<ArchitecturalViewerProps> = ({ produc
       {/* Fullscreen Zoom Modal */}
       {isZoomModalOpen && (
         <div 
-          className="fixed inset-0 z-50 bg-black/90 flex flex-col items-center justify-center p-4 backdrop-blur-md"
+          className="fixed inset-0 z-50 bg-forest-dark/95 flex flex-col items-center justify-center p-4 backdrop-blur-md animate-fade-up"
           onClick={() => setIsZoomModalOpen(false)}
         >
-          <div className="relative max-w-5xl max-h-[90vh] overflow-hidden" onClick={e => e.stopPropagation()}>
+          {/* Close button in top corner */}
+          <button 
+            onClick={() => setIsZoomModalOpen(false)}
+            className="absolute top-6 right-6 p-2 bg-forest border border-brass/50 text-paper hover:bg-brass hover:text-forest transition-colors shadow-xl"
+            title="Đóng (Phím Esc)"
+          >
+            <X className="w-5 h-5" />
+          </button>
+
+          <div className="relative max-w-5xl max-h-[85vh] overflow-hidden" onClick={e => e.stopPropagation()}>
             <img
               src={currentImage.src}
               alt={currentImage.title}
-              className="max-w-full max-h-[85vh] object-contain border border-brass/50"
+              className="max-w-full max-h-[80vh] object-contain border border-brass/60 shadow-2xl"
             />
-            <div className="mt-2 text-center text-xs font-mono text-paper tracking-widest uppercase">
-              {product.name} — {currentImage.title} (Nhấp ngoài màn hình để đóng)
+            <div className="mt-3 flex items-center justify-between text-xs font-mono text-paper tracking-wider uppercase">
+              <span className="text-brass font-bold">{product.name} — {currentImage.title}</span>
+              <span className="text-paper/60 text-[11px]">Nhấp ngoài hoặc phím ESC để đóng</span>
             </div>
           </div>
         </div>

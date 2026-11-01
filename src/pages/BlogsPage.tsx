@@ -58,8 +58,17 @@ export const BlogsPage: React.FC = () => {
 
         {/* Articles Grid */}
         {loading ? (
-          <div className="py-20 text-center font-mono text-xs text-forest">
-            ĐANG TẢI BÀI VIẾT KHẢO CỨU...
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 py-4">
+            {[1, 2, 3].map((n) => (
+              <div key={n} className="bg-paper-warm border border-paper-border corner-frame overflow-hidden p-0 space-y-4 shadow-sm">
+                <div className="aspect-[16/10] heritage-shimmer" />
+                <div className="p-6 space-y-3">
+                  <div className="h-4 w-28 heritage-shimmer" />
+                  <div className="h-6 w-3/4 heritage-shimmer" />
+                  <div className="h-3 w-full heritage-shimmer" />
+                </div>
+              </div>
+            ))}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

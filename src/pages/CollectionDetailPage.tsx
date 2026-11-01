@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, MapPin } from 'lucide-react';
 import { publicApi } from '../services/api';
 import type { Collection, Product } from '../types';
+import { PageLoadingHeritage } from '../components/common/HeritageSkeleton';
 
 export const CollectionDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -19,11 +20,7 @@ export const CollectionDetailPage: React.FC = () => {
   }, [slug]);
 
   if (loading) {
-    return (
-      <div className="min-h-[60vh] flex items-center justify-center bg-paper text-forest font-mono text-xs">
-        ĐANG TẢI BỘ SƯU TẬP DI SẢN...
-      </div>
-    );
+    return <PageLoadingHeritage message="Đang tải chi tiết bộ sưu tập kiến trúc..." />;
   }
 
   if (!collection) {

@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Clock, User, Calendar } from 'lucide-react';
 import { publicApi } from '../services/api';
 import type { BlogPost } from '../types';
+import { PageLoadingHeritage } from '../components/common/HeritageSkeleton';
 
 export const BlogDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -20,11 +21,7 @@ export const BlogDetailPage: React.FC = () => {
   }, [slug]);
 
   if (loading) {
-    return (
-      <div className="min-h-[70vh] flex items-center justify-center bg-paper text-forest font-mono text-xs">
-        ĐANG TẢI BÀI VIẾT KHẢO CỨU...
-      </div>
-    );
+    return <PageLoadingHeritage message="Đang tải bài viết khảo cứu di sản..." />;
   }
 
   if (!blog) {

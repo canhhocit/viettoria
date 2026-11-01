@@ -13,6 +13,7 @@ import QRResolverPage from '../pages/QRResolverPage';
 import AboutPage from '../pages/AboutPage';
 import BlogsPage from '../pages/BlogsPage';
 import BlogDetailPage from '../pages/BlogDetailPage';
+import HeritageMapPage from '../pages/HeritageMapPage';
 
 // Admin CMS Pages
 import AdminLoginPage from '../pages/admin/AdminLoginPage';
@@ -39,7 +40,8 @@ export const AppRoutes: React.FC = () => {
         <Route path="/p" element={<QRResolverPage />} />
         <Route path="/p/:code" element={<QRResolverPage />} />
 
-        {/* Brand & Culture */}
+        {/* Brand, Culture & Map */}
+        <Route path="/map" element={<HeritageMapPage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/blogs" element={<BlogsPage />} />
         <Route path="/blogs/:slug" element={<BlogDetailPage />} />

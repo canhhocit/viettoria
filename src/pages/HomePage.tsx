@@ -11,6 +11,7 @@ import {
 import { publicApi } from '../services/api';
 import type { Product, Collection, BlogPost } from '../types';
 import { PageLoadingHeritage } from '../components/common/HeritageSkeleton';
+import { HeritageMap } from '../components/common/HeritageMap';
 
 export const HomePage: React.FC = () => {
   const [heroProduct, setHeroProduct] = useState<Product | null>(null);
@@ -316,6 +317,32 @@ export const HomePage: React.FC = () => {
               </Link>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* 4.5. HERITAGE INTERACTIVE LEAFLET MAP */}
+      <section className="py-20 sm:py-28 border-b border-paper-border bg-paper">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div className="space-y-2">
+              <span className="text-xs font-mono uppercase tracking-widest text-brass font-semibold">
+                Địa Linh Nhân Kiệt
+              </span>
+              <h2 className="font-serif text-3xl sm:text-4xl font-bold text-forest">
+                Bản Đồ Di Sản Kiến Trúc Thực Địa
+              </h2>
+            </div>
+
+            <Link
+              to="/map"
+              className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-forest font-bold hover:text-brass transition-colors"
+            >
+              <span>Mở Bản Đồ Toàn Màn Hình</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+
+          <HeritageMap />
         </div>
       </section>
 

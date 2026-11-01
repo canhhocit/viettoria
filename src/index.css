@@ -161,6 +161,36 @@
   cursor: zoom-in;
 }
 
+/* Leaflet Custom Heritage Atelier Styling */
+.heritage-atelier-popup .leaflet-popup-content-wrapper {
+  background: #FAF7F0 !important;
+  color: #1B1E1B !important;
+  border-radius: 0px !important;
+  border: 1px solid #B88A44 !important;
+  box-shadow: 0 10px 25px rgba(13, 28, 22, 0.25) !important;
+  padding: 4px !important;
+}
+
+.heritage-atelier-popup .leaflet-popup-tip {
+  background: #FAF7F0 !important;
+  box-shadow: none !important;
+  border: 1px solid #B88A44 !important;
+}
+
+.heritage-atelier-popup a.leaflet-popup-close-button {
+  color: #142820 !important;
+  padding: 4px 6px !important;
+}
+
+.heritage-atelier-popup a.leaflet-popup-close-button:hover {
+  color: #9C3D28 !important;
+}
+
+/* Warm sepia vintage filter for map tiles */
+.leaflet-tile-pane {
+  filter: sepia(18%) contrast(102%) brightness(98%) hue-rotate(-5deg);
+}
+
 /* WCAG 2.2 AA Accessibility Guard: Prefers Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
   *,

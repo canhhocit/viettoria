@@ -22,6 +22,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenQRModal }) => {
     { to: '/', label: 'Trang Chủ' },
     { to: '/collections', label: 'Bộ Sưu Tập' },
     { to: '/products', label: 'Tác Phẩm Di Sản' },
+    { to: '/map', label: 'Bản Đồ Di Sản' },
     { to: '/blogs', label: 'Góc Nhìn Di Sản' },
     { to: '/about', label: 'Về Viettoria' },
   ];

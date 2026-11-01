@@ -1,168 +1,137 @@
 import React, { useState } from 'react';
-import { QrCode, Menu, X, Bot, Map, Layers } from 'lucide-react';
+import { NavLink, Link } from 'react-router-dom';
+import { QrCode, Menu, X, Shield } from 'lucide-react';
 
 interface HeaderProps {
-  activeTab?: string;
-  onNavigate?: (tab: string) => void;
-  onOpenAIModal?: () => void;
+  onOpenQRModal: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ 
-  activeTab = 'home', 
-  onNavigate,
-  onOpenAIModal,
-}) => {
+export const Header: React.FC<HeaderProps> = ({ onOpenQRModal }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
 
-  const handleTabClick = (tab: string) => {
-    if (onNavigate) onNavigate(tab);
-    setMobileMenuOpen(false);
-  };
+  const navLinks = [
+    { to: '/', label: 'Trang Chủ' },
+    { to: '/collections', label: 'Bộ Sưu Tập' },
+    { to: '/products', label: 'Tác Phẩm Di Sản' },
+    { to: '/blogs', label: 'Góc Nhìn Di Sản' },
+    { to: '/about', label: 'Về Viettoria' },
+  ];
 
   return (
-    <header className="sticky top-0 z-50 px-3 py-3 text-white sm:px-4" style={{ marginBottom: '-88px' }}>
-      <div className="glass-navbar mx-auto w-full max-w-7xl px-3 py-2.5 sm:px-5 lg:px-7">
-        <div className="flex w-full items-center justify-between gap-x-3">
-          {/* Brand Logo & Title */}
-          <button 
-            onClick={() => handleTabClick('home')}
-            className="flex min-w-0 items-center gap-3 text-left focus:outline-none"
-          >
-            <span className="grid h-10 w-10 flex-none place-items-center rounded-full border border-[#f6d99b]/40 bg-white/10 text-[#f6d99b] shadow-[inset_0_1px_0_rgba(255,255,255,0.24)]">
-              <span className="font-serif font-bold text-lg text-[#f6d99b]">V</span>
+    <header className="sticky top-0 z-40 atelier-navbar text-paper">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-20">
+          {/* Brand Logo & Atelier Identity */}
+          <Link to="/" className="flex items-center gap-3.5 group focus:outline-none">
+            <span className="w-10 h-10 flex items-center justify-center border border-brass/60 bg-forest-dark text-brass font-serif font-bold text-xl group-hover:border-brass-light transition-colors shadow-inner">
+              V
             </span>
-            <span className="min-w-0">
-              <span className="block truncate font-serif text-xl font-bold leading-5 text-[#f6d99b]">
-                Di Sản Việt <span className="text-xs font-sans text-white/60 font-normal">VIETTORIA</span>
+            <div className="flex flex-col">
+              <span className="font-serif text-2xl font-bold tracking-widest text-paper group-hover:text-brass-light transition-colors leading-none">
+                VIETTORIA
               </span>
-              <span className="hidden truncate text-[11px] text-white/70 sm:block font-light">
-                Khám phá lịch sử, kết nối tự hào
+              <span className="text-[10px] font-mono tracking-editorial uppercase text-brass font-medium mt-1">
+                Phygital Heritage Collectibles
               </span>
-            </span>
-          </button>
+            </div>
+          </Link>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-1 text-sm font-medium text-white/85">
-            <button
-              onClick={() => handleTabClick('home')}
-              className={`glass-navbar-link px-3.5 py-1.5 transition ${
-                activeTab === 'home' ? 'bg-white/20 text-[#f6d99b] font-semibold' : 'hover:text-white'
-              }`}
-            >
-              Trang chủ
-            </button>
-            <button
-              onClick={() => handleTabClick('map')}
-              className={`glass-navbar-link px-3.5 py-1.5 transition flex items-center gap-1.5 ${
-                activeTab === 'map' ? 'bg-white/20 text-[#f6d99b] font-semibold' : 'hover:text-white'
-              }`}
-            >
-              <Map className="w-4 h-4 text-[#f6d99b]" />
-              <span>Bản đồ di sản</span>
-            </button>
-            <button
-              onClick={() => handleTabClick('collection')}
-              className={`glass-navbar-link px-3.5 py-1.5 transition ${
-                activeTab === 'collection' ? 'bg-white/20 text-[#f6d99b] font-semibold' : 'hover:text-white'
-              }`}
-            >
-              Bộ sưu tập
-            </button>
-            <button
-              onClick={() => handleTabClick('assembly')}
-              className={`glass-navbar-link px-3.5 py-1.5 transition flex items-center gap-1.5 ${
-                activeTab === 'assembly' ? 'bg-white/20 text-[#f6d99b] font-semibold' : 'hover:text-white'
-              }`}
-            >
-              <Layers className="w-4 h-4 text-[#f6d99b]" />
-              <span>Bóc tách mộng</span>
-            </button>
-            <button
-              onClick={() => onOpenAIModal && onOpenAIModal()}
-              className="glass-navbar-link px-3.5 py-1.5 transition text-[#f6d99b] hover:bg-white/10 flex items-center gap-1.5 font-semibold"
-            >
-              <Bot className="w-4 h-4 text-[#f6d99b]" />
-              <span>Hỏi AI hướng dẫn</span>
-            </button>
+          <nav className="hidden lg:flex items-center gap-8 text-xs font-mono tracking-wider uppercase" aria-label="Menu chính">
+            {navLinks.map((link) => (
+              <NavLink
+                key={link.to}
+                to={link.to}
+                className={({ isActive }) =>
+                  `py-2 border-b-2 transition-colors duration-150 ${
+                    isActive
+                      ? 'border-brass text-brass-light font-bold'
+                      : 'border-transparent text-paper/80 hover:text-paper hover:border-paper/40'
+                  }`
+                }
+              >
+                {link.label}
+              </NavLink>
+            ))}
           </nav>
 
-          {/* Right Action Buttons */}
-          <div className="flex items-center gap-2">
+          {/* Right Actions */}
+          <div className="flex items-center gap-3">
+            {/* Quick QR Scanner Button */}
             <button
-              onClick={() => handleTabClick('qr-demo')}
-              className="hidden sm:inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold bg-[#f6d99b] text-[#102832] hover:bg-white transition-all shadow-md font-mono uppercase tracking-wider"
+              onClick={onOpenQRModal}
+              className="inline-flex items-center gap-2 px-4 py-2 border border-brass text-brass hover:bg-brass hover:text-forest transition-colors font-mono text-xs uppercase tracking-wider font-semibold shadow-sm"
+              title="Mở trình quét tem QR trên đế mô hình"
             >
-              <QrCode className="w-3.5 h-3.5" />
-              <span>Quét Tem QR</span>
+              <QrCode className="w-4 h-4" />
+              <span className="hidden sm:inline">Quét Tem QR</span>
             </button>
 
-            <button
-              onClick={() => onOpenAIModal && onOpenAIModal()}
-              className="glass-navbar-button hidden sm:grid h-9 w-9 place-items-center rounded-full text-white/90 border border-white/20 hover:bg-white/20"
-              title="Hướng dẫn viên AI"
+            {/* Admin CMS Portal Link */}
+            <Link
+              to="/admin/dashboard"
+              className="hidden md:inline-flex items-center gap-1.5 px-3 py-2 bg-forest-dark border border-paper/20 hover:border-brass text-paper/70 hover:text-brass text-xs font-mono uppercase tracking-wider transition-colors"
+              title="Cổng quản trị nội dung CMS"
             >
-              <Bot className="w-4 h-4 text-[#f6d99b]" />
-            </button>
+              <Shield className="w-3.5 h-3.5" />
+              <span>CMS</span>
+            </Link>
 
-            {/* Mobile menu toggle */}
+            {/* Mobile Menu Toggle Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="glass-navbar-button grid h-9 w-9 place-items-center rounded-full text-white/90 border border-white/20 lg:hidden"
-              aria-label="Toggle Menu"
+              className="p-2 border border-paper/20 text-paper hover:border-brass hover:text-brass lg:hidden transition-colors"
+              aria-label="Mở danh mục điều hướng"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
+      </div>
 
-        {/* Mobile Dropdown Menu */}
-        {mobileMenuOpen && (
-          <nav className="mt-3 pt-3 border-t border-white/15 flex flex-col gap-2 text-sm font-medium text-white/90 lg:hidden">
-            <button
-              onClick={() => handleTabClick('home')}
-              className="px-4 py-2 text-left rounded-lg hover:bg-white/10 text-white"
-            >
-              Trang chủ
-            </button>
-            <button
-              onClick={() => handleTabClick('map')}
-              className="px-4 py-2 text-left rounded-lg hover:bg-white/10 text-white flex items-center gap-2"
-            >
-              <Map className="w-4 h-4 text-[#f6d99b]" />
-              <span>Bản đồ di sản</span>
-            </button>
-            <button
-              onClick={() => handleTabClick('collection')}
-              className="px-4 py-2 text-left rounded-lg hover:bg-white/10 text-white"
-            >
-              Bộ sưu tập (5 SKU)
-            </button>
-            <button
-              onClick={() => handleTabClick('assembly')}
-              className="px-4 py-2 text-left rounded-lg hover:bg-white/10 text-white flex items-center gap-2"
-            >
-              <Layers className="w-4 h-4 text-[#f6d99b]" />
-              <span>Bóc tách mộng gỗ 2.5D</span>
-            </button>
+      {/* Mobile Drawer Navigation */}
+      {mobileMenuOpen && (
+        <div className="lg:hidden border-t border-brass/30 bg-forest-dark px-4 pt-4 pb-6 space-y-3">
+          <nav className="flex flex-col space-y-2 text-xs font-mono uppercase tracking-wider">
+            {navLinks.map((link) => (
+              <NavLink
+                key={link.to}
+                to={link.to}
+                onClick={() => setMobileMenuOpen(false)}
+                className={({ isActive }) =>
+                  `px-3 py-2.5 border-l-2 transition-colors ${
+                    isActive
+                      ? 'border-brass bg-forest text-brass font-bold'
+                      : 'border-transparent text-paper/80 hover:text-paper hover:bg-forest/50'
+                  }`
+                }
+              >
+                {link.label}
+              </NavLink>
+            ))}
+          </nav>
+
+          <div className="pt-4 border-t border-paper/15 flex flex-col gap-2">
             <button
               onClick={() => {
                 setMobileMenuOpen(false);
-                if (onOpenAIModal) onOpenAIModal();
+                onOpenQRModal();
               }}
-              className="px-4 py-2 text-left rounded-lg bg-[#f6d99b]/20 text-[#f6d99b] flex items-center gap-2 font-semibold"
+              className="w-full py-2.5 px-4 bg-brass text-forest font-mono text-xs uppercase tracking-wider font-bold flex items-center justify-center gap-2"
             >
-              <Bot className="w-4 h-4" />
-              <span>Hỏi hướng dẫn viên AI</span>
+              <QrCode className="w-4 h-4" />
+              <span>Quét Tem QR Mô Hình</span>
             </button>
-            <button
-              onClick={() => handleTabClick('qr-demo')}
-              className="mt-1 px-4 py-2 text-center rounded-full bg-[#f6d99b] text-[#102832] font-semibold text-xs uppercase font-mono"
+            <Link
+              to="/admin/dashboard"
+              onClick={() => setMobileMenuOpen(false)}
+              className="w-full py-2 px-4 border border-paper/30 text-paper/80 font-mono text-xs uppercase tracking-wider text-center"
             >
-              Mở trang quét tem QR
-            </button>
-          </nav>
-        )}
-      </div>
+              Truy Cập Quản Trị CMS
+            </Link>
+          </div>
+        </div>
+      )}
     </header>
   );
 };

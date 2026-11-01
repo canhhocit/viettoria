@@ -4,89 +4,106 @@
 
 @layer base {
   :root {
-    --heritage-paper: #efe6d2;
-    --heritage-paper-light: #f8f1e3;
-    --heritage-paper-deep: #d8c7a5;
-    --heritage-ink: #2d2820;
-    --heritage-brown: #6f5830;
-    --heritage-bronze: #9b7a3a;
-    --heritage-sepia: #7c6a4c;
-    --heritage-line: #b8aa8d;
-    --heritage-muted: #776f62;
-    --heritage-white: #fffaf0;
-    --heritage-forest: #102832;
+    --color-paper: #FAF7F0;
+    --color-paper-warm: #F3EFE6;
+    --color-paper-muted: #E8E1D3;
+    --color-paper-border: #DCD4C4;
+    --color-forest: #142820;
+    --color-forest-dark: #0D1C16;
+    --color-brass: #B88A44;
+    --color-brass-light: #C89C54;
+    --color-charcoal: #1B1E1B;
+    --color-terracotta: #9C3D28;
   }
 
   body {
-    background-color: var(--heritage-paper-light);
-    color: var(--heritage-ink);
+    background-color: #FAF7F0;
+    color: #1B1E1B;
+    font-family: "Be Vietnam Pro", sans-serif;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: "Cinzel", "Playfair Display", serif;
+    letter-spacing: -0.01em;
   }
 }
 
 /* Subtle Heritage Paper Grain Overlay */
 .heritage-grain {
-  background-image: linear-gradient(90deg, rgba(45, 40, 32, 0.035) 1px, transparent 1px),
-                    linear-gradient(rgba(45, 40, 32, 0.025) 1px, transparent 1px);
-  background-size: 38px 38px;
+  background-image: linear-gradient(90deg, rgba(27, 30, 27, 0.03) 1px, transparent 1px),
+                    linear-gradient(rgba(27, 30, 27, 0.02) 1px, transparent 1px);
+  background-size: 32px 32px;
 }
 
-/* Heritage Dong Son Concentric Rings Motif */
+/* Heritage Dong Son Concentric Rings Watermark */
 .heritage-dong-son {
-  background: repeating-radial-gradient(circle, rgba(111, 88, 48, 0.12) 0 1px, transparent 1px 18px),
-              radial-gradient(circle, transparent 0 42%, rgba(111, 88, 48, 0.08) 43% 44%, transparent 45%);
+  background: repeating-radial-gradient(circle, rgba(184, 138, 68, 0.1) 0 1px, transparent 1px 18px),
+              radial-gradient(circle, transparent 0 42%, rgba(184, 138, 68, 0.06) 43% 44%, transparent 45%);
 }
 
-/* Heritage Surface Gradient */
-.heritage-surface {
-  background: radial-gradient(circle at 16% 8%, rgba(155, 122, 58, 0.12), transparent 24rem),
-              radial-gradient(circle at 78% 12%, rgba(124, 106, 76, 0.1), transparent 28rem),
-              linear-gradient(180deg, var(--heritage-paper-light), var(--heritage-paper));
-  color: var(--heritage-ink);
+/* Museum Passe-partout Frame Effect */
+.passe-partout {
+  padding: 12px;
+  background-color: #FAF7F0;
+  border: 1px solid #DCD4C4;
+  box-shadow: inset 0 0 0 1px rgba(184, 138, 68, 0.15);
 }
 
-/* Floating Glass Navbar from Disanviet */
-.glass-navbar {
-  color: #fffffff0;
-  box-shadow: 0 18px 44px rgba(7, 23, 28, 0.28);
+/* Antique Atelier Corner Frame Accent */
+.corner-frame {
   position: relative;
-  border-radius: 9999px;
-  background: #102832ba;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(246, 217, 155, 0.25);
+}
+.corner-frame::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  width: 12px;
+  height: 12px;
+  border-top: 2px solid #B88A44;
+  border-left: 2px solid #B88A44;
+  pointer-events: none;
+}
+.corner-frame::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  width: 12px;
+  height: 12px;
+  border-bottom: 2px solid #B88A44;
+  border-right: 2px solid #B88A44;
+  pointer-events: none;
 }
 
-.glass-navbar-link, .glass-navbar-button {
-  border-radius: 9999px;
-  text-shadow: 0 1px 2px rgba(16, 40, 50, 0.35);
-  transition: all 0.2s ease;
+/* Heritage Atelier Glass / Solid Navbar */
+.atelier-navbar {
+  background: rgba(20, 40, 32, 0.94);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(184, 138, 68, 0.3);
+  box-shadow: 0 10px 30px rgba(13, 28, 22, 0.25);
 }
 
-.glass-navbar-link:hover, .glass-navbar-button:hover {
-  background: rgba(255, 255, 255, 0.14);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2), inset 1.5px 2.5px 0 -2px rgba(255, 255, 255, 0.6);
-  transform: scale(1.02);
+/* Soft gold glow for interactive hover */
+.gold-glow:hover {
+  box-shadow: 0 0 20px rgba(184, 138, 68, 0.2);
 }
 
-/* Vietnam Map Silhouette Polygon */
-.home-map-shape {
-  clip-path: polygon(46% 0%, 61% 8%, 67% 20%, 58% 31%, 71% 47%, 62% 63%, 74% 81%, 59% 100%, 45% 89%, 52% 70%, 40% 54%, 49% 38%, 36% 23%);
-  filter: drop-shadow(0 18px 32px rgba(21, 36, 38, 0.2));
-}
-
-/* Custom Scrollbar */
+/* Custom Heritage Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #f8f1e3;
+  background: #F3EFE6;
 }
 ::-webkit-scrollbar-thumb {
-  background: #9b7a3a;
-  border-radius: 3px;
+  background: #B88A44;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #6f5830;
+  background: #966E2F;
 }

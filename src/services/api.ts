@@ -14,7 +14,7 @@ import {
   FALLBACK_MEDIA 
 } from '../data/fallbackData';
 
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE = (import.meta.env.VITE_API_BASE_URL as string) || 'http://localhost:5000/api';
 
 const getAuthHeaders = (): Record<string, string> => {
   const token = localStorage.getItem('viettoria_admin_token');

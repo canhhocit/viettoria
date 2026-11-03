@@ -4,6 +4,7 @@ import { Search, Box, MapPin, ArrowRight, Sparkles } from 'lucide-react';
 import { publicApi } from '../services/api';
 import type { Product, Collection } from '../types';
 import { TiltCard } from '../components/effects/TiltCard';
+import { resolveImageUrl, handleImageFallback } from '../utils/mediaResolver';
 
 export const ProductsPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -146,8 +147,9 @@ export const ProductsPage: React.FC = () => {
                   <div>
                     <div className="aspect-[4/3] overflow-hidden bg-forest relative">
                       <img
-                        src={product.heroImage}
+                        src={resolveImageUrl(product.heroImage)}
                         alt={product.name}
+                        onError={(e) => handleImageFallback(e)}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                       {product.isHeroRelease ? (

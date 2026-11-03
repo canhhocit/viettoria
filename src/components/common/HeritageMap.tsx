@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { MapPin, ArrowRight, ShieldCheck, Compass } from 'lucide-react';
+import { MapPin, ArrowRight, Compass } from 'lucide-react';
 
 export interface HeritageSiteLocation {
   id: string;
@@ -147,7 +147,7 @@ export const HeritageMap: React.FC<HeritageMapProps> = ({
     // Reliable High-Speed TileLayer (100% Accessible in Vietnam & Globally, No API Key Required)
     const tileLayer = L.tileLayer('https://mt{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
       subdomains: ['0', '1', '2', '3'],
-      attribution: '&copy; Google Maps &bull; Dữ liệu khảo cứu VIETTORIA',
+      attribution: '&copy; VIETTORIA',
       maxZoom: 20,
     });
     tileLayer.addTo(map);
@@ -449,24 +449,7 @@ export const HeritageMap: React.FC<HeritageMapProps> = ({
           className="absolute inset-0 w-full h-full z-10"
         />
 
-        {/* Subtle Watermark Overlay to preserve Heritage Aesthetic */}
-        <div 
-          className="absolute top-4 left-4 z-20 bg-forest/85 backdrop-blur-sm border border-brass/50 px-3 py-1.5 text-paper text-[10px] font-mono uppercase tracking-widest flex items-center gap-1.5 shadow-md pointer-events-none"
-        >
-          <ShieldCheck className="w-3.5 h-3.5 text-brass" />
-        </div>
-
-        {/* Top-Right Quick Legend */}
-        <div className="absolute top-4 right-4 z-20 bg-paper/95 backdrop-blur-sm border border-paper-border px-3 py-1.5 text-charcoal text-[11px] font-mono hidden sm:flex items-center gap-3 shadow-md pointer-events-none">
-          <span className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 bg-brass inline-block"></span>
-            <span>Hero (Chùa Một Cột)</span>
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 bg-forest inline-block"></span>
-            <span>Di Sản Khảo Cứu</span>
-          </span>
-        </div>
+        
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FileText, Plus, Edit, CheckCircle, X, ExternalLink } from 'lucide-react';
+import { Plus, Edit, CheckCircle, X, ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { adminApi } from '../../services/api';
 import type { BlogPost } from '../../types';
@@ -54,10 +54,6 @@ export const AdminBlogsPage: React.FC = () => {
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-paper-border">
         <div>
-          <div className="flex items-center gap-2 text-brass text-xs font-mono uppercase tracking-widest">
-            <FileText className="w-4 h-4" />
-            <span>Nghiên Cứu & Bảo Tồn Di Sản</span>
-          </div>
           <h1 className="font-serif text-2xl sm:text-3xl font-bold text-forest mt-1">
             Quản Lý Góc Văn Hóa
           </h1>
@@ -68,7 +64,7 @@ export const AdminBlogsPage: React.FC = () => {
           className="px-4 py-2.5 bg-forest text-paper hover:bg-brass transition-colors font-mono text-xs uppercase tracking-wider font-bold flex items-center gap-2 shadow-sm"
         >
           <Plus className="w-4 h-4" />
-          <span>Soạn Bài Viết Mới</span>
+          <span>Bài Viết Mới</span>
         </button>
       </div>
 

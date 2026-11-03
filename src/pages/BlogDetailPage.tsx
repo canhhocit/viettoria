@@ -4,6 +4,7 @@ import { ArrowLeft, Clock, User, Calendar } from 'lucide-react';
 import { publicApi } from '../services/api';
 import type { BlogPost } from '../types';
 import { PageLoadingHeritage } from '../components/common/HeritageSkeleton';
+import { resolveImageUrl, handleImageFallback } from '../utils/mediaResolver';
 
 export const BlogDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -77,8 +78,9 @@ export const BlogDetailPage: React.FC = () => {
         {/* Cover Image */}
         <div className="aspect-[16/9] overflow-hidden bg-forest border border-brass/30 corner-frame shadow-xl">
           <img
-            src={blog.coverImage}
+            src={resolveImageUrl(blog.coverImage)}
             alt={blog.title}
+            onError={(e) => handleImageFallback(e)}
             className="w-full h-full object-cover"
           />
         </div>

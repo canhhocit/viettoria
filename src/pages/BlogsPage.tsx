@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { FileText, ArrowRight, Clock, User } from 'lucide-react';
 import { publicApi } from '../services/api';
 import type { BlogPost } from '../types';
+import { resolveImageUrl, handleImageFallback } from '../utils/mediaResolver';
 
 export const BlogsPage: React.FC = () => {
   const [blogs, setBlogs] = useState<BlogPost[]>([]);
@@ -80,8 +81,9 @@ export const BlogsPage: React.FC = () => {
                 <div>
                   <div className="aspect-[16/10] overflow-hidden bg-forest">
                     <img
-                      src={blog.coverImage}
+                      src={resolveImageUrl(blog.coverImage)}
                       alt={blog.title}
+                      onError={(e) => handleImageFallback(e)}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                   </div>

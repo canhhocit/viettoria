@@ -4,157 +4,170 @@ import { Mail, MapPin, Share2, Camera, ArrowUpRight } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="relative overflow-hidden bg-[#523f24] text-[#f8f1e3] border-t border-[#b8aa8d]/30 select-none">
-      {/* Background Heritage Grain Texture */}
-      <div className="heritage-grain pointer-events-none absolute inset-0 opacity-25"></div>
-
-      {/* Subtle Radial Glow in Center */}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_25%_40%,rgba(184,138,68,0.08),transparent_50%)]"></div>
-
-      {/* Faint Bronze Drum Watermark on Right with Slow Celestial Rotation */}
-      <img
-        src="/images/trong-dong.webp"
-        alt=""
-        aria-hidden="true"
-        className="pointer-events-none absolute right-[-8%] sm:right-[-4%] lg:right-[0%] top-1/2 -translate-y-1/2 h-[135%] max-w-none opacity-[0.16] object-contain select-none mix-blend-screen animate-dong-son-spin"
-      />
-
-      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-16 pb-12">
+    <footer className="border-t border-[#D8CCB8] bg-[#E2D3BA] text-[#3B2B1D] px-4 pt-14 pb-8 sm:px-6 lg:px-8 select-none">
+      <div className="mx-auto max-w-7xl">
         {/* Main 4-Column Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
-          {/* Column 1: Brand Atelier */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-12 pb-12">
+          {/* Column 1: Brand & Philosophy */}
           <div className="lg:col-span-4 space-y-4">
-            <div className="flex items-center gap-3.5">
-              <div className="w-12 h-12 flex-none flex items-center justify-center border border-[#f6d99b]/60 bg-white/10 text-[#f6d99b] shadow-[inset_0_1px_0_rgba(255,255,255,0.25)] font-serif font-bold text-xl">
-                V
-              </div>
-              <div>
-                <h3 className="font-serif text-2xl font-bold text-[#fffaf0] leading-tight tracking-wide">
-                  VIETTORIA
-                </h3>
-                <p className="text-[11px] uppercase tracking-[0.22em] text-[#d8c7a5] font-medium mt-0.5 font-mono">
-                  PHYGITAL HERITAGE ATELIER
-                </p>
-              </div>
-            </div>
-
-            <p className="text-xs sm:text-[13px] text-[#f2e9d8]/90 leading-relaxed font-light max-w-sm pt-1">
+            <Link to="/" className="inline-block" aria-label="Viettoria Trang chủ">
+              <img
+                src="/viettoria-noback.svg"
+                alt="Viettoria"
+                className="h-8 sm:h-9 w-auto object-contain"
+              />
+            </Link>
+            <p className="font-serif text-xs sm:text-sm text-[#554231] leading-relaxed max-w-sm">
               Tái hiện kiệt tác kiến trúc Việt Nam dưới dạng mô hình in 3D tinh xảo kết hợp nền tảng số hóa tương tác đa giác quan, đưa câu chuyện sử Việt đến gần hơn với mọi thế hệ.
             </p>
+            <div className="pt-1">
+              <span className="seal-stamp px-3 py-1 font-mono text-[10px] tracking-widest font-semibold rounded-[1px]">
+                VIETTORIA ATELIER • DI SẢN ĐẠI VIỆT
+              </span>
+            </div>
           </div>
 
-          {/* Column 2: KHÁM PHÁ */}
-          <div className="lg:col-span-2 space-y-3.5">
-            <h4 className="font-serif text-sm font-semibold uppercase tracking-wider text-[#f8f2e4]">
-              KHÁM PHÁ
+          {/* Column 2: 5 Monuments Collection */}
+          <div className="lg:col-span-3 space-y-3">
+            <h4 className="font-mono text-xs uppercase tracking-widest text-[#745C42] font-semibold">
+              TÁC PHẨM DI SẢN
             </h4>
-            <ul className="space-y-2.5 text-xs sm:text-[13px] text-[#e8dec8] font-light">
+            <ul className="space-y-2 text-xs sm:text-sm font-serif">
               <li>
-                <Link to="/collections" className="hover:text-white transition-colors block">
-                  Bộ sưu tập di sản
+                <Link
+                  to="/products/chua-mot-cot"
+                  className="text-[#4e3c2c] hover:text-[#745C42] hover:underline transition-colors flex items-center justify-between pr-4"
+                >
+                  <span>Chùa Một Cột</span>
+                  <span className="font-mono text-[11px] opacity-70">Hà Nội</span>
                 </Link>
               </li>
               <li>
-                <Link to="/products/chua-mot-cot" className="hover:text-white transition-colors block">
-                  Chùa Một Cột (Hero)
+                <Link
+                  to="/products/khue-van-cac"
+                  className="text-[#4e3c2c] hover:text-[#745C42] hover:underline transition-colors flex items-center justify-between pr-4"
+                >
+                  <span>Khuê Văn Các</span>
+                  <span className="font-mono text-[11px] opacity-70">Hà Nội</span>
                 </Link>
               </li>
               <li>
-                <Link to="/products" className="hover:text-white transition-colors block">
-                  Danh mục 5 tác phẩm
+                <Link
+                  to="/products/cot-co-ha-noi"
+                  className="text-[#4e3c2c] hover:text-[#745C42] hover:underline transition-colors flex items-center justify-between pr-4"
+                >
+                  <span>Cột Cờ Hà Nội</span>
+                  <span className="font-mono text-[11px] opacity-70">Hà Nội</span>
                 </Link>
               </li>
               <li>
-                <Link to="/blogs" className="hover:text-white transition-colors block">
-                  Góc nhìn di sản
+                <Link
+                  to="/products/ngo-mon-hue"
+                  className="text-[#4e3c2c] hover:text-[#745C42] hover:underline transition-colors flex items-center justify-between pr-4"
+                >
+                  <span>Ngọ Môn Huế</span>
+                  <span className="font-mono text-[11px] opacity-70">Thừa Thiên Huế</span>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/products/ben-nha-rong"
+                  className="text-[#4e3c2c] hover:text-[#745C42] hover:underline transition-colors flex items-center justify-between pr-4"
+                >
+                  <span>Bến Nhà Rồng</span>
+                  <span className="font-mono text-[11px] opacity-70">TP. Hồ Chí Minh</span>
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Column 3: THÔNG TIN */}
-          <div className="lg:col-span-2 space-y-3.5">
-            <h4 className="font-serif text-sm font-semibold uppercase tracking-wider text-[#f8f2e4]">
-              THÔNG TIN
+          {/* Column 3: Atelier & Story */}
+          <div className="lg:col-span-2 space-y-3">
+            <h4 className="font-mono text-xs uppercase tracking-widest text-[#745C42] font-semibold">
+              VIETTORIA
             </h4>
-            <ul className="space-y-2.5 text-xs sm:text-[13px] text-[#e8dec8] font-light">
+            <ul className="space-y-2 text-xs sm:text-sm font-serif text-[#4e3c2c]">
               <li>
-                <Link to="/about" className="hover:text-white transition-colors block">
-                  Về Viettoria Atelier
+                <Link to="/about" className="hover:text-[#745C42] hover:underline transition-colors block">
+                  Về Viettoria
                 </Link>
               </li>
               <li>
-                <Link to="/about" className="hover:text-white transition-colors block">
-                  Đề án Phenikaa PSI 2026
+                <Link to="/collections" className="hover:text-[#745C42] hover:underline transition-colors block">
+                  Bộ sưu tập
                 </Link>
               </li>
               <li>
-                <span className="hover:text-white transition-colors cursor-pointer block">
-                  Tiêu chuẩn BioPETG
-                </span>
+                <Link to="/map" className="hover:text-[#745C42] hover:underline transition-colors block">
+                  Bản đồ di sản
+                </Link>
               </li>
               <li>
-                <Link to="/admin/login" className="hover:text-white transition-colors block font-mono text-[11px] text-brass-subtle">
+                <Link to="/blogs" className="hover:text-[#745C42] hover:underline transition-colors block">
+                  Góc nhìn di sản
+                </Link>
+              </li>
+              <li>
+                <Link to="/admin/login" className="hover:text-[#745C42] hover:underline transition-colors block font-mono text-[11px] text-[#745C42] font-semibold">
                   Cổng Quản Trị CMS
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Column 4: KẾT NỐI VỚI CHÚNG TÔI */}
-          <div className="lg:col-span-4 space-y-3.5">
-            <h4 className="font-serif text-sm font-semibold uppercase tracking-wider text-[#f8f2e4]">
-              KẾT NỐI VỚI CHÚNG TÔI
+          {/* Column 4: Contact & Social */}
+          <div className="lg:col-span-3 space-y-3">
+            <h4 className="font-mono text-xs uppercase tracking-widest text-[#745C42] font-semibold">
+              KẾT NỐI
             </h4>
-
-            <div className="space-y-2.5 text-xs sm:text-[13px] text-[#f2e9d8]/95 font-light">
-              <div className="flex items-center gap-2.5">
-                <Mail className="w-4 h-4 text-[#f6d99b] shrink-0" />
-                <a href="mailto:contact@viettoria.vn" className="hover:text-white transition-colors">
+            <div className="space-y-2.5 text-xs sm:text-[13px] text-[#554231] font-serif">
+              <div className="flex items-center gap-2">
+                <Mail className="w-3.5 h-3.5 text-[#745C42] shrink-0" />
+                <a href="mailto:contact@viettoria.vn" className="hover:text-[#745C42] transition-colors">
                   contact@viettoria.vn
                 </a>
               </div>
-              <div className="flex items-center gap-2.5">
-                <MapPin className="w-4 h-4 text-[#f6d99b] shrink-0" />
-                <span>Trường Đại học Phenikaa, Hà Nội, Việt Nam</span>
+              <div className="flex items-start gap-2">
+                <MapPin className="w-3.5 h-3.5 text-[#745C42] shrink-0 mt-0.5" />
+                <span>Trường Đại học Phenikaa, Hà Nội</span>
               </div>
             </div>
 
-            {/* Social Circle Icons & Pill Action Button */}
-            <div className="flex items-center gap-2.5 pt-2">
+            {/* Social & Action Button */}
+            <div className="flex items-center gap-2 pt-2">
               <button 
-                className="w-9 h-9 flex items-center justify-center border border-white/25 text-[#f2e9d8] hover:bg-white/15 hover:text-white transition-all shadow-sm"
+                className="w-8 h-8 flex items-center justify-center border border-[#d8ccb8] text-[#554231] hover:bg-[#ede4d2] hover:text-[#3B2B1D] transition-all rounded-[2px]"
                 title="Chia sẻ di sản"
               >
-                <Share2 className="w-4 h-4" />
+                <Share2 className="w-3.5 h-3.5" />
               </button>
-
               <button 
-                className="w-9 h-9 flex items-center justify-center border border-white/25 text-[#f2e9d8] hover:bg-white/15 hover:text-white transition-all shadow-sm"
+                className="w-8 h-8 flex items-center justify-center border border-[#d8ccb8] text-[#554231] hover:bg-[#ede4d2] hover:text-[#3B2B1D] transition-all rounded-[2px]"
                 title="Thư viện hình ảnh"
               >
-                <Camera className="w-4 h-4" />
+                <Camera className="w-3.5 h-3.5" />
               </button>
-
               <Link
-                to="/collections"
-                className="inline-flex items-center gap-1.5 border border-[#f6d99b]/60 bg-transparent px-4 py-2 text-xs font-medium text-[#fffaf0] hover:bg-[#f6d99b] hover:text-[#523f24] transition-all shadow-sm"
+                to="/products"
+                className="inline-flex items-center gap-1.5 border border-[#745C42] bg-[#745C42] px-3.5 py-1.5 text-xs font-medium text-white hover:bg-[#5f4a38] transition-all rounded-[2px] shadow-xs"
               >
-                <span className="font-serif text-[13px]">Khám phá ngay</span>
-                <ArrowUpRight className="w-3.5 h-3.5 text-[#f6d99b]" />
+                <span className="font-mono uppercase tracking-wider text-[11px]">Khám phá ngay</span>
+                <ArrowUpRight className="w-3.5 h-3.5 text-white" />
               </Link>
             </div>
           </div>
         </div>
 
-        {/* Delicate Divider Line */}
-        <div className="mt-12 border-t border-[#d8c7a5]/25 pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-[#d8c7a5]/80 font-light">
+        {/* Bottom copyright line */}
+        <div className="mt-8 border-t border-[#D8CCB8] pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-[#796857]">
           <p>© 2026 VIETTORIA. Khắc dạ nhớ nguồn — Đưa nét Việt vươn xa.</p>
-          <p className="mt-2 sm:mt-0 font-serif italic text-[#e8dec8]/90">
-            Dự án tham dự Sáng tạo - Khởi nghiệp 
+          <p className="mt-2 sm:mt-0 font-serif italic text-[#554231]">
+            Đề án tham dự Sáng tạo - Khởi nghiệp Phenikaa PSI 2026
           </p>
         </div>
       </div>
     </footer>
   );
 };
+
+export default Footer;

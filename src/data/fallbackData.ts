@@ -57,10 +57,12 @@ export const FALLBACK_PRODUCTS: Product[] = [
       finishing: 'Phủ bóng mờ sáp ong, gờ ngói cổ chạm nổi, giả lập chất gỗ lim già'
     },
     heroImage: '/images/chua-mot-cot.webp',
+    model3dUrl: '/3D/chua-mot-cot.glb',
     galleryImages: [
       '/images/chua-mot-cot.webp',
-      '/images/van-mieu-quoc-tu-giam.webp',
-      '/images/hoang-thanh-thang-long.webp'
+      '/viettoria_img/IMG_6026.PNG',
+      '/viettoria_img/IMG_6361.PNG',
+      '/viettoria_img/IMG_6368.PNG'
     ],
     audioGuide: {
       title: 'Hào Khí Thăng Long & Giấc Mơ Đài Sen',
@@ -93,9 +95,12 @@ export const FALLBACK_PRODUCTS: Product[] = [
       finishing: 'Sơn son thếp vàng thủ công viền cửa tròn sao Khuê, mái ngói giả cổ'
     },
     heroImage: '/images/van-mieu-quoc-tu-giam.webp',
+    model3dUrl: '/3D/khue-van-cac.glb',
     galleryImages: [
       '/images/van-mieu-quoc-tu-giam.webp',
-      '/images/hoang-thanh-thang-long.webp'
+      '/viettoria_img/IMG_6362.PNG',
+      '/viettoria_img/IMG_6363.PNG',
+      '/viettoria_img/IMG_6370.PNG'
     ],
     audioGuide: {
       title: 'Sao Khuê Tỏa Sáng Đất Tràng An',
@@ -128,7 +133,12 @@ export const FALLBACK_PRODUCTS: Product[] = [
       finishing: 'Màu gạch nung cổ kính, 39 lỗ hoa thị đón sáng tinh tế'
     },
     heroImage: '/images/hoang-thanh-thang-long.webp',
-    galleryImages: ['/images/hoang-thanh-thang-long.webp'],
+    model3dUrl: '/3D/cot-co-ha-noi.glb',
+    galleryImages: [
+      '/images/hoang-thanh-thang-long.webp',
+      '/viettoria_img/IMG_6364.PNG',
+      '/viettoria_img/IMG_6371.PNG'
+    ],
     audioGuide: {
       title: 'Hào Khí Kỳ Đài Thăng Long',
       duration: '02:30',
@@ -160,7 +170,13 @@ export const FALLBACK_PRODUCTS: Product[] = [
       finishing: 'Ngói hoàng lưu ly vàng rực rỡ và ngói thanh lưu ly xanh biếc'
     },
     heroImage: '/images/thua-thien-hue.webp',
-    galleryImages: ['/images/thua-thien-hue.webp', '/images/lang-vua-tu-duc.webp'],
+    model3dUrl: '/3D/ngo-mon-hue.glb',
+    galleryImages: [
+      '/images/thua-thien-hue.webp',
+      '/viettoria_img/IMG_6365.PNG',
+      '/viettoria_img/IMG_6366.PNG',
+      '/viettoria_img/IMG_6372.PNG'
+    ],
     audioGuide: {
       title: 'Âm Sắc Cung Đình Bên Dòng Hương Giang',
       duration: '03:10',
@@ -192,7 +208,13 @@ export const FALLBACK_PRODUCTS: Product[] = [
       finishing: 'Chi tiết đôi rồng gốm men xanh ngậm ngọc chầu trăng trên đỉnh mái'
     },
     heroImage: '/images/dinh-doc-lap.webp',
-    galleryImages: ['/images/dinh-doc-lap.webp'],
+    model3dUrl: '/3D/ben-nha-rong.glb',
+    galleryImages: [
+      '/images/dinh-doc-lap.webp',
+      '/viettoria_img/IMG_6367.PNG',
+      '/viettoria_img/IMG_5825.PNG',
+      '/viettoria_img/IMG_5826.PNG'
+    ],
     audioGuide: {
       title: 'Khúc Tráng Ca Trên Bến Cảng Sài Gòn',
       duration: '02:50',
@@ -375,6 +397,36 @@ export const FALLBACK_MEDIA: MediaItem[] = [
     fileSize: 191866,
     url: '/images/hoang-thanh-thang-long.webp',
     altText: 'Cột Cờ Hà Nội trong khuôn viên di tích Hoàng thành',
+    uploadedAt: new Date().toISOString()
+  },
+  {
+    id: 'media-4',
+    name: 'Mô hình Viettoria Atelier Thực Tế',
+    fileName: 'IMG_6026.PNG',
+    fileType: 'image/png',
+    fileSize: 929956,
+    url: '/viettoria_img/IMG_6026.PNG',
+    altText: 'Ảnh chụp mẫu mô hình in 3D thực tế tại xưởng Viettoria',
+    uploadedAt: new Date().toISOString()
+  },
+  {
+    id: 'media-5',
+    name: 'Quy cách Đóng gói & Thẻ Chứng Nhận',
+    fileName: 'IMG_6370.PNG',
+    fileType: 'image/png',
+    fileSize: 744162,
+    url: '/viettoria_img/IMG_6370.PNG',
+    altText: 'Thẻ chứng nhận độc bản và bao bì đóng gói cao cấp',
+    uploadedAt: new Date().toISOString()
+  },
+  {
+    id: 'media-6',
+    name: 'Chi tiết Cấu kiện Mộng Ngàm',
+    fileName: 'IMG_6361.PNG',
+    fileType: 'image/png',
+    fileSize: 1734432,
+    url: '/viettoria_img/IMG_6361.PNG',
+    altText: 'Chi tiết cấu kiện mộng ngàm kiến trúc gỗ truyền thống',
     uploadedAt: new Date().toISOString()
   }
 ];

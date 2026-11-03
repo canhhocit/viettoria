@@ -23,7 +23,7 @@ export const QRScanModal: React.FC<QRScanModalProps> = ({ isOpen, onClose }) => 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-forest-dark/80 backdrop-blur-sm animate-fadeIn">
       <div 
-        className="relative w-full max-w-md bg-paper border border-brass corner-frame p-6 sm:p-8 shadow-2xl"
+        className="relative w-full max-w-md bg-[#FAF7F0] border border-[#B88A38] corner-frame p-6 sm:p-8 shadow-2xl rounded-[2px]"
         role="dialog"
         aria-modal="true"
         aria-labelledby="qr-modal-title"
@@ -93,7 +93,7 @@ export const QRScanModal: React.FC<QRScanModalProps> = ({ isOpen, onClose }) => 
 
           <button
             type="submit"
-            className="w-full py-3 px-4 bg-forest text-paper hover:bg-brass transition-colors font-mono text-xs uppercase tracking-widest font-semibold flex items-center justify-center gap-2 shadow-md mt-6"
+            className="w-full py-3 px-4 bg-[#745C42] text-white hover:bg-[#5F4A38] transition-colors font-mono text-xs uppercase tracking-widest font-semibold flex items-center justify-center gap-2 shadow-sm rounded-[2px] mt-6"
           >
             <span>Kích Hoạt Trải Nghiệm Số</span>
             <ArrowRight className="w-4 h-4" />

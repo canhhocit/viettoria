@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Image, Copy, Check } from 'lucide-react';
 import { adminApi } from '../../services/api';
 import type { MediaItem } from '../../types';
+import { resolveImageUrl, handleImageFallback } from '../../utils/mediaResolver';
 
 export const AdminMediaPage: React.FC = () => {
   const [mediaList, setMediaList] = useState<MediaItem[]>([]);
@@ -68,8 +69,9 @@ export const AdminMediaPage: React.FC = () => {
               <div>
                 <div className="aspect-[4/3] bg-forest overflow-hidden relative">
                   <img
-                    src={item.url}
+                    src={resolveImageUrl(item.url)}
                     alt={item.altText || item.name}
+                    onError={(e) => handleImageFallback(e)}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                 </div>

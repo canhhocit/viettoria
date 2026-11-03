@@ -5,7 +5,6 @@ import {
   Layers, 
   FileText, 
   Plus, 
-  Sparkles,
   BookOpen
 } from 'lucide-react';
 import { adminApi } from '../../services/api';
@@ -39,16 +38,11 @@ export const AdminDashboardPage: React.FC = () => {
       {/* Top Banner */}
       <div className="bg-forest text-paper p-6 sm:p-8 border border-brass corner-frame flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-md">
         <div className="space-y-2">
-          <div className="flex items-center gap-2 text-brass text-xs font-mono uppercase tracking-widest">
-            <Sparkles className="w-4 h-4" />
-            <span>Hệ Thống Quản Trị Di Sản Số & Mô Hình 3D</span>
-          </div>
+          
           <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-wide">
             Bảng Điều Hành Trung Tâm
           </h1>
-          <p className="text-xs sm:text-sm text-paper/80 font-light max-w-xl">
-            Quản lý mô hình 3D, biên tập các khối câu chuyện lịch sử (Story Blocks) và cập nhật bài viết nghiên cứu bảo tồn.
-          </p>
+          
         </div>
 
         <div className="flex flex-wrap gap-3">
@@ -129,7 +123,7 @@ export const AdminDashboardPage: React.FC = () => {
         <div className="lg:col-span-7 bg-paper border border-paper-border corner-frame p-6 space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-paper-border">
             <h2 className="font-serif text-lg font-bold text-forest">
-              Mô Hình & Khối Câu Chuyện (Story Blocks)
+              Mô Hình & Khối Câu Chuyện 
             </h2>
             <Link to="/admin/products" className="text-xs font-mono text-brass hover:underline">
               Xem tất cả →

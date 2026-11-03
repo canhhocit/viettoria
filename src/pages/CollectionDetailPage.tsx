@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowRight, MapPin } from 'lucide-react';
 import { publicApi } from '../services/api';
 import type { Collection, Product } from '../types';
 import { PageLoadingHeritage } from '../components/common/HeritageSkeleton';
+import { resolveImageUrl, handleImageFallback } from '../utils/mediaResolver';
 
 export const CollectionDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -89,8 +90,9 @@ export const CollectionDetailPage: React.FC = () => {
                 <div>
                   <div className="aspect-[4/3] overflow-hidden bg-forest relative">
                     <img
-                      src={product.heroImage}
+                      src={resolveImageUrl(product.heroImage)}
                       alt={product.name}
+                      onError={(e) => handleImageFallback(e)}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                     <div className="absolute top-3 left-3 bg-forest/90 border border-brass/50 px-2.5 py-1 text-[11px] font-serif uppercase tracking-wider text-brass">

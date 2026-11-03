@@ -2,6 +2,7 @@ import React from 'react';
 import type { StoryBlock } from '../../types';
 import { AssemblyGuide } from '../common/AssemblyGuide';
 import { Clock } from 'lucide-react';
+import { resolveImageUrl, handleImageFallback } from '../../utils/mediaResolver';
 
 interface StoryBlockRendererProps {
   block: StoryBlock;
@@ -37,8 +38,9 @@ export const StoryBlockRenderer: React.FC<StoryBlockRendererProps> = ({ block, h
           <div className="max-w-4xl mx-auto space-y-3">
             <div className="overflow-hidden bg-forest-dark border border-brass/30 corner-frame">
               <img
-                src={block.mediaUrl}
+                src={resolveImageUrl(block.mediaUrl)}
                 alt={block.mediaCaption || block.title}
+                onError={(e) => handleImageFallback(e)}
                 className="w-full h-auto max-h-[550px] object-cover hover:scale-102 transition-transform duration-500"
               />
             </div>
@@ -74,8 +76,9 @@ export const StoryBlockRenderer: React.FC<StoryBlockRendererProps> = ({ block, h
             <div className="lg:col-span-6">
               <div className="overflow-hidden bg-forest border border-brass/40 corner-frame shadow-lg">
                 <img
-                  src={block.mediaUrl || '/images/chua-mot-cot.webp'}
+                  src={resolveImageUrl(block.mediaUrl || '/images/chua-mot-cot.webp')}
                   alt={block.mediaCaption || block.title}
+                  onError={(e) => handleImageFallback(e)}
                   className="w-full h-auto object-cover"
                 />
               </div>

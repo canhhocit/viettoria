@@ -12,6 +12,7 @@ import { AudioPlayer } from '../components/common/AudioPlayer';
 import { StoryBlockRenderer } from '../components/story/StoryBlockRenderer';
 import { ScaleRuler } from '../components/common/ScaleRuler';
 import { PageLoadingHeritage } from '../components/common/HeritageSkeleton';
+import { resolveImageUrl, handleImageFallback } from '../utils/mediaResolver';
 
 export const ProductDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -233,8 +234,9 @@ export const ProductDetailPage: React.FC = () => {
                 >
                   <div className="aspect-[16/10] overflow-hidden bg-forest">
                     <img
-                      src={rel.heroImage}
+                      src={resolveImageUrl(rel.heroImage)}
                       alt={rel.name}
+                      onError={(e) => handleImageFallback(e)}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                   </div>

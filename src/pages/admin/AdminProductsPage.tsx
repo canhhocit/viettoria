@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { adminApi, publicApi } from '../../services/api';
 import type { Product, Collection } from '../../types';
+import { resolveImageUrl, handleImageFallback } from '../../utils/mediaResolver';
 
 export const AdminProductsPage: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -144,8 +145,9 @@ export const AdminProductsPage: React.FC = () => {
                   <td className="p-4">
                     <div className="flex items-center gap-3">
                       <img
-                        src={product.heroImage}
+                        src={resolveImageUrl(product.heroImage)}
                         alt={product.name}
+                        onError={(e) => handleImageFallback(e)}
                         className="w-12 h-10 object-cover border border-paper-border bg-forest shrink-0"
                       />
                       <div>
@@ -386,15 +388,28 @@ export const AdminProductsPage: React.FC = () => {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-charcoal-muted uppercase mb-1">URL Ảnh Bìa Đại Diện</label>
-                <input
-                  type="text"
-                  value={editingProduct.heroImage || ''}
-                  onChange={e => setEditingProduct({ ...editingProduct, heroImage: e.target.value })}
-                  className="w-full px-3 py-2 bg-paper-warm border border-paper-border focus:border-brass focus:outline-none"
-                  required
-                />
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-charcoal-muted uppercase mb-1">URL Ảnh Bìa Đại Diện</label>
+                  <input
+                    type="text"
+                    value={editingProduct.heroImage || ''}
+                    onChange={e => setEditingProduct({ ...editingProduct, heroImage: e.target.value })}
+                    placeholder="/images/chua-mot-cot.webp hoặc https://res.cloudinary.com/..."
+                    className="w-full px-3 py-2 bg-paper-warm border border-paper-border focus:border-brass focus:outline-none"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-charcoal-muted uppercase mb-1">Đường Dẫn Mô Hình 3D (.glb)</label>
+                  <input
+                    type="text"
+                    value={editingProduct.model3dUrl || ''}
+                    onChange={e => setEditingProduct({ ...editingProduct, model3dUrl: e.target.value })}
+                    placeholder="/3D/chua-mot-cot.glb hoặc Cloudinary / Backend URL"
+                    className="w-full px-3 py-2 bg-paper-warm border border-paper-border focus:border-brass focus:outline-none"
+                  />
+                </div>
               </div>
 
               <div className="pt-4 border-t border-paper-border flex justify-end gap-3">

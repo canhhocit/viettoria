@@ -5,6 +5,7 @@ import { publicApi } from '../services/api';
 import type { Collection } from '../types';
 import { PageLoadingHeritage } from '../components/common/HeritageSkeleton';
 import { HeritageTimeline } from '../components/common/HeritageTimeline';
+import { resolveImageUrl, handleImageFallback } from '../utils/mediaResolver';
 
 export const CollectionsPage: React.FC = () => {
   const [collections, setCollections] = useState<Collection[]>([]);
@@ -63,8 +64,9 @@ export const CollectionsPage: React.FC = () => {
                 <div>
                   <div className="aspect-[16/10] overflow-hidden bg-forest relative">
                     <img
-                      src={col.heroImage}
+                      src={resolveImageUrl(col.heroImage)}
                       alt={col.name}
+                      onError={(e) => handleImageFallback(e)}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                     <div className="absolute top-3 left-3 bg-forest/90 border border-brass/50 px-2.5 py-1 text-[11px] font-serif uppercase tracking-wider text-brass">

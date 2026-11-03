@@ -14,6 +14,7 @@ import { PageLoadingHeritage } from '../components/common/HeritageSkeleton';
 import { HeritageMap } from '../components/common/HeritageMap';
 import { HeritageParticles } from '../components/effects/HeritageParticles';
 import { TiltCard } from '../components/effects/TiltCard';
+import { resolveImageUrl, handleImageFallback } from '../utils/mediaResolver';
 
 export const HomePage: React.FC = () => {
   const [heroProduct, setHeroProduct] = useState<Product | null>(null);
@@ -199,8 +200,9 @@ export const HomePage: React.FC = () => {
                 <TiltCard className="w-full" tiltAmount={4}>
                   <div className="relative border border-brass/50 corner-frame bg-forest-dark overflow-hidden group shadow-2xl animate-pulse-aura">
                     <img
-                      src={heroProduct.heroImage}
+                      src={resolveImageUrl(heroProduct.heroImage)}
                       alt={heroProduct.name}
+                      onError={(e) => handleImageFallback(e)}
                       className="w-full aspect-[4/3] object-cover group-hover:scale-105 transition-transform duration-700"
                     />
                     <div className="absolute top-4 left-4 bg-forest/90 border border-brass/60 px-3 py-1 font-sans text-[11px] text-brass uppercase tracking-wider font-semibold shadow-md">
@@ -306,8 +308,9 @@ export const HomePage: React.FC = () => {
                 >
                   <div className="aspect-[16/10] overflow-hidden bg-forest relative">
                     <img
-                      src={col.heroImage}
+                      src={resolveImageUrl(col.heroImage)}
                       alt={col.name}
+                      onError={(e) => handleImageFallback(e)}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                   </div>
@@ -390,8 +393,9 @@ export const HomePage: React.FC = () => {
                   <div>
                     <div className="aspect-[16/10] overflow-hidden bg-forest">
                       <img
-                        src={blog.coverImage}
+                        src={resolveImageUrl(blog.coverImage)}
                         alt={blog.title}
+                        onError={(e) => handleImageFallback(e)}
                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                       />
                     </div>

@@ -4,31 +4,67 @@
 
 @layer base {
   :root {
+    --heritage-paper: #E2D3BA;        /* Nền Footer - Sand Beige */
+    --heritage-paper-light: #FFFFFF;  /* Nền Trắng ấm / Canvas */
+    --heritage-paper-card: #F3EBDD;   /* Khối Thẻ/Card - Soft Oat */
+    --heritage-header: #F9F4E8;       /* Nền Header - Warm Cream */
+    --heritage-outer: #15171C;        /* Nền ngoài - Dark Slate */
+    --heritage-ink: #3B2B1D;          /* Chữ chính - Deep Espresso */
+    --heritage-brown: #745C42;        /* Nút bấm chính - Earthy Brown */
+    --heritage-button-text: #FFFFFF;  /* Chữ trên nút */
+    --heritage-paper-deep: #D8C7A5;
+    --heritage-bronze: #8F6E4A;
+    --heritage-sepia: #5F4A38;
+    --heritage-line: #D8CCB8;
+    --heritage-muted: #796857;
+    --heritage-brass: #B88A38;
+    --heritage-brass-light: #D4AF37;
+    --heritage-cinnabar: #98281A;
+    --heritage-cinnabar-dark: #7A1D12;
+    --heritage-forest: #142820;
+    --heritage-forest-dark: #0D1C16;
+
+    /* Backward compatibility tokens */
     --color-paper: #FAF7F0;
     --color-paper-warm: #F3EFE6;
     --color-paper-muted: #E8E1D3;
-    --color-paper-border: #DCD4C4;
+    --color-paper-border: #D8CCB8;
     --color-forest: #142820;
     --color-forest-dark: #0D1C16;
-    --color-brass: #B88A44;
-    --color-brass-light: #C89C54;
-    --color-charcoal: #1B1E1B;
-    --color-terracotta: #9C3D28;
+    --color-brass: #B88A38;
+    --color-brass-light: #D4AF37;
+    --color-charcoal: #3B2B1D;
+    --color-terracotta: #98281A;
+  }
+
+  html {
+    color: var(--heritage-ink);
+    background-color: var(--heritage-paper-light);
+    scroll-padding-top: 72px;
   }
 
   body {
-    background-color: #FAF7F0;
-    color: #1B1E1B;
-    font-family: "Be Vietnam Pro", sans-serif;
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    background-color: var(--heritage-paper-light);
+    color: var(--heritage-ink);
+    font-family: "Source Serif 4", "Source Serif Pro", Charter, Baskerville, serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: "Playfair Display", "Cormorant Garamond", "Cinzel", serif;
+    font-family: "Cormorant Garamond", Garamond, "Times New Roman", serif;
+    color: var(--heritage-ink);
     letter-spacing: -0.01em;
   }
+}
+
+/* Authentic Red Seal Stamp */
+.seal-stamp {
+  display: inline-block;
+  border: 1px solid var(--heritage-cinnabar);
+  color: var(--heritage-cinnabar);
+  background: rgba(152, 40, 26, 0.05);
+  font-family: "Roboto Mono", monospace;
 }
 
 /* Subtle Heritage Paper Grain Overlay */

@@ -144,15 +144,23 @@ export const HeritageMap: React.FC<HeritageMapProps> = ({
     // Custom Zoom control at bottom right
     L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-    // Warm Heritage CartoDB Positron / OpenStreetMap TileLayer with Warm Sepia Paper Tone Filter
-    const tileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-      subdomains: 'abcd',
+    // OpenStreetMap Standard TileLayer (100% Free, No API Key Required)
+    const tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxZoom: 19,
     });
     tileLayer.addTo(map);
 
     mapRef.current = map;
+
+    // Auto fit bounds to encompass all 5 heritage sites across Vietnam
+    const bounds = L.latLngBounds(HERITAGE_SITES.map(s => [s.lat, s.lng]));
+    map.fitBounds(bounds, { padding: [40, 40] });
+
+    // Handle container resize cleanly
+    setTimeout(() => {
+      map.invalidateSize();
+    }, 200);
 
     // Create markers for each heritage site
     HERITAGE_SITES.forEach((site) => {
@@ -197,7 +205,17 @@ export const HeritageMap: React.FC<HeritageMapProps> = ({
         popupAnchor: [0, -42],
       });
 
-      const marker = L.marker([site.lat, site.lng], { icon }).addTo(map);
+      const marker = L.marker([site.lat, site.lng], { 
+        icon,
+        zIndexOffset: isHero ? 1000 : 100 - parseInt(site.id),
+      }).addTo(map);
+
+      // Tooltip on hover
+      marker.bindTooltip(`<b>${site.code}</b>: ${site.name}`, {
+        direction: 'top',
+        offset: [0, -44],
+        className: 'heritage-map-tooltip',
+      });
 
       // Popup with Heritage Atelier styling
       const popupHtml = `
@@ -248,9 +266,10 @@ export const HeritageMap: React.FC<HeritageMapProps> = ({
     if (!map) return;
 
     if (region === 'all') {
-      map.flyTo([16.5, 107.0], 6, { duration: 1.2 });
+      const allBounds = L.latLngBounds(HERITAGE_SITES.map(s => [s.lat, s.lng]));
+      map.flyToBounds(allBounds, { padding: [50, 50], duration: 1.2 });
     } else if (region === 'hanoi') {
-      map.flyTo([21.032, 105.836], 14, { duration: 1.2 });
+      map.flyTo([21.032, 105.836], 15, { duration: 1.2 });
       const hanoiSite = HERITAGE_SITES.find(s => s.city === 'hanoi');
       if (hanoiSite) setActiveSite(hanoiSite);
     } else if (region === 'hue') {

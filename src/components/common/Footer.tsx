@@ -11,12 +11,12 @@ export const Footer: React.FC = () => {
       {/* Subtle Radial Glow in Center */}
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_25%_40%,rgba(184,138,68,0.08),transparent_50%)]"></div>
 
-      {/* Faint Bronze Drum Watermark on Right */}
+      {/* Faint Bronze Drum Watermark on Right with Slow Celestial Rotation */}
       <img
         src="/images/trong-dong.webp"
         alt=""
         aria-hidden="true"
-        className="pointer-events-none absolute right-[-8%] sm:right-[-4%] lg:right-[0%] top-1/2 -translate-y-1/2 h-[135%] max-w-none opacity-[0.16] object-contain select-none mix-blend-screen"
+        className="pointer-events-none absolute right-[-8%] sm:right-[-4%] lg:right-[0%] top-1/2 -translate-y-1/2 h-[135%] max-w-none opacity-[0.16] object-contain select-none mix-blend-screen animate-dong-son-spin"
       />
 
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-16 pb-12">

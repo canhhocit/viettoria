@@ -12,6 +12,8 @@ import { publicApi } from '../services/api';
 import type { Product, Collection, BlogPost } from '../types';
 import { PageLoadingHeritage } from '../components/common/HeritageSkeleton';
 import { HeritageMap } from '../components/common/HeritageMap';
+import { HeritageParticles } from '../components/effects/HeritageParticles';
+import { TiltCard } from '../components/effects/TiltCard';
 
 export const HomePage: React.FC = () => {
   const [heroProduct, setHeroProduct] = useState<Product | null>(null);
@@ -53,19 +55,24 @@ export const HomePage: React.FC = () => {
 
         {/* Heritage Pattern Overlay */}
         <div className="heritage-grain absolute inset-0 opacity-40 pointer-events-none" />
+
+        {/* Ambient Gold Dust Particles (Incense/Sunlight motes) */}
+        <HeritageParticles />
         
-        {/* Faint Dong Son Watermark */}
-        <img
-          src="/images/trong-dong.webp"
-          alt=""
-          aria-hidden="true"
-          className="absolute -right-24 sm:-right-12 top-1/2 -translate-y-1/2 h-[120%] opacity-[0.08] pointer-events-none object-contain select-none mix-blend-screen"
-        />
+        {/* Faint Dong Son Watermark with Slow Celestial Rotation */}
+        <div className="absolute -right-24 sm:-right-12 top-1/2 -translate-y-1/2 h-[125%] pointer-events-none select-none overflow-hidden flex items-center justify-center">
+          <img
+            src="/images/trong-dong.webp"
+            alt=""
+            aria-hidden="true"
+            className="h-full opacity-[0.11] object-contain mix-blend-screen animate-dong-son-spin"
+          />
+        </div>
 
         {/* Content Container */}
-        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center space-y-8">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 border border-brass/60 bg-forest/80 backdrop-blur-sm text-brass text-xs font-mono uppercase tracking-widest">
-            <Sparkles className="w-3.5 h-3.5" />
+        <div className="relative z-20 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center space-y-8 animate-fade-up">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 border border-brass/60 bg-forest/80 backdrop-blur-sm text-brass text-xs font-mono uppercase tracking-widest shadow-sm hover:border-brass transition-colors">
+            <Sparkles className="w-3.5 h-3.5 animate-spin" style={{ animationDuration: '8s' }} />
             <span>Phygital Heritage Collectibles • Phenikaa PSI 2026</span>
           </div>
 
@@ -82,15 +89,15 @@ export const HomePage: React.FC = () => {
           <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               to="/products/chua-mot-cot"
-              className="w-full sm:w-auto px-8 py-3.5 bg-brass text-forest hover:bg-brass-light transition-colors font-mono text-xs uppercase tracking-widest font-bold flex items-center justify-center gap-2.5 shadow-lg group"
+              className="w-full sm:w-auto px-8 py-3.5 bg-brass text-forest hover:bg-brass-light transition-all font-mono text-xs uppercase tracking-widest font-bold flex items-center justify-center gap-2.5 shadow-xl hover:shadow-brass/30 active:scale-[0.98] group animate-gold-glint"
             >
               <span>Khám Phá Chùa Một Cột (Hero)</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform duration-200" />
             </Link>
 
             <Link
               to="/collections"
-              className="w-full sm:w-auto px-8 py-3.5 border border-paper/40 text-paper hover:border-brass hover:text-brass transition-colors font-mono text-xs uppercase tracking-widest"
+              className="w-full sm:w-auto px-8 py-3.5 border border-paper/40 text-paper hover:border-brass hover:text-brass transition-all font-mono text-xs uppercase tracking-widest active:scale-[0.98] hover:bg-forest/40"
             >
               <span>Xem Toàn Bộ 5 Tuyệt Tác</span>
             </Link>
@@ -135,43 +142,49 @@ export const HomePage: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Pillar 1 */}
-            <div className="p-8 bg-paper-warm border border-paper-border hover:border-brass transition-all corner-frame space-y-4">
-              <div className="w-12 h-12 flex items-center justify-center bg-forest text-brass border border-brass">
-                <Layers className="w-6 h-6" />
+            <TiltCard className="h-full">
+              <div className="h-full p-8 bg-paper-warm border border-paper-border hover:border-brass transition-all corner-frame space-y-4 shadow-sm hover:shadow-xl">
+                <div className="w-12 h-12 flex items-center justify-center bg-forest text-brass border border-brass">
+                  <Layers className="w-6 h-6" />
+                </div>
+                <h3 className="font-serif text-xl font-bold text-forest">
+                  1. Mô Hình Vật Lý Tinh Xảo
+                </h3>
+                <p className="text-sm text-charcoal/80 font-light leading-relaxed">
+                  Được sản xuất từ vật liệu BioPETG thân thiện môi trường, tái hiện chuẩn xác từng khớp mộng ngậm gỗ và góc đao cong với dung sai quang học dưới 0.08mm.
+                </p>
               </div>
-              <h3 className="font-serif text-xl font-bold text-forest">
-                1. Mô Hình Vật Lý Tinh Xảo
-              </h3>
-              <p className="text-sm text-charcoal/80 font-light leading-relaxed">
-                Được sản xuất từ vật liệu BioPETG thân thiện môi trường, tái hiện chuẩn xác từng khớp mộng ngậm gỗ và góc đao cong với dung sai quang học dưới 0.08mm.
-              </p>
-            </div>
+            </TiltCard>
 
             {/* Pillar 2 */}
-            <div className="p-8 bg-paper-warm border border-paper-border hover:border-brass transition-all corner-frame space-y-4">
-              <div className="w-12 h-12 flex items-center justify-center bg-forest text-brass border border-brass">
-                <BookOpen className="w-6 h-6" />
+            <TiltCard className="h-full">
+              <div className="h-full p-8 bg-paper-warm border border-paper-border hover:border-brass transition-all corner-frame space-y-4 shadow-sm hover:shadow-xl">
+                <div className="w-12 h-12 flex items-center justify-center bg-forest text-brass border border-brass">
+                  <BookOpen className="w-6 h-6" />
+                </div>
+                <h3 className="font-serif text-xl font-bold text-forest">
+                  2. Storytelling Lịch Sử Chuẩn Xác
+                </h3>
+                <p className="text-sm text-charcoal/80 font-light leading-relaxed">
+                  Mỗi công trình không đơn thuần là đồ lưu niệm, mà là một pho sử liệu sống động được thẩm định nghiêm ngặt từ các văn bia, mộc bản và chuyên gia sử học.
+                </p>
               </div>
-              <h3 className="font-serif text-xl font-bold text-forest">
-                2. Storytelling Lịch Sử Chuẩn Xác
-              </h3>
-              <p className="text-sm text-charcoal/80 font-light leading-relaxed">
-                Mỗi công trình không đơn thuần là đồ lưu niệm, mà là một pho sử liệu sống động được thẩm định nghiêm ngặt từ các văn bia, mộc bản và chuyên gia sử học.
-              </p>
-            </div>
+            </TiltCard>
 
             {/* Pillar 3 */}
-            <div className="p-8 bg-paper-warm border border-paper-border hover:border-brass transition-all corner-frame space-y-4">
-              <div className="w-12 h-12 flex items-center justify-center bg-forest text-brass border border-brass">
-                <QrCode className="w-6 h-6" />
+            <TiltCard className="h-full">
+              <div className="h-full p-8 bg-paper-warm border border-paper-border hover:border-brass transition-all corner-frame space-y-4 shadow-sm hover:shadow-xl">
+                <div className="w-12 h-12 flex items-center justify-center bg-forest text-brass border border-brass">
+                  <QrCode className="w-6 h-6" />
+                </div>
+                <h3 className="font-serif text-xl font-bold text-forest">
+                  3. Trải Nghiệm Số Qua Tem QR
+                </h3>
+                <p className="text-sm text-charcoal/80 font-light leading-relaxed">
+                  Dưới đế mỗi mô hình là tem mã QR độc bản. Người sở hữu quét mã để mở khóa bản thu âm Audio Guide độc quyền và tài liệu khảo cứu kiến trúc chuyên sâu.
+                </p>
               </div>
-              <h3 className="font-serif text-xl font-bold text-forest">
-                3. Trải Nghiệm Số Qua Tem QR
-              </h3>
-              <p className="text-sm text-charcoal/80 font-light leading-relaxed">
-                Dưới đế mỗi mô hình là tem mã QR độc bản. Người sở hữu quét mã để mở khóa bản thu âm Audio Guide độc quyền và tài liệu khảo cứu kiến trúc chuyên sâu.
-              </p>
-            </div>
+            </TiltCard>
           </div>
         </div>
       </section>
@@ -183,19 +196,21 @@ export const HomePage: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
               {/* Left Column: Model Image & Inspection Framing */}
               <div className="lg:col-span-7">
-                <div className="relative border border-brass/40 corner-frame bg-forest-dark overflow-hidden group shadow-2xl">
-                  <img
-                    src={heroProduct.heroImage}
-                    alt={heroProduct.name}
-                    className="w-full aspect-[4/3] object-cover group-hover:scale-105 transition-transform duration-700"
-                  />
-                  <div className="absolute top-4 left-4 bg-forest/90 border border-brass/60 px-3 py-1 font-mono text-[10px] text-brass uppercase tracking-widest">
-                    Mã Tác Phẩm: {heroProduct.code}
+                <TiltCard className="w-full" tiltAmount={4}>
+                  <div className="relative border border-brass/50 corner-frame bg-forest-dark overflow-hidden group shadow-2xl animate-pulse-aura">
+                    <img
+                      src={heroProduct.heroImage}
+                      alt={heroProduct.name}
+                      className="w-full aspect-[4/3] object-cover group-hover:scale-105 transition-transform duration-700"
+                    />
+                    <div className="absolute top-4 left-4 bg-forest/90 border border-brass/60 px-3 py-1 font-mono text-[10px] text-brass uppercase tracking-widest shadow-md">
+                      Mã Tác Phẩm: {heroProduct.code}
+                    </div>
+                    <div className="absolute bottom-4 right-4 bg-forest/90 border border-paper/20 px-3 py-1 font-mono text-xs text-paper backdrop-blur-sm shadow-md">
+                      Tỷ lệ {heroProduct.modelSpecs.scale} • Cao {heroProduct.modelSpecs.heightCm}cm
+                    </div>
                   </div>
-                  <div className="absolute bottom-4 right-4 bg-forest/90 border border-paper/20 px-3 py-1 font-mono text-xs text-paper">
-                    Tỷ lệ {heroProduct.modelSpecs.scale} • Cao {heroProduct.modelSpecs.heightCm}cm
-                  </div>
-                </div>
+                </TiltCard>
               </div>
 
               {/* Right Column: Hero Information */}
@@ -241,7 +256,7 @@ export const HomePage: React.FC = () => {
                 <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
                   <Link
                     to={`/products/${heroProduct.slug}`}
-                    className="px-6 py-3.5 bg-brass text-forest hover:bg-brass-light transition-colors font-mono text-xs uppercase tracking-widest font-bold flex items-center justify-center gap-2 shadow-md"
+                    className="px-6 py-3.5 bg-brass text-forest hover:bg-brass-light transition-all font-mono text-xs uppercase tracking-widest font-bold flex items-center justify-center gap-2 shadow-xl hover:shadow-brass/30 active:scale-[0.98] animate-gold-glint"
                   >
                     <span>Khám Phá Di Sản & Bản Thu Âm</span>
                     <ArrowRight className="w-4 h-4" />
@@ -284,37 +299,38 @@ export const HomePage: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {collections.map((col) => (
-              <Link
-                key={col.id}
-                to={`/collections/${col.slug}`}
-                className="group block bg-paper-warm border border-paper-border hover:border-brass transition-all corner-frame overflow-hidden"
-              >
-                <div className="aspect-[16/10] overflow-hidden bg-forest relative">
-                  <img
-                    src={col.heroImage}
-                    alt={col.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute top-3 left-3 bg-forest/90 border border-brass/50 px-2.5 py-1 text-[10px] font-mono uppercase text-brass">
-                    {col.code}
+              <TiltCard key={col.id} className="h-full">
+                <Link
+                  to={`/collections/${col.slug}`}
+                  className="group block h-full bg-paper-warm border border-paper-border hover:border-brass transition-all corner-frame overflow-hidden shadow-sm hover:shadow-xl"
+                >
+                  <div className="aspect-[16/10] overflow-hidden bg-forest relative">
+                    <img
+                      src={col.heroImage}
+                      alt={col.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute top-3 left-3 bg-forest/90 border border-brass/50 px-2.5 py-1 text-[10px] font-mono uppercase text-brass shadow-sm">
+                      {col.code}
+                    </div>
                   </div>
-                </div>
 
-                <div className="p-6 space-y-3">
-                  <h3 className="font-serif text-xl font-bold text-forest group-hover:text-brass transition-colors">
-                    {col.name}
-                  </h3>
-                  <p className="text-xs text-charcoal/80 font-light line-clamp-3 leading-relaxed">
-                    {col.description}
-                  </p>
-                  <div className="pt-2 flex items-center justify-between text-xs font-mono text-charcoal-muted border-t border-paper-border">
-                    <span>{col.productsCount || 1} Tác phẩm</span>
-                    <span className="text-brass group-hover:translate-x-1 transition-transform flex items-center gap-1 font-bold">
-                      Chi tiết <ArrowRight className="w-3.5 h-3.5" />
-                    </span>
+                  <div className="p-6 space-y-3">
+                    <h3 className="font-serif text-xl font-bold text-forest group-hover:text-brass transition-colors">
+                      {col.name}
+                    </h3>
+                    <p className="text-xs text-charcoal/80 font-light line-clamp-3 leading-relaxed">
+                      {col.description}
+                    </p>
+                    <div className="pt-2 flex items-center justify-between text-xs font-mono text-charcoal-muted border-t border-paper-border">
+                      <span>{col.productsCount || 1} Tác phẩm</span>
+                      <span className="text-brass group-hover:translate-x-1.5 transition-transform flex items-center gap-1 font-bold">
+                        Chi tiết <ArrowRight className="w-3.5 h-3.5" />
+                      </span>
+                    </div>
                   </div>
-                </div>
-              </Link>
+                </Link>
+              </TiltCard>
             ))}
           </div>
         </div>
@@ -370,46 +386,47 @@ export const HomePage: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {blogs.map((blog) => (
-              <article
-                key={blog.id}
-                className="bg-paper border border-paper-border hover:border-brass transition-all corner-frame overflow-hidden flex flex-col justify-between"
-              >
-                <div>
-                  <div className="aspect-[16/10] overflow-hidden bg-forest">
-                    <img
-                      src={blog.coverImage}
-                      alt={blog.title}
-                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                    />
-                  </div>
-
-                  <div className="p-6 space-y-2.5">
-                    <div className="flex items-center justify-between text-[11px] font-mono text-charcoal-muted">
-                      <span className="text-brass font-semibold">{blog.category}</span>
-                      <span>{blog.readTime}</span>
+              <TiltCard key={blog.id} className="h-full">
+                <article
+                  className="h-full bg-paper border border-paper-border hover:border-brass transition-all corner-frame overflow-hidden flex flex-col justify-between shadow-sm hover:shadow-xl"
+                >
+                  <div>
+                    <div className="aspect-[16/10] overflow-hidden bg-forest">
+                      <img
+                        src={blog.coverImage}
+                        alt={blog.title}
+                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                      />
                     </div>
 
-                    <h3 className="font-serif text-lg font-bold text-forest hover:text-brass transition-colors leading-snug">
-                      <Link to={`/blogs/${blog.slug}`}>
-                        {blog.title}
+                    <div className="p-6 space-y-2.5">
+                      <div className="flex items-center justify-between text-[11px] font-mono text-charcoal-muted">
+                        <span className="text-brass font-semibold">{blog.category}</span>
+                        <span>{blog.readTime}</span>
+                      </div>
+
+                      <h3 className="font-serif text-lg font-bold text-forest hover:text-brass transition-colors leading-snug">
+                        <Link to={`/blogs/${blog.slug}`}>
+                          {blog.title}
+                        </Link>
+                      </h3>
+
+                      <p className="text-xs text-charcoal/80 font-light line-clamp-3 leading-relaxed">
+                        {blog.excerpt}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="p-6 pt-0 border-t border-paper-border mt-4">
+                    <div className="flex items-center justify-between pt-3 text-[11px] font-mono text-charcoal-muted">
+                      <span>Tác giả: {blog.author}</span>
+                      <Link to={`/blogs/${blog.slug}`} className="text-brass font-bold hover:underline">
+                        Đọc tiếp →
                       </Link>
-                    </h3>
-
-                    <p className="text-xs text-charcoal/80 font-light line-clamp-3 leading-relaxed">
-                      {blog.excerpt}
-                    </p>
+                    </div>
                   </div>
-                </div>
-
-                <div className="p-6 pt-0 border-t border-paper-border mt-4">
-                  <div className="flex items-center justify-between pt-3 text-[11px] font-mono text-charcoal-muted">
-                    <span>Tác giả: {blog.author}</span>
-                    <Link to={`/blogs/${blog.slug}`} className="text-brass font-bold hover:underline">
-                      Đọc tiếp →
-                    </Link>
-                  </div>
-                </div>
-              </article>
+                </article>
+              </TiltCard>
             ))}
           </div>
         </div>

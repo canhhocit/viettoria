@@ -112,7 +112,7 @@
 @keyframes fadeSlideUp {
   from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(16px);
   }
   to {
     opacity: 1;
@@ -121,7 +121,82 @@
 }
 
 .animate-fade-up {
-  animation: fadeSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: fadeSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Celestial Dong Son Drum Slow Rotation */
+@keyframes dongSonSpin {
+  from {
+    transform: translateY(-50%) rotate(0deg);
+  }
+  to {
+    transform: translateY(-50%) rotate(360deg);
+  }
+}
+
+.animate-dong-son-spin {
+  animation: dongSonSpin 240s linear infinite;
+  transform-origin: center center;
+}
+
+/* Gold Glint Shimmer Sweep for Buttons & Badges */
+@keyframes goldGlint {
+  0% {
+    transform: translateX(-100%) skewX(-20deg);
+  }
+  30%, 100% {
+    transform: translateX(250%) skewX(-20deg);
+  }
+}
+
+.animate-gold-glint {
+  position: relative;
+  overflow: hidden;
+}
+
+.animate-gold-glint::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.35),
+    transparent
+  );
+  animation: goldGlint 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  pointer-events: none;
+}
+
+/* Ambient Floating Animation */
+@keyframes floatSlow {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.animate-float-slow {
+  animation: floatSlow 4s ease-in-out infinite;
+}
+
+/* Subtle Golden Pulse Aura */
+@keyframes pulseAura {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(184, 138, 68, 0.25);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(184, 138, 68, 0.5);
+  }
+}
+
+.animate-pulse-aura {
+  animation: pulseAura 3s ease-in-out infinite;
 }
 
 /* Heritage Paper & Brass Shimmer Loading */

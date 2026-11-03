@@ -144,10 +144,11 @@ export const HeritageMap: React.FC<HeritageMapProps> = ({
     // Custom Zoom control at bottom right
     L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-    // OpenStreetMap Standard TileLayer (100% Free, No API Key Required)
-    const tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      maxZoom: 19,
+    // Reliable High-Speed TileLayer (100% Accessible in Vietnam & Globally, No API Key Required)
+    const tileLayer = L.tileLayer('https://mt{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+      subdomains: ['0', '1', '2', '3'],
+      attribution: '&copy; Google Maps &bull; Dữ liệu khảo cứu VIETTORIA',
+      maxZoom: 20,
     });
     tileLayer.addTo(map);
 

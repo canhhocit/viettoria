@@ -51,10 +51,10 @@ export const CollectionDetailPage: React.FC = () => {
         <div className="bg-forest text-paper border border-brass corner-frame p-8 sm:p-12 relative overflow-hidden shadow-xl">
           <div className="relative z-10 max-w-3xl space-y-4">
             <div className="flex items-center gap-3">
-              <span className="px-3 py-1 bg-brass text-forest font-mono text-xs uppercase tracking-widest font-bold">
-                {collection.code}
+              <span className="px-3 py-1 bg-brass text-forest text-xs font-serif uppercase tracking-widest font-bold">
+                Tuyển Tập Di Sản
               </span>
-              <span className="text-xs font-mono text-brass-subtle uppercase tracking-widest">
+              <span className="text-xs text-brass-subtle uppercase tracking-widest">
                 Thời kỳ lịch sử
               </span>
             </div>
@@ -93,8 +93,8 @@ export const CollectionDetailPage: React.FC = () => {
                       alt={product.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
-                    <div className="absolute top-3 left-3 bg-forest/90 border border-brass/50 px-2.5 py-1 text-[10px] font-mono uppercase text-brass">
-                      {product.code}
+                    <div className="absolute top-3 left-3 bg-forest/90 border border-brass/50 px-2.5 py-1 text-[11px] font-serif uppercase tracking-wider text-brass">
+                      {product.epoch}
                     </div>
                     {product.isHeroRelease && (
                       <div className="absolute top-3 right-3 bg-brass text-forest px-2.5 py-1 text-[10px] font-mono uppercase font-bold">

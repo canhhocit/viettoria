@@ -31,7 +31,7 @@ export const ProductDetailPage: React.FC = () => {
   }, [slug]);
 
   if (loading) {
-    return <PageLoadingHeritage message="Đang tải dữ liệu khảo cứu di sản kiến trúc..." />;
+    return <PageLoadingHeritage message="Đang tải dữ liệu..." />;
   }
 
   if (!product) {
@@ -67,8 +67,8 @@ export const ProductDetailPage: React.FC = () => {
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-mono uppercase tracking-widest text-brass font-bold">
-                    Xác Thực Thành Công Tem QR [{codeParam.toUpperCase()}]
+                  <span className="text-xs uppercase tracking-wider text-brass font-bold">
+                    Xác Thực Thành Công Tem QR Di Sản Độc Bản
                   </span>
                 </div>
                 <p className="text-xs sm:text-sm text-paper/90 font-light mt-0.5">
@@ -86,13 +86,10 @@ export const ProductDetailPage: React.FC = () => {
         {/* Product Identity Header */}
         <div className="space-y-4 max-w-4xl">
           <div className="flex flex-wrap items-center gap-3">
-            <span className="px-3 py-1 bg-brass text-forest font-mono text-xs uppercase tracking-widest font-bold">
-              {product.code}
-            </span>
-            <span className="px-3 py-1 bg-paper-warm border border-paper-border text-forest font-mono text-xs uppercase tracking-wider">
+            <span className="px-3 py-1 bg-paper-warm border border-paper-border text-forest text-xs uppercase tracking-wider font-medium">
               {product.epoch}
             </span>
-            <span className="flex items-center gap-1.5 text-xs font-mono text-charcoal-muted">
+            <span className="flex items-center gap-1.5 text-xs text-charcoal-muted">
               <MapPin className="w-3.5 h-3.5 text-brass" />
               <span>{product.location}</span>
             </span>
@@ -242,7 +239,7 @@ export const ProductDetailPage: React.FC = () => {
                     />
                   </div>
                   <div>
-                    <span className="text-[10px] font-mono text-brass uppercase">{rel.code}</span>
+                    <span className="text-[11px] text-brass uppercase font-serif tracking-wider">{rel.epoch}</span>
                     <h3 className="font-serif text-lg font-bold text-forest group-hover:text-brass transition-colors">
                       {rel.name}
                     </h3>

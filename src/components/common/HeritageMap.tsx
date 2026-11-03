@@ -185,7 +185,7 @@ export const HeritageMap: React.FC<HeritageMapProps> = ({
             cursor: pointer;
             transition: all 0.2s ease;
           ">
-            <span style="font-family: 'Cinzel', serif; font-size: 13px; font-weight: bold;">
+            <span style="font-family: 'Playfair Display', serif; font-size: 14px; font-weight: bold;">
               ${site.id}
             </span>
             <div style="
@@ -212,7 +212,7 @@ export const HeritageMap: React.FC<HeritageMapProps> = ({
       }).addTo(map);
 
       // Tooltip on hover
-      marker.bindTooltip(`<b>${site.code}</b>: ${site.name}`, {
+      marker.bindTooltip(`<b>${site.name}</b> (${site.epoch})`, {
         direction: 'top',
         offset: [0, -44],
         className: 'heritage-map-tooltip',
@@ -227,16 +227,16 @@ export const HeritageMap: React.FC<HeritageMapProps> = ({
           background: #FAF7F0;
           color: #1B1E1B;
         ">
-          <div style="font-family: monospace; font-size: 10px; color: #B88A44; letter-spacing: 0.15em; text-transform: uppercase; font-weight: bold; margin-bottom: 4px;">
-            ${site.code} • ${site.epoch}
+          <div style="font-family: 'Playfair Display', serif; font-size: 11px; color: #B88A44; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">
+            ${site.epoch}
           </div>
-          <h4 style="font-family: 'Cinzel', serif; font-size: 15px; font-weight: bold; color: #142820; margin: 0 0 4px 0;">
+          <h4 style="font-family: 'Playfair Display', 'Cormorant Garamond', serif; font-size: 16px; font-weight: bold; color: #142820; margin: 0 0 4px 0;">
             ${site.name}
           </h4>
           <p style="font-size: 11px; color: #525952; margin: 0 0 8px 0; line-height: 1.4;">
             ${site.location}
           </p>
-          <div style="font-family: monospace; font-size: 10px; color: #142820; border-top: 1px solid #DCD4C4; padding-top: 6px;">
+          <div style="font-size: 10px; color: #142820; border-top: 1px solid #DCD4C4; padding-top: 6px;">
             Tỷ lệ ${site.scale} • Cao ${site.heightCm}cm
           </div>
         </div>
@@ -374,12 +374,12 @@ export const HeritageMap: React.FC<HeritageMapProps> = ({
                   }`}
                 >
                   <div className="space-y-0.5">
-                    <div className="flex items-center gap-1.5 text-[10px] font-mono">
-                      <span className={isSelected ? 'text-brass font-bold' : 'text-brass'}>
-                        {site.code}
+                    <div className="flex items-center gap-1.5 text-[11px]">
+                      <span className={`font-serif uppercase tracking-wider ${isSelected ? 'text-brass font-bold' : 'text-brass'}`}>
+                        {site.cityName.split('—')[0].trim()}
                       </span>
                       <span className={isSelected ? 'text-paper/60' : 'text-charcoal-muted'}>
-                        • {site.cityName.split('—')[0]}
+                        • {site.epoch.split('(')[0].trim()}
                       </span>
                     </div>
                     <div className="font-serif text-sm font-bold">
@@ -402,8 +402,8 @@ export const HeritageMap: React.FC<HeritageMapProps> = ({
 
         {/* Selected Heritage Spotlight Card */}
         <div className="p-4 bg-forest text-paper border border-brass/50 space-y-3">
-          <div className="flex items-center justify-between text-xs font-mono">
-            <span className="text-brass font-bold uppercase">{activeSite.code}</span>
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-brass font-serif font-bold tracking-wider uppercase">{activeSite.cityName}</span>
             <span className="text-paper/60 text-[11px]">{activeSite.epoch}</span>
           </div>
 
@@ -454,7 +454,6 @@ export const HeritageMap: React.FC<HeritageMapProps> = ({
           className="absolute top-4 left-4 z-20 bg-forest/85 backdrop-blur-sm border border-brass/50 px-3 py-1.5 text-paper text-[10px] font-mono uppercase tracking-widest flex items-center gap-1.5 shadow-md pointer-events-none"
         >
           <ShieldCheck className="w-3.5 h-3.5 text-brass" />
-          <span>Bản Đồ Di Sản Leaflet • Tọa Độ Thực Địa</span>
         </div>
 
         {/* Top-Right Quick Legend */}

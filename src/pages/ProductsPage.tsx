@@ -102,8 +102,8 @@ export const ProductsPage: React.FC = () => {
               type="text"
               value={searchQuery}
               onChange={handleSearchChange}
-              placeholder="Tìm theo tên, mã (VT-HN-001)..."
-              className="w-full pl-9 pr-4 py-2 bg-paper border border-paper-border focus:border-brass text-xs font-mono focus:outline-none transition-colors"
+              placeholder="Tìm kiếm tác phẩm kiến trúc, địa danh lịch sử..."
+              className="w-full pl-9 pr-4 py-2 bg-paper border border-paper-border focus:border-brass text-xs font-sans focus:outline-none transition-colors"
             />
           </div>
         </div>
@@ -150,16 +150,13 @@ export const ProductsPage: React.FC = () => {
                         alt={product.name}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
-                      <div className="absolute top-3 left-3 bg-forest/90 border border-brass/50 px-2.5 py-1 text-[10px] font-mono uppercase text-brass shadow-sm">
-                        {product.code}
-                      </div>
                       {product.isHeroRelease ? (
-                        <div className="absolute top-3 right-3 bg-brass text-forest px-2.5 py-1 text-[10px] font-mono uppercase font-bold flex items-center gap-1 shadow-sm">
+                        <div className="absolute top-3 right-3 bg-brass text-forest px-2.5 py-1 text-[10px] font-sans uppercase font-bold flex items-center gap-1 shadow-sm">
                           <Sparkles className="w-3 h-3" />
                           <span>Hero Release</span>
                         </div>
                       ) : (
-                        <div className="absolute top-3 right-3 bg-forest/80 text-paper/80 px-2.5 py-1 text-[10px] font-mono uppercase">
+                        <div className="absolute top-3 right-3 bg-forest/80 text-paper/80 px-2.5 py-1 text-[10px] font-sans uppercase">
                           Khảo Cứu Lưu Trữ
                         </div>
                       )}

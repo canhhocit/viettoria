@@ -1,7 +1,7 @@
 # VIETTORIA — Phygital Heritage Collectibles
 
 > Tái hiện di sản kiến trúc Việt Nam dưới dạng mô hình in 3D tinh xảo kết hợp nền tảng số hóa 3D tương tác đa giác quan.  
-> **Dự án:** Sáng tạo - Khởi nghiệp Phenikaa năm 2026 (PSI 2026)  
+> **Dự án:** Sáng tạo - Khởi nghiệp FTU 2026 lần thứ XIX
 > **Khẩu hiệu:** *"Khắc dạ nhớ nguồn — Đưa sử Việt vươn xa"*
 
 ---

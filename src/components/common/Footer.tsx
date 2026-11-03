@@ -149,9 +149,9 @@ export const Footer: React.FC = () => {
 
         {/* Delicate Divider Line */}
         <div className="mt-12 border-t border-[#d8c7a5]/25 pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-[#d8c7a5]/80 font-light">
-          <p>© 2026 VIETTORIA. Khắc dạ nhớ nguồn — Đưa sử Việt vươn xa.</p>
+          <p>© 2026 VIETTORIA. Khắc dạ nhớ nguồn — Đưa nét Việt vươn xa.</p>
           <p className="mt-2 sm:mt-0 font-serif italic text-[#e8dec8]/90">
-            Dự án tham dự Sáng tạo - Khởi nghiệp Phenikaa 2026 (PSI 2026).
+            Dự án tham dự Sáng tạo - Khởi nghiệp 
           </p>
         </div>
       </div>

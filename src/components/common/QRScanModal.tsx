@@ -58,15 +58,15 @@ export const QRScanModal: React.FC<QRScanModalProps> = ({ isOpen, onClose }) => 
               type="text"
               value={code}
               onChange={(e) => setCode(e.target.value)}
-              placeholder="Nhập mã VT-HN-001..."
-              className="w-full px-4 py-2.5 bg-paper-warm border border-paper-border focus:border-brass text-sm font-mono text-forest uppercase tracking-widest focus:outline-none transition-colors"
+              placeholder="Nhập mã tem xác thực hoặc chọn bên dưới..."
+              className="w-full px-4 py-2.5 bg-paper-warm border border-paper-border focus:border-brass text-sm text-forest tracking-wider focus:outline-none transition-colors"
               required
             />
           </div>
 
           {/* Quick presets */}
           <div>
-            <span className="block text-[10px] font-mono text-charcoal-muted uppercase mb-1.5">Mã thử nghiệm có sẵn:</span>
+            <span className="block text-[11px] text-charcoal-muted uppercase mb-1.5 font-medium">Tác phẩm di sản mẫu:</span>
             <div className="flex flex-wrap gap-1.5">
               {[
                 { code: 'VT-HN-001', label: 'Chùa Một Cột' },
@@ -79,13 +79,13 @@ export const QRScanModal: React.FC<QRScanModalProps> = ({ isOpen, onClose }) => 
                   key={preset.code}
                   type="button"
                   onClick={() => setCode(preset.code)}
-                  className={`px-2 py-1 text-[10px] font-mono border transition-colors ${
+                  className={`px-2.5 py-1 text-xs border transition-colors ${
                     code === preset.code 
                       ? 'bg-forest text-paper border-forest font-semibold' 
                       : 'bg-paper-warm border-paper-border text-charcoal hover:border-brass'
                   }`}
                 >
-                  {preset.code} ({preset.label})
+                  {preset.label}
                 </button>
               ))}
             </div>

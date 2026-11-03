@@ -67,8 +67,8 @@ export const CollectionsPage: React.FC = () => {
                       alt={col.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
-                    <div className="absolute top-3 left-3 bg-forest/90 border border-brass/50 px-2.5 py-1 text-[10px] font-mono uppercase text-brass">
-                      {col.code}
+                    <div className="absolute top-3 left-3 bg-forest/90 border border-brass/50 px-2.5 py-1 text-[11px] font-serif uppercase tracking-wider text-brass">
+                      Tuyển Tập
                     </div>
                   </div>
 

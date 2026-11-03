@@ -203,8 +203,8 @@ export const HomePage: React.FC = () => {
                       alt={heroProduct.name}
                       className="w-full aspect-[4/3] object-cover group-hover:scale-105 transition-transform duration-700"
                     />
-                    <div className="absolute top-4 left-4 bg-forest/90 border border-brass/60 px-3 py-1 font-mono text-[10px] text-brass uppercase tracking-widest shadow-md">
-                      Mã Tác Phẩm: {heroProduct.code}
+                    <div className="absolute top-4 left-4 bg-forest/90 border border-brass/60 px-3 py-1 font-sans text-[11px] text-brass uppercase tracking-wider font-semibold shadow-md">
+                      {heroProduct.epoch}
                     </div>
                     <div className="absolute bottom-4 right-4 bg-forest/90 border border-paper/20 px-3 py-1 font-mono text-xs text-paper backdrop-blur-sm shadow-md">
                       Tỷ lệ {heroProduct.modelSpecs.scale} • Cao {heroProduct.modelSpecs.heightCm}cm
@@ -310,9 +310,6 @@ export const HomePage: React.FC = () => {
                       alt={col.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
-                    <div className="absolute top-3 left-3 bg-forest/90 border border-brass/50 px-2.5 py-1 text-[10px] font-mono uppercase text-brass shadow-sm">
-                      {col.code}
-                    </div>
                   </div>
 
                   <div className="p-6 space-y-3">

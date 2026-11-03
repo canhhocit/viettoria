@@ -38,7 +38,7 @@ export default {
         },
       },
       fontFamily: {
-        serif: ['Cinzel', 'Playfair Display', 'serif'],
+        serif: ['"Playfair Display"', '"Cormorant Garamond"', 'Cinzel', 'serif'],
         sans: ['"Be Vietnam Pro"', 'sans-serif'],
       },
       borderRadius: {

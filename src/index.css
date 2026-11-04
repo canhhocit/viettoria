@@ -197,6 +197,44 @@
               radial-gradient(circle, transparent 0 42%, rgba(184, 138, 68, 0.06) 43% 44%, transparent 45%);
 }
 
+/* Admin sign-in: lacquer, paper, and a quiet Dong Son drum motif. */
+.admin-login-backdrop {
+  background:
+    radial-gradient(ellipse at 12% 15%, rgba(184, 138, 68, 0.09), transparent 30%),
+    radial-gradient(ellipse at 90% 88%, rgba(20, 40, 32, 0.07), transparent 34%),
+    #eee9de;
+}
+
+.admin-login-heritage {
+  background-color: #10231b;
+  background-image: linear-gradient(145deg, #1b382d 0%, #142820 46%, #0d1c16 100%);
+}
+
+.admin-login-grain {
+  opacity: 0.22;
+  background-image:
+    linear-gradient(90deg, rgba(250, 247, 240, 0.035) 1px, transparent 1px),
+    linear-gradient(rgba(250, 247, 240, 0.03) 1px, transparent 1px),
+    repeating-linear-gradient(118deg, transparent 0 7px, rgba(250, 247, 240, 0.018) 8px, transparent 9px 15px);
+  background-size: 34px 34px, 34px 34px, auto;
+}
+
+.admin-login-halo {
+  background:
+    radial-gradient(ellipse at 72% 28%, rgba(196, 154, 69, 0.13), transparent 42%),
+    linear-gradient(0deg, rgba(7, 17, 13, 0.34), transparent 42%);
+}
+
+.admin-login-drum {
+  transform-origin: center;
+  animation: admin-drum-turn 110s linear infinite;
+  will-change: transform;
+}
+
+@keyframes admin-drum-turn {
+  to { transform: rotate(360deg); }
+}
+
 /* Museum Passe-partout Frame Effect */
 .passe-partout {
   padding: 12px;

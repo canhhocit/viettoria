@@ -1,24 +1,38 @@
 import React, { useState } from 'react';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
-import { KeyRound, User, ArrowRight, AlertCircle, Eye } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import {
+  AlertCircle,
+  ArrowLeft,
+  ArrowRight,
+  Eye,
+  EyeOff,
+  KeyRound,
+  LockKeyhole,
+  ShieldCheck,
+  UserRound,
+} from 'lucide-react';
 import { adminApi } from '../../services/api';
+
+const QUICK_LOGIN_USERNAME = 'admin';
+const QUICK_LOGIN_PASSWORD = 'viettoria@2026';
 
 export const AdminLoginPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [loadingMode, setLoadingMode] = useState<'admin' | 'demo' | null>(null);
+  const [loadingMode, setLoadingMode] = useState<'admin' | 'quick' | null>(null);
 
   const finishLogin = () => {
     const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/admin/dashboard';
     navigate(from, { replace: true });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     setError(null);
     setLoading(true);
     setLoadingMode('admin');
@@ -27,26 +41,22 @@ export const AdminLoginPage: React.FC = () => {
       await adminApi.login(username.trim(), password);
       finishLogin();
     } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError('Đăng nhập thất bại. Vui lòng kiểm tra kết nối và thông tin đăng nhập.');
-      }
+      setError(err instanceof Error ? err.message : 'Đăng nhập thất bại. Vui lòng kiểm tra kết nối và thông tin đăng nhập.');
     } finally {
       setLoading(false);
       setLoadingMode(null);
     }
   };
 
-  const handleDemoLogin = async () => {
+  const handleQuickLogin = async () => {
     setError(null);
     setLoading(true);
-    setLoadingMode('demo');
+    setLoadingMode('quick');
     try {
-      await adminApi.loginDemo();
+      await adminApi.login(QUICK_LOGIN_USERNAME, QUICK_LOGIN_PASSWORD);
       finishLogin();
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Không thể mở bản demo lúc này.');
+      setError(err instanceof Error ? err.message : 'Không thể đăng nhập nhanh lúc này.');
     } finally {
       setLoading(false);
       setLoadingMode(null);
@@ -54,113 +64,172 @@ export const AdminLoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-forest flex flex-col justify-center items-center p-4 relative overflow-hidden">
-      {/* Background Subtle Elements */}
-      <div className="heritage-grain absolute inset-0 opacity-20 pointer-events-none" />
-      <div aria-hidden="true" className="heritage-dong-son pointer-events-none absolute -right-32 top-1/2 h-[85vh] w-[85vh] -translate-y-1/2 opacity-[0.15] mix-blend-screen" />
+    <main className="admin-login-backdrop flex min-h-screen items-center justify-center p-3 text-charcoal sm:p-6 lg:p-8">
+      <div className="admin-login-shell grid w-full max-w-[1240px] overflow-hidden border border-[#D8CCB8] bg-paper shadow-[0_28px_90px_rgba(31,39,32,0.16)] lg:min-h-[700px] lg:grid-cols-[1.03fr_.97fr]">
+        <section className="admin-login-heritage relative flex min-h-[260px] flex-col overflow-hidden px-6 py-6 text-paper sm:min-h-[320px] sm:px-10 sm:py-8 lg:min-h-[700px] lg:px-14 lg:py-10">
+          <div aria-hidden="true" className="admin-login-grain pointer-events-none absolute inset-0" />
+          <div aria-hidden="true" className="admin-login-halo pointer-events-none absolute inset-0" />
+          <img
+            src="/images/trong-dong.webp"
+            alt=""
+            aria-hidden="true"
+            className="admin-login-drum pointer-events-none absolute -right-[8%] top-[4%] w-[78%] max-w-[620px] opacity-[0.18] mix-blend-screen sm:-right-[4%] sm:top-[1%] sm:w-[72%] lg:right-[-14%] lg:top-[8%] lg:w-[92%]"
+          />
 
-      <div className="relative z-10 w-full max-w-md bg-paper border border-brass corner-frame p-8 sm:p-10 shadow-2xl space-y-6">
-        {/* Atelier Logo Header */}
-        <div className="text-center space-y-2">
-          <div className="w-14 h-14 mx-auto flex items-center justify-center border-2 border-brass bg-forest text-brass font-serif font-bold text-2xl shadow-inner">
-            V
-          </div>
-          <h1 className="font-serif text-2xl sm:text-3xl font-bold text-forest tracking-wider">
-            VIETTORIA CMS
-          </h1>
-          <p className="text-xs font-mono text-brass-dark uppercase tracking-widest">
-            Hệ Thống Biên Tập & Điều Hành Di Sản Số
-          </p>
-        </div>
-
-        {error && (
-          <div className="p-3 bg-terracotta/10 border border-terracotta/40 text-terracotta text-xs font-mono flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 shrink-0" />
-            <span>{error}</span>
-          </div>
-        )}
-
-        <div className="border border-brass/50 bg-paper-warm p-4">
-          <p className="text-[10px] font-mono uppercase tracking-[0.18em] text-brass-dark">Trải nghiệm nhanh</p>
-          <p className="mt-1.5 text-xs leading-relaxed text-charcoal-muted">Tài khoản demo dùng tên quản trị cấu hình bằng ADMIN_USERNAME ở BE. Phiên demo chỉ có quyền xem dữ liệu, không cần mật khẩu.</p>
-          <dl className="mt-3 grid grid-cols-2 gap-3 border-y border-brass/25 py-3 font-mono text-[11px]">
-            <div>
-              <dt className="text-charcoal-muted">Tài khoản</dt>
-              <dd className="mt-1 select-all font-semibold text-forest">ADMIN_USERNAME (BE)</dd>
-            </div>
-            <div>
-              <dt className="text-charcoal-muted">Mật khẩu</dt>
-              <dd className="mt-1 font-semibold text-forest">Không cần · chỉ xem</dd>
-            </div>
-          </dl>
-          <button
-            type="button"
-            onClick={() => void handleDemoLogin()}
-            disabled={loading}
-            className="mt-3 flex w-full items-center justify-center gap-2 border border-forest bg-forest px-4 py-3 text-xs font-mono font-bold uppercase tracking-wider text-paper transition-colors hover:bg-brass hover:text-forest disabled:cursor-wait disabled:opacity-60"
-          >
-            <Eye className="h-4 w-4" />
-            <span>{loadingMode === 'demo' ? 'Đang mở bản demo...' : 'Đăng nhập demo'}</span>
-          </button>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-xs font-mono uppercase tracking-wider text-charcoal-muted mb-1.5">
-              Tài Khoản Quản Trị
-            </label>
-            <div className="relative">
-              <User className="w-4 h-4 text-charcoal-muted absolute left-3 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="Nhập tên đăng nhập..."
-                autoComplete="username"
-                className="w-full pl-9 pr-4 py-2.5 bg-paper-warm border border-paper-border focus:border-brass text-xs font-mono focus:outline-none transition-colors"
-                required
-              />
-            </div>
+          <div className="relative z-10 flex items-center justify-between gap-4">
+            <Link to="/" className="group inline-flex items-center gap-3" aria-label="Viettoria, về trang chủ">
+              <span className="flex h-11 w-11 items-center justify-center border border-brass/70 bg-paper/5 font-display text-xl text-[#E6C878] transition-colors group-hover:bg-brass/15">V</span>
+              <span>
+                <span className="block font-display text-lg font-semibold tracking-[0.12em] text-paper">VIETTORIA</span>
+                <span className="mt-0.5 block text-[9px] uppercase tracking-[0.22em] text-paper/55">Heritage Atelier</span>
+              </span>
+            </Link>
+            <span className="border border-paper/20 px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.16em] text-paper/65">CMS · 01</span>
           </div>
 
-          <div>
-            <label className="block text-xs font-mono uppercase tracking-wider text-charcoal-muted mb-1.5">
-              Mật Khẩu
-            </label>
-            <div className="relative">
-              <KeyRound className="w-4 h-4 text-charcoal-muted absolute left-3 top-1/2 -translate-y-1/2" />
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Nhập mật khẩu..."
-                autoComplete="current-password"
-                className="w-full pl-9 pr-4 py-2.5 bg-paper-warm border border-paper-border focus:border-brass text-xs font-mono focus:outline-none transition-colors"
-                required
-              />
-            </div>
+          <div className="relative z-10 mt-auto max-w-[500px] pb-2 pt-10 sm:pt-14 lg:pb-8 lg:pt-24">
+            <p className="mb-4 flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.22em] text-[#D5B765]">
+              <span className="h-px w-8 bg-brass" />
+              Không gian dành cho quản trị
+              <span className="h-px w-8 bg-brass" />
+            </p>
+            <h1 className="max-w-[470px] font-display text-[clamp(2.15rem,4vw,3.75rem)] font-medium leading-[1.08] tracking-[-0.025em] text-paper">
+              Gìn giữ ký ức,<br /><em className="font-normal text-[#E1C47F]">kể tiếp câu chuyện.</em>
+            </h1>
+            <p className="mt-5 max-w-[390px] text-sm leading-7 text-paper/70 sm:text-[15px]">
+              Không gian dành cho đội ngũ biên tập, quản lý tư liệu và những câu chuyện di sản Việt Nam.
+            </p>
+
           </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-3 bg-forest text-paper hover:bg-brass transition-colors font-mono text-xs uppercase tracking-widest font-bold flex items-center justify-center gap-2 shadow-md disabled:opacity-50"
-          >
-            <span>{loadingMode === 'admin' ? 'Đang Xác Thực...' : 'Đăng Nhập Quản Trị'}</span>
-            <ArrowRight className="w-4 h-4" />
-          </button>
-        </form>
+        </section>
 
-        <div className="pt-4 border-t border-paper-border text-center">
-          <Link
-            to="/"
-            className="text-xs font-mono uppercase tracking-wider text-charcoal-muted hover:text-forest transition-colors"
-          >
-            ← Quay lại website công khai
-          </Link>
-        </div>
+        <section className="relative flex items-center justify-center bg-[#FAF7F0] px-6 py-9 sm:px-12 sm:py-12 lg:px-14 lg:py-14">
+          <div aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-40 [background-image:linear-gradient(90deg,rgba(59,43,29,.035)_1px,transparent_1px),linear-gradient(rgba(59,43,29,.035)_1px,transparent_1px)] [background-size:28px_28px]" />
+          <div className="relative z-10 w-full max-w-[390px]">
+            <Link to="/" className="mb-10 inline-flex items-center gap-2 text-[11px] font-medium text-charcoal-muted transition-colors hover:text-forest lg:absolute lg:-top-20 lg:mb-0">
+              <ArrowLeft className="h-3.5 w-3.5" />
+              Về trang chủ
+            </Link>
+
+            <div className="mb-8">
+              <div className="mb-4 flex h-11 w-11 items-center justify-center border border-brass/40 bg-[#F3EFE6] text-forest">
+                <LockKeyhole className="h-[18px] w-[18px] stroke-[1.5]" />
+              </div>
+              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-brass-dark">Cổng quản trị</p>
+              <h2 className="mt-2 font-display text-[2rem] font-medium leading-tight text-forest sm:text-[2.25rem]">Chào mừng trở lại</h2>
+              <p className="mt-2 text-sm leading-6 text-charcoal-muted">Đăng nhập để tiếp tục công việc biên tập của bạn.</p>
+            </div>
+
+            {error && (
+              <div role="alert" className="mb-5 flex items-start gap-2.5 border border-terracotta/35 bg-terracotta/5 px-3.5 py-3 text-sm leading-5 text-terracotta">
+                <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+                <span>{error}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div>
+                <label htmlFor="admin-username" className="mb-2 block text-xs font-medium text-charcoal">Tài khoản quản trị</label>
+                <div className="group relative">
+                  <UserRound className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-charcoal-muted transition-colors group-focus-within:text-brass-dark" />
+                  <input
+                    id="admin-username"
+                    type="text"
+                    value={username}
+                    onChange={(event) => setUsername(event.target.value)}
+                    placeholder="Nhập tên đăng nhập"
+                    autoComplete="username"
+                    className="h-12 w-full border border-[#D8CCB8] bg-white/65 pl-10 pr-3.5 text-sm text-charcoal outline-none transition-[border-color,box-shadow,background-color] placeholder:text-charcoal-muted/65 hover:border-brass/60 focus:border-brass focus:bg-white focus:shadow-[0_0_0_3px_rgba(184,138,56,.12)]"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="admin-password" className="mb-2 block text-xs font-medium text-charcoal">Mật khẩu</label>
+                <div className="group relative">
+                  <KeyRound className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-charcoal-muted transition-colors group-focus-within:text-brass-dark" />
+                  <input
+                    id="admin-password"
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={(event) => setPassword(event.target.value)}
+                    placeholder="Nhập mật khẩu"
+                    autoComplete="current-password"
+                    className="h-12 w-full border border-[#D8CCB8] bg-white/65 pl-10 pr-11 text-sm text-charcoal outline-none transition-[border-color,box-shadow,background-color] placeholder:text-charcoal-muted/65 hover:border-brass/60 focus:border-brass focus:bg-white focus:shadow-[0_0_0_3px_rgba(184,138,56,.12)]"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((visible) => !visible)}
+                    className="absolute right-0 top-0 flex h-12 w-11 items-center justify-center text-charcoal-muted transition-colors hover:text-forest focus-visible:outline focus-visible:outline-2 focus-visible:outline-brass"
+                    aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
+                    aria-pressed={showPassword}
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="group flex h-12 w-full items-center justify-center gap-2 bg-forest px-5 text-xs font-semibold uppercase tracking-[0.13em] text-paper transition-[background-color,transform] hover:bg-[#1D3A2E] active:translate-y-px disabled:cursor-wait disabled:opacity-65"
+              >
+                <span>{loadingMode === 'admin' ? 'Đang xác thực…' : 'Đăng nhập quản trị'}</span>
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </button>
+            </form>
+
+            <div className="my-7 flex items-center gap-3" aria-hidden="true">
+              <span className="h-px flex-1 bg-[#D8CCB8]" />
+              <span className="font-mono text-[9px] uppercase tracking-[0.16em] text-charcoal-muted/70">đăng nhập nhanh</span>
+              <span className="h-px flex-1 bg-[#D8CCB8]" />
+            </div>
+
+            <button
+              type="button"
+              onClick={() => void handleQuickLogin()}
+              disabled={loading}
+              className="group w-full border border-[#D8CCB8] bg-white/45 p-4 text-left transition-colors hover:border-brass/70 hover:bg-white/80 disabled:cursor-wait disabled:opacity-60"
+            >
+              <span className="flex items-center justify-between gap-3">
+                <span className="flex items-center gap-3">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center border border-forest/15 bg-forest/5 text-forest transition-colors group-hover:border-brass/45 group-hover:bg-brass/10">
+                    <KeyRound className="h-4 w-4" />
+                  </span>
+                  <span>
+                    <span className="block text-xs font-semibold text-forest">Tài khoản dùng thử</span>
+                    <span className="mt-1 block text-[11px] text-charcoal-muted">Đăng nhập nhanh vào trang quản trị</span>
+                  </span>
+                </span>
+                <ArrowRight className="h-4 w-4 shrink-0 text-charcoal-muted transition-all group-hover:translate-x-0.5 group-hover:text-brass-dark" />
+              </span>
+              <span className="mt-4 grid grid-cols-2 gap-3 border-t border-[#D8CCB8] pt-3 font-mono text-[11px]">
+                <span>
+                  <span className="block text-[9px] uppercase tracking-[0.15em] text-charcoal-muted">Username</span>
+                  <span className="mt-1 block select-all text-charcoal">{QUICK_LOGIN_USERNAME}</span>
+                </span>
+                <span className="border-l border-[#D8CCB8] pl-3">
+                  <span className="block text-[9px] uppercase tracking-[0.15em] text-charcoal-muted">Password</span>
+                  <span className="mt-1 block select-all text-charcoal">{QUICK_LOGIN_PASSWORD}</span>
+                </span>
+              </span>
+              <span className="mt-3 flex h-10 items-center justify-center gap-2 bg-[#F0EDE6] px-3 text-[10px] font-semibold uppercase tracking-[0.13em] text-forest transition-colors group-hover:bg-brass group-hover:text-forest">
+                <span>{loadingMode === 'quick' ? 'Đang đăng nhập…' : 'Đăng nhập nhanh'}</span>
+                <ArrowRight className="h-3.5 w-3.5" />
+              </span>
+            </button>
+
+            <div className="mt-8 flex items-start gap-2 border-t border-[#D8CCB8] pt-4 text-[10px] leading-5 text-charcoal-muted">
+              <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-forest/65" />
+              <p>Tài khoản dành cho môi trường demo và các buổi trải nghiệm VIETTORIA.</p>
+            </div>
+          </div>
+        </section>
       </div>
-    </div>
+    </main>
   );
 };
 

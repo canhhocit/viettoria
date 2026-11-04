@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, Link } from 'react-router-dom';
-import { QrCode, Menu, X } from 'lucide-react';
+import { QrCode } from 'lucide-react';
 
 interface HeaderProps {
   onOpenQRModal: () => void;
@@ -68,10 +68,8 @@ export const Header: React.FC<HeaderProps> = ({ onOpenQRModal }) => {
               </NavLink>
             ))}
           </nav>
-
-          {/* Right Actions */}
+          {/* Right Actions - Tạm ẩn theo yêu cầu
           <div className="flex items-center gap-2.5">
-            {/* Quick QR Scanner Button */}
             <button
               onClick={onOpenQRModal}
               className={`inline-flex items-center gap-2 border border-[#B88A38] bg-white/75 text-[#5B432A] hover:bg-[#735735] hover:text-white transition-colors font-medium ${
@@ -83,7 +81,6 @@ export const Header: React.FC<HeaderProps> = ({ onOpenQRModal }) => {
               <span className="hidden sm:inline">Quét Tem QR</span>
             </button>
 
-            {/* Mobile Menu Toggle Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="p-2 border border-[#D8CCB8] text-[#3B2B1D] hover:border-[#745C42] hover:text-[#745C42] lg:hidden transition-colors rounded-[2px]"
@@ -92,6 +89,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenQRModal }) => {
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
+          */}
         </div>
       </div>
 

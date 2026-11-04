@@ -82,7 +82,17 @@ export const AdminLoginPage: React.FC = () => {
 
         <div className="border border-brass/50 bg-paper-warm p-4">
           <p className="text-[10px] font-mono uppercase tracking-[0.18em] text-brass-dark">Trải nghiệm nhanh</p>
-          <p className="mt-1.5 text-xs leading-relaxed text-charcoal-muted">Vào thẳng CMS, không cần tài khoản. Bản demo chỉ xem nên không thể làm thay đổi dữ liệu.</p>
+          <p className="mt-1.5 text-xs leading-relaxed text-charcoal-muted">Thông tin đăng nhập demo được để sẵn bên dưới. Phiên này chỉ có quyền xem dữ liệu.</p>
+          <dl className="mt-3 grid grid-cols-2 gap-3 border-y border-brass/25 py-3 font-mono text-[11px]">
+            <div>
+              <dt className="text-charcoal-muted">Tài khoản</dt>
+              <dd className="mt-1 select-all font-semibold text-forest">demo-viewer</dd>
+            </div>
+            <div>
+              <dt className="text-charcoal-muted">Mật khẩu</dt>
+              <dd className="mt-1 font-semibold text-forest">Không cần</dd>
+            </div>
+          </dl>
           <button
             type="button"
             onClick={() => void handleDemoLogin()}
@@ -90,7 +100,7 @@ export const AdminLoginPage: React.FC = () => {
             className="mt-3 flex w-full items-center justify-center gap-2 border border-forest bg-forest px-4 py-3 text-xs font-mono font-bold uppercase tracking-wider text-paper transition-colors hover:bg-brass hover:text-forest disabled:cursor-wait disabled:opacity-60"
           >
             <Eye className="h-4 w-4" />
-            <span>{loadingMode === 'demo' ? 'Đang mở bản demo...' : 'Vào xem bản demo'}</span>
+            <span>{loadingMode === 'demo' ? 'Đang mở bản demo...' : 'Đăng nhập demo'}</span>
           </button>
         </div>
 

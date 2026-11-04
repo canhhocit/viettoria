@@ -10,7 +10,8 @@ import {
   ExternalLink, 
   Shield, 
   Menu, 
-  X
+  X,
+  Eye
 } from 'lucide-react';
 import { adminApi } from '../services/api';
 import { resolveAvatarUrl } from '../utils/mediaResolver';
@@ -19,7 +20,7 @@ export const AdminLayout: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [user, setUser] = useState<{ fullName: string; username: string; avatarUrl?: string } | null>(null);
+  const [user, setUser] = useState<{ fullName: string; username: string; role?: string; avatarUrl?: string } | null>(null);
 
   useEffect(() => {
     if (!adminApi.isAuthenticated()) {
@@ -27,8 +28,8 @@ export const AdminLayout: React.FC = () => {
     } else {
       try {
         const storedUser = localStorage.getItem('viettoria_admin_user');
-        const parsedUser = storedUser ? JSON.parse(storedUser) as { fullName?: string; username?: string } : null;
-        setUser({ fullName: parsedUser?.fullName || 'Quản Trị Viên', username: parsedUser?.username || '', avatarUrl: resolveAvatarUrl() });
+        const parsedUser = storedUser ? JSON.parse(storedUser) as { fullName?: string; username?: string; role?: string } : null;
+        setUser({ fullName: parsedUser?.fullName || 'Quản Trị Viên', username: parsedUser?.username || '', role: parsedUser?.role, avatarUrl: resolveAvatarUrl() });
       } catch {
         setUser({ fullName: 'Quản Trị Viên', username: '', avatarUrl: resolveAvatarUrl() });
       }
@@ -120,7 +121,7 @@ export const AdminLayout: React.FC = () => {
             
             <div className="min-w-0">
               <p className="text-white font-medium text-xs truncate">{user?.fullName || 'Ban Quản Trị'}</p>
-              <p className="text-[10px] text-[#B88A38] uppercase tracking-widest">Administrator</p>
+              <p className="text-[10px] text-[#B88A38] uppercase tracking-widest">{user?.role === 'DEMO' ? 'Bản xem thử' : 'Administrator'}</p>
             </div>
           </div>
 
@@ -155,6 +156,12 @@ export const AdminLayout: React.FC = () => {
         </header>
 
         <main className="flex-1 p-4 sm:p-6 lg:p-8">
+          {user?.role === 'DEMO' && (
+            <div role="status" className="mb-5 flex items-start gap-2 border border-brass/40 bg-paper-warm px-4 py-3 text-xs leading-relaxed text-forest">
+              <Eye className="mt-0.5 h-4 w-4 shrink-0 text-brass" />
+              <p><strong className="font-mono uppercase tracking-wider">Chế độ xem thử</strong><span className="ml-2">Bạn có thể duyệt các mục trong CMS; thao tác tạo, sửa, xóa và tải tệp đã được khóa.</span></p>
+            </div>
+          )}
           <Outlet />
         </main>
       </div>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
-import { KeyRound, User, ArrowRight, AlertCircle } from 'lucide-react';
+import { KeyRound, User, ArrowRight, AlertCircle, Eye } from 'lucide-react';
 import { adminApi } from '../../services/api';
 
 export const AdminLoginPage: React.FC = () => {
@@ -10,16 +10,22 @@ export const AdminLoginPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [loadingMode, setLoadingMode] = useState<'admin' | 'demo' | null>(null);
+
+  const finishLogin = () => {
+    const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/admin/dashboard';
+    navigate(from, { replace: true });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
+    setLoadingMode('admin');
 
     try {
       await adminApi.login(username.trim(), password);
-      const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/admin/dashboard';
-      navigate(from, { replace: true });
+      finishLogin();
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
@@ -28,11 +34,27 @@ export const AdminLoginPage: React.FC = () => {
       }
     } finally {
       setLoading(false);
+      setLoadingMode(null);
+    }
+  };
+
+  const handleDemoLogin = async () => {
+    setError(null);
+    setLoading(true);
+    setLoadingMode('demo');
+    try {
+      await adminApi.loginDemo();
+      finishLogin();
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Không thể mở bản demo lúc này.');
+    } finally {
+      setLoading(false);
+      setLoadingMode(null);
     }
   };
 
   return (
-    <div className="min-h-screen bg-forest flex flex-col justify-center items-center p-4 relative overflow-hidden select-none">
+    <div className="min-h-screen bg-forest flex flex-col justify-center items-center p-4 relative overflow-hidden">
       {/* Background Subtle Elements */}
       <div className="heritage-grain absolute inset-0 opacity-20 pointer-events-none" />
       <div aria-hidden="true" className="heritage-dong-son pointer-events-none absolute -right-32 top-1/2 h-[85vh] w-[85vh] -translate-y-1/2 opacity-[0.15] mix-blend-screen" />
@@ -58,6 +80,20 @@ export const AdminLoginPage: React.FC = () => {
           </div>
         )}
 
+        <div className="border border-brass/50 bg-paper-warm p-4">
+          <p className="text-[10px] font-mono uppercase tracking-[0.18em] text-brass-dark">Trải nghiệm nhanh</p>
+          <p className="mt-1.5 text-xs leading-relaxed text-charcoal-muted">Vào thẳng CMS, không cần tài khoản. Bản demo chỉ xem nên không thể làm thay đổi dữ liệu.</p>
+          <button
+            type="button"
+            onClick={() => void handleDemoLogin()}
+            disabled={loading}
+            className="mt-3 flex w-full items-center justify-center gap-2 border border-forest bg-forest px-4 py-3 text-xs font-mono font-bold uppercase tracking-wider text-paper transition-colors hover:bg-brass hover:text-forest disabled:cursor-wait disabled:opacity-60"
+          >
+            <Eye className="h-4 w-4" />
+            <span>{loadingMode === 'demo' ? 'Đang mở bản demo...' : 'Vào xem bản demo'}</span>
+          </button>
+        </div>
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-xs font-mono uppercase tracking-wider text-charcoal-muted mb-1.5">
@@ -70,6 +106,7 @@ export const AdminLoginPage: React.FC = () => {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="Nhập tên đăng nhập..."
+                autoComplete="username"
                 className="w-full pl-9 pr-4 py-2.5 bg-paper-warm border border-paper-border focus:border-brass text-xs font-mono focus:outline-none transition-colors"
                 required
               />
@@ -87,6 +124,7 @@ export const AdminLoginPage: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Nhập mật khẩu..."
+                autoComplete="current-password"
                 className="w-full pl-9 pr-4 py-2.5 bg-paper-warm border border-paper-border focus:border-brass text-xs font-mono focus:outline-none transition-colors"
                 required
               />
@@ -98,7 +136,7 @@ export const AdminLoginPage: React.FC = () => {
             disabled={loading}
             className="w-full py-3 bg-forest text-paper hover:bg-brass transition-colors font-mono text-xs uppercase tracking-widest font-bold flex items-center justify-center gap-2 shadow-md disabled:opacity-50"
           >
-            <span>{loading ? 'Đang Xác Thực...' : 'Đăng Nhập Quản Trị'}</span>
+            <span>{loadingMode === 'admin' ? 'Đang Xác Thực...' : 'Đăng Nhập Quản Trị'}</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </form>

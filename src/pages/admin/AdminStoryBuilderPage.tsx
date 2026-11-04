@@ -21,6 +21,7 @@ import { adminApi } from '../../services/api';
 import type { StoryBlock, Product, StoryBlockType } from '../../types';
 
 export const AdminStoryBuilderPage: React.FC = () => {
+  const isDemo = adminApi.isDemoSession();
   const { id } = useParams<{ id: string }>();
   const [product, setProduct] = useState<Product | null>(null);
   const [stories, setStories] = useState<StoryBlock[]>([]);
@@ -156,7 +157,7 @@ export const AdminStoryBuilderPage: React.FC = () => {
         </div>
 
         {/* Add Block Dropdown / Quick Buttons */}
-        <div className="flex flex-wrap gap-2">
+        {!isDemo && <div className="flex flex-wrap gap-2">
           {(['text', 'image', 'text_image', 'timeline', 'highlight', 'assembly'] as StoryBlockType[]).map((type) => (
             <button
               key={type}
@@ -167,7 +168,7 @@ export const AdminStoryBuilderPage: React.FC = () => {
               <span>+{type}</span>
             </button>
           ))}
-        </div>
+        </div>}
       </div>
 
       {error && <div role="alert" className="border border-terracotta/40 bg-terracotta/10 p-3 text-sm text-terracotta">{error}</div>}
@@ -221,7 +222,7 @@ export const AdminStoryBuilderPage: React.FC = () => {
               </div>
 
               {/* Action Toolbar */}
-              <div className="flex items-center gap-2 self-end md:self-center font-mono text-xs">
+              {!isDemo && <div className="flex items-center gap-2 self-end md:self-center font-mono text-xs">
                 {/* Reorder Buttons */}
                 <button
                   onClick={() => handleMove(idx, 'up')}
@@ -271,14 +272,14 @@ export const AdminStoryBuilderPage: React.FC = () => {
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
-              </div>
+              </div>}
             </div>
           ))}
         </div>
       )}
 
       {/* Edit / Add Modal */}
-      {isModalOpen && editingBlock && (
+      {!isDemo && isModalOpen && editingBlock && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-forest-dark/80 backdrop-blur-sm overflow-y-auto">
           <div className="relative w-full max-w-2xl bg-paper border border-brass corner-frame p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
             <button

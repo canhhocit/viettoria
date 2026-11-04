@@ -111,8 +111,21 @@ export interface MediaItem {
   fileType: string;
   fileSize: number;
   url: string;
+  publicId?: string | null;
+  resourceType?: 'image' | 'raw' | null;
   altText: string;
   uploadedAt: string;
+}
+
+export interface CloudinaryUploadSignature {
+  cloudName: string;
+  apiKey: string;
+  timestamp: number;
+  signature: string;
+  folder: string;
+  publicId: string;
+  resourceType: 'image' | 'raw';
+  overwrite: boolean;
 }
 
 export interface AdminUser {

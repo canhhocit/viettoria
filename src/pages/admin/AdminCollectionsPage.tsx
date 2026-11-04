@@ -7,6 +7,7 @@ import { resolveImageUrl, handleImageFallback } from '../../utils/mediaResolver'
 const slugFromName = (value: string) => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/đ/g, 'd').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
 export const AdminCollectionsPage: React.FC = () => {
+  const isDemo = adminApi.isDemoSession();
   const [collections, setCollections] = useState<Collection[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -67,7 +68,7 @@ export const AdminCollectionsPage: React.FC = () => {
     <div className="space-y-6">
       <div className="flex flex-col justify-between gap-4 border-b border-paper-border pb-4 sm:flex-row sm:items-center">
         <div><div className="flex items-center gap-2 text-brass text-xs font-mono uppercase tracking-widest"><Layers className="h-4 w-4"/><span>Phân loại niên đại & thời kỳ</span></div><h1 className="mt-1 font-serif text-2xl font-bold text-forest sm:text-3xl">Quản lý bộ sưu tập</h1></div>
-        <button onClick={handleOpenAdd} className="flex items-center gap-2 bg-forest px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-paper transition-colors hover:bg-brass"><Plus className="h-4 w-4"/>Thêm bộ sưu tập</button>
+        {!isDemo && <button onClick={handleOpenAdd} className="flex items-center gap-2 bg-forest px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-paper transition-colors hover:bg-brass"><Plus className="h-4 w-4"/>Thêm bộ sưu tập</button>}
       </div>
 
       {error && <div role="alert" className="flex items-start gap-2 border border-terracotta/40 bg-terracotta/10 p-3 text-sm text-terracotta"><AlertCircle className="mt-0.5 h-4 w-4 shrink-0"/>{error}</div>}
@@ -79,12 +80,12 @@ export const AdminCollectionsPage: React.FC = () => {
               <div className="flex items-start justify-between gap-3"><h2 className="font-serif text-lg font-bold text-forest">{col.name}</h2><span className={`shrink-0 border px-2 py-1 text-[10px] uppercase ${col.status === 'published' ? 'border-forest/30 bg-forest/10 text-forest' : 'border-charcoal/20 bg-charcoal/5 text-charcoal-muted'}`}>{col.status === 'published' ? 'Đã xuất bản' : col.status === 'hidden' ? 'Đang ẩn' : 'Bản nháp'}</span></div>
               <p className="line-clamp-3 text-xs leading-relaxed text-charcoal/80">{col.description}</p>
             </div>
-            <div className="flex items-center justify-between border-t border-paper-border pt-3 font-mono text-xs"><span className="text-charcoal-muted">Thứ tự: {col.displayOrder}</span><div className="flex gap-2"><button onClick={() => { setEditingCol({ ...col }); setError(null); setIsModalOpen(true); }} className="flex items-center gap-1 border border-paper-border px-2.5 py-1.5 text-charcoal hover:border-brass" aria-label={`Sửa ${col.name}`}><Edit className="h-3 w-3 text-brass"/>Sửa</button><button onClick={() => void handleDelete(col)} className="border border-paper-border p-1.5 text-terracotta hover:border-terracotta" aria-label={`Xóa ${col.name}`}><Trash2 className="h-3.5 w-3.5"/></button></div></div>
+            <div className="flex items-center justify-between border-t border-paper-border pt-3 font-mono text-xs"><span className="text-charcoal-muted">Thứ tự: {col.displayOrder}</span>{!isDemo && <div className="flex gap-2"><button onClick={() => { setEditingCol({ ...col }); setError(null); setIsModalOpen(true); }} className="flex items-center gap-1 border border-paper-border px-2.5 py-1.5 text-charcoal hover:border-brass" aria-label={`Sửa ${col.name}`}><Edit className="h-3 w-3 text-brass"/>Sửa</button><button onClick={() => void handleDelete(col)} className="border border-paper-border p-1.5 text-terracotta hover:border-terracotta" aria-label={`Xóa ${col.name}`}><Trash2 className="h-3.5 w-3.5"/></button></div>}</div>
           </article>)}
         </div>
       )}
 
-      {isModalOpen && editingCol && <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-forest-dark/80 p-4">
+      {!isDemo && isModalOpen && editingCol && <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-forest-dark/80 p-4">
         <div className="relative my-auto max-h-[92vh] w-full max-w-lg overflow-y-auto border border-brass bg-paper p-6 shadow-2xl sm:p-8">
           <button onClick={() => setIsModalOpen(false)} className="absolute right-4 top-4 p-1 text-charcoal-muted hover:text-charcoal" aria-label="Đóng"><X className="h-5 w-5"/></button>
           <h2 className="mb-5 pr-8 font-serif text-2xl font-bold text-forest">{editingCol.id ? 'Sửa bộ sưu tập' : 'Thêm bộ sưu tập'}</h2>

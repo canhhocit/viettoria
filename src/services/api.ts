@@ -4,6 +4,7 @@ import type {
   StoryBlock, 
   BlogPost, 
   MediaItem, 
+  CloudinaryUploadSignature,
   DashboardStats 
 } from '../types/index';
 import { 
@@ -14,6 +15,17 @@ import {
 } from '../data/fallbackData';
 
 const API_BASE = (import.meta.env.VITE_API_BASE_URL as string) || 'http://localhost:8081/api';
+
+type AdminLoginResult = {
+  token: string;
+  user: { id: string; fullName: string; username: string; role: string };
+};
+
+const persistAdminSession = (data: AdminLoginResult): AdminLoginResult => {
+  localStorage.setItem('viettoria_admin_token', data.token);
+  localStorage.setItem('viettoria_admin_user', JSON.stringify(data.user));
+  return data;
+};
 
 const getAuthHeaders = (): Record<string, string> => {
   const token = localStorage.getItem('viettoria_admin_token');
@@ -34,6 +46,7 @@ async function adminRequest<T>(path: string, init: RequestInit = {}): Promise<T>
   const payload = await response.json().catch(() => null) as {
     data?: T;
     message?: string;
+    detail?: string;
     success?: boolean;
   } | null;
 
@@ -42,7 +55,32 @@ async function adminRequest<T>(path: string, init: RequestInit = {}): Promise<T>
       localStorage.removeItem('viettoria_admin_token');
       window.dispatchEvent(new Event('viettoria:unauthorized'));
     }
-    throw new Error(payload?.message || `Yêu cầu thất bại (${response.status})`);
+    throw new Error(payload?.message || payload?.detail || `Yêu cầu thất bại (${response.status})`);
+  }
+
+  return payload?.data as T;
+}
+
+async function adminMultipartRequest<T>(path: string, formData: FormData): Promise<T> {
+  const token = localStorage.getItem('viettoria_admin_token');
+  const response = await fetch(`${API_BASE}${path}`, {
+    method: 'POST',
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+    body: formData,
+  });
+  const payload = await response.json().catch(() => null) as {
+    data?: T;
+    message?: string;
+    detail?: string;
+    success?: boolean;
+  } | null;
+
+  if (!response.ok || payload?.success === false) {
+    if (response.status === 401 || response.status === 403) {
+      localStorage.removeItem('viettoria_admin_token');
+      window.dispatchEvent(new Event('viettoria:unauthorized'));
+    }
+    throw new Error(payload?.message || payload?.detail || `Yêu cầu thất bại (${response.status})`);
   }
 
   return payload?.data as T;
@@ -209,7 +247,7 @@ export const publicApi = {
 
 // --- ADMIN CMS API ---
 export const adminApi = {
-  async login(username: string, password: string): Promise<{ token: string; user: { fullName: string; username: string } }> {
+  async login(username: string, password: string): Promise<AdminLoginResult> {
     let response: Response;
     try {
       response = await fetch(`${API_BASE}/admin/auth/login`, {
@@ -221,15 +259,32 @@ export const adminApi = {
       throw new Error('Không kết nối được máy chủ. Kiểm tra backend rồi thử lại.');
     }
     const payload = await response.json().catch(() => null) as {
-      data?: { token: string; user: { fullName: string; username: string } };
+      data?: AdminLoginResult;
       message?: string;
+      detail?: string;
     } | null;
     if (!response.ok || !payload?.data?.token) {
-      throw new Error(payload?.message || (response.ok ? 'Máy chủ không trả token đăng nhập.' : 'Đăng nhập thất bại.'));
+      throw new Error(payload?.message || payload?.detail || (response.ok ? 'Máy chủ không trả token đăng nhập.' : 'Đăng nhập thất bại.'));
     }
-    localStorage.setItem('viettoria_admin_token', payload.data.token);
-    localStorage.setItem('viettoria_admin_user', JSON.stringify(payload.data.user));
-    return payload.data;
+    return persistAdminSession(payload.data);
+  },
+
+  async loginDemo(): Promise<AdminLoginResult> {
+    let response: Response;
+    try {
+      response = await fetch(`${API_BASE}/admin/auth/demo`, { method: 'POST' });
+    } catch {
+      throw new Error('Không kết nối được máy chủ. Kiểm tra backend rồi thử lại.');
+    }
+    const payload = await response.json().catch(() => null) as {
+      data?: AdminLoginResult;
+      message?: string;
+      detail?: string;
+    } | null;
+    if (!response.ok || !payload?.data?.token) {
+      throw new Error(payload?.message || payload?.detail || 'Chưa thể mở bản demo.');
+    }
+    return persistAdminSession(payload.data);
   },
 
   logout(): void {
@@ -239,6 +294,15 @@ export const adminApi = {
 
   isAuthenticated(): boolean {
     return Boolean(localStorage.getItem('viettoria_admin_token'));
+  },
+
+  isDemoSession(): boolean {
+    try {
+      const user = localStorage.getItem('viettoria_admin_user');
+      return Boolean(user && (JSON.parse(user) as { role?: string }).role === 'DEMO');
+    } catch {
+      return false;
+    }
   },
 
   async getDashboard(): Promise<{ stats: DashboardStats; recentProducts: Product[]; recentBlogs: BlogPost[] }> {
@@ -319,5 +383,24 @@ export const adminApi = {
 
   async getMedia(): Promise<MediaItem[]> {
     return adminRequest('/admin/media');
+  },
+
+  async createMediaUploadSignature(resourceType: 'image' | 'raw', fileExtension: string): Promise<CloudinaryUploadSignature> {
+    return adminRequest('/admin/media/upload-signature', {
+      method: 'POST',
+      body: JSON.stringify({ resourceType, fileExtension }),
+    });
+  },
+
+  async saveMedia(data: Omit<MediaItem, 'id' | 'uploadedAt'>): Promise<MediaItem> {
+    return adminRequest('/admin/media', { method: 'POST', body: JSON.stringify(data) });
+  },
+
+  async uploadMediaFallback(file: File, name: string, altText: string): Promise<MediaItem> {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('name', name);
+    formData.append('altText', altText);
+    return adminMultipartRequest('/admin/media/fallback-upload', formData);
   }
 };

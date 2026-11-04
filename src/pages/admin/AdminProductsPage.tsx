@@ -16,6 +16,7 @@ import type { Product, Collection } from '../../types';
 import { resolveImageUrl, handleImageFallback } from '../../utils/mediaResolver';
 
 export const AdminProductsPage: React.FC = () => {
+  const isDemo = adminApi.isDemoSession();
   const [products, setProducts] = useState<Product[]>([]);
   const [collections, setCollections] = useState<Collection[]>([]);
   const [loading, setLoading] = useState(true);
@@ -122,13 +123,13 @@ export const AdminProductsPage: React.FC = () => {
           </h1>
         </div>
 
-        <button
+        {!isDemo && <button
           onClick={handleOpenAdd}
           className="px-4 py-2.5 bg-forest text-paper hover:bg-brass transition-colors font-mono text-xs uppercase tracking-wider font-bold flex items-center gap-2 shadow-sm"
         >
           <Plus className="w-4 h-4" />
           <span>Thêm Mô Hình Mới</span>
-        </button>
+        </button>}
       </div>
 
       {error && <div role="alert" className="border border-terracotta/40 bg-terracotta/10 p-3 text-sm text-terracotta">{error}</div>}
@@ -189,7 +190,9 @@ export const AdminProductsPage: React.FC = () => {
                     <div className="text-brass font-bold text-[11px]">{product.modelSpecs.partsCount} mộng</div>
                   </td>
                   <td className="p-4">
-                    <button
+                    {isDemo ? <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] uppercase font-bold tracking-wider ${product.status === 'published' ? 'bg-forest/15 text-forest border border-forest/30' : 'bg-charcoal/10 text-charcoal-muted border border-charcoal/20'}`}>
+                      {product.status === 'published' ? 'Đã xuất bản' : 'Bản nháp'}
+                    </span> : <button
                       onClick={() => handleToggleStatus(product)}
                       className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] uppercase font-bold tracking-wider ${
                         product.status === 'published'
@@ -208,7 +211,7 @@ export const AdminProductsPage: React.FC = () => {
                           <span>Bản Nháp</span>
                         </>
                       )}
-                    </button>
+                    </button>}
                   </td>
                   <td className="p-4 text-right">
                     <div className="flex items-center justify-end gap-2">
@@ -221,13 +224,13 @@ export const AdminProductsPage: React.FC = () => {
                         <span>Stories</span>
                       </Link>
 
-                      <button
+                      {!isDemo && <button
                         onClick={() => handleOpenEdit(product)}
                         className="p-1.5 border border-paper-border hover:border-brass text-charcoal transition-colors"
                         title="Chỉnh sửa thông số mô hình"
                       >
                         <Edit className="w-3.5 h-3.5" />
-                      </button>
+                      </button>}
 
                       <Link
                         to={`/products/${product.slug}`}
@@ -238,13 +241,13 @@ export const AdminProductsPage: React.FC = () => {
                         <ExternalLink className="w-3.5 h-3.5" />
                       </Link>
 
-                      <button
+                      {!isDemo && <button
                         onClick={() => handleDelete(product.id)}
                         className="p-1.5 border border-paper-border hover:border-terracotta text-terracotta transition-colors"
                         title="Xóa mô hình"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
-                      </button>
+                      </button>}
                     </div>
                   </td>
                 </tr>
@@ -255,7 +258,7 @@ export const AdminProductsPage: React.FC = () => {
       </div>
 
       {/* Edit / Add Modal */}
-      {isModalOpen && editingProduct && (
+      {!isDemo && isModalOpen && editingProduct && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-forest-dark/80 backdrop-blur-sm overflow-y-auto">
           <div className="relative w-full max-w-2xl bg-paper border border-brass corner-frame p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
             <button

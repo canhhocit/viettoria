@@ -210,7 +210,6 @@ const ScrollyHeritage: React.FC<{ products: Product[]; }> = ({ products }) => {
             <InteractiveModelStage key={activeProduct.slug} product={activeProduct} reducedMotion={reducedMotion} />
             <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between bg-gradient-to-t from-[#2B241C]/85 via-[#2B241C]/35 to-transparent px-5 pb-5 pt-16 text-[#FFF9EE] sm:px-7 sm:pb-7">
               <div>
-                <p className="text-[10px] uppercase tracking-[0.18em] text-[#E4C98C]">Đang xem mô hình</p>
                 <p className="mt-1 font-display text-xl sm:text-2xl">{activeProduct.name}</p>
               </div>
               <span className="font-mono text-xs tracking-[0.14em] text-white/80">0{activeIndex + 1} / 0{products.length}</span>
@@ -356,10 +355,7 @@ export const HomePage: React.FC = () => {
 
         <div className="relative z-10 mx-auto flex w-full max-w-[1440px] items-center px-5 pb-24 pt-16 sm:px-8 lg:px-16">
           <div className="max-w-[760px] animate-fade-up py-10">
-            <p className="mb-5 flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#E1C47F]">
-              <span className="h-px w-9 bg-[#C49A45]" />
-              Di sản Việt Nam · Viettoria
-            </p>
+            
             <h1 className="font-display text-[clamp(3rem,5.5vw,5.2rem)] font-medium leading-[1.04] tracking-[-0.035em] text-[#FAF7F0]">
               Di sản Việt Nam,<br />
               <em className="font-normal text-[#E2C681]">thu nhỏ trên tay.</em>

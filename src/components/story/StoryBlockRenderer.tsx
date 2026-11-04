@@ -1,6 +1,5 @@
 import React from 'react';
 import type { StoryBlock } from '../../types';
-import { AssemblyGuide } from '../common/AssemblyGuide';
 import { Clock } from 'lucide-react';
 import { resolveImageUrl, handleImageFallback } from '../../utils/mediaResolver';
 
@@ -9,7 +8,7 @@ interface StoryBlockRendererProps {
   heritageName?: string;
 }
 
-export const StoryBlockRenderer: React.FC<StoryBlockRendererProps> = ({ block, heritageName }) => {
+export const StoryBlockRenderer: React.FC<StoryBlockRendererProps> = ({ block }) => {
   if (block.status === 'hidden') return null;
 
   switch (block.type) {
@@ -166,13 +165,6 @@ export const StoryBlockRenderer: React.FC<StoryBlockRendererProps> = ({ block, h
               )}
             </div>
           </div>
-        </section>
-      );
-
-    case 'assembly':
-      return (
-        <section className="py-10 sm:py-14 border-b border-paper-border last:border-b-0">
-          <AssemblyGuide steps={block.assemblySteps} heritageName={heritageName} />
         </section>
       );
 

@@ -14,6 +14,8 @@ import {
 import { adminApi } from '../../services/api';
 import type { Product, Collection } from '../../types';
 import { resolveImageUrl, handleImageFallback } from '../../utils/mediaResolver';
+import { AdminImagePicker } from '../../components/admin/AdminImagePicker';
+import { HeritageLoader } from '../../components/common/HeritageLoader';
 
 export const AdminProductsPage: React.FC = () => {
   const isDemo = adminApi.isDemoSession();
@@ -151,8 +153,8 @@ export const AdminProductsPage: React.FC = () => {
             <tbody className="divide-y divide-paper-border font-mono">
               {loading ? (
                 <tr>
-                  <td colSpan={6} className="p-8 text-center text-forest">
-                    Đang tải danh sách tác phẩm...
+                  <td colSpan={6} className="p-8 text-center">
+                    <HeritageLoader variant="section" size="md" message="Đang tải danh sách tác phẩm..." />
                   </td>
                 </tr>
               ) : products.map((product) => (
@@ -407,18 +409,14 @@ export const AdminProductsPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-charcoal-muted uppercase mb-1">URL Ảnh Bìa Đại Diện</label>
-                  <input
-                    type="text"
-                    value={editingProduct.heroImage || ''}
-                    onChange={e => setEditingProduct({ ...editingProduct, heroImage: e.target.value })}
+              <div className="space-y-4">
+                <AdminImagePicker
+                  label="URL Ảnh Bìa Đại Diện"
+                  value={editingProduct.heroImage || ''}
+                  onChange={url => setEditingProduct({ ...editingProduct, heroImage: url })}
                   placeholder="/3D/chua-mot-cot-poster.webp hoặc URL Cloudinary..."
-                    className="w-full px-3 py-2 bg-paper-warm border border-paper-border focus:border-brass focus:outline-none"
-                    required
-                  />
-                </div>
+                  required
+                />
                 <div>
                   <label className="block text-charcoal-muted uppercase mb-1">Đường Dẫn Mô Hình 3D (.glb)</label>
                   <input

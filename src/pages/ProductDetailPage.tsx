@@ -111,14 +111,7 @@ export const ProductDetailPage: React.FC = () => {
 
         {/* Architectural Inspection Frame */}
         <section className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="font-serif text-xl sm:text-2xl font-bold text-forest">
-              Khảo Cứu Thực Địa & Hình Ảnh Chi Tiết
-            </h2>
-            <span className="text-xs font-mono text-charcoal-muted uppercase">
-              Tư liệu lưu trữ chuẩn mực
-            </span>
-          </div>
+          
 
           <ArchitecturalViewer product={product} />
         </section>
@@ -209,9 +202,9 @@ export const ProductDetailPage: React.FC = () => {
             </div>
 
             <div className="space-y-1">
-              <span className="text-xs font-mono text-charcoal-muted uppercase">Kỹ Nghệ Lắp Ráp</span>
+              <span className="text-xs font-mono text-charcoal-muted uppercase">Kỹ Nghệ Chế Tác</span>
               <p className="font-serif text-xl font-bold text-brass">
-                {product.modelSpecs.partsCount} Chi Tiết Mộng
+                {product.modelSpecs.partsCount} Cấu Kiện Tinh Xảo
               </p>
               <p className="text-[11px] text-charcoal/70 font-light">{product.modelSpecs.finishing}</p>
             </div>

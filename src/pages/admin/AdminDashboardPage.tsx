@@ -10,6 +10,7 @@ import {
 import { adminApi } from '../../services/api';
 import type { DashboardStats, Product, BlogPost } from '../../types';
 import { resolveImageUrl, handleImageFallback } from '../../utils/mediaResolver';
+import { HeritageLoader } from '../../components/common/HeritageLoader';
 
 export const AdminDashboardPage: React.FC = () => {
   const [stats, setStats] = useState<DashboardStats | null>(null);
@@ -30,9 +31,12 @@ export const AdminDashboardPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="py-20 text-center font-mono text-xs text-forest">
-        ĐANG TẢI DỮ LIỆU ĐIỀU HÀNH CMS...
-      </div>
+      <HeritageLoader
+        variant="section"
+        size="lg"
+        message="Đang tải dữ liệu điều hành CMS Viettoria..."
+        submessage="Trung tâm giám sát & quản trị di sản kiến trúc"
+      />
     );
   }
 

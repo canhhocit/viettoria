@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate, useParams, Link } from 'react-router-dom';
 import { QrCode, ArrowRight, AlertTriangle, ShieldCheck } from 'lucide-react';
 import { publicApi } from '../services/api';
+import { HeritageLoader } from '../components/common/HeritageLoader';
 
 export const QRResolverPage: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -41,10 +42,15 @@ export const QRResolverPage: React.FC = () => {
 
   if (resolving) {
     return (
-      <div className="min-h-[70vh] flex flex-col items-center justify-center bg-paper text-forest p-4">
-        <div className="w-12 h-12 border-2 border-brass border-t-transparent animate-spin mb-4" />
-        <p className="font-serif text-lg font-bold">Đang Xác Thực Mã Di Sản [{rawCode.toUpperCase()}]...</p>
-        <p className="text-xs font-mono text-charcoal-muted mt-2">Kết nối hệ thống lưu trữ Phygital</p>
+      <div className="relative min-h-[70vh] flex items-center justify-center bg-paper">
+        <HeritageLoader
+          variant="overlay"
+          blur={true}
+          size="lg"
+          message={`Đang Xác Thực Mã Di Sản [${rawCode.toUpperCase()}]...`}
+          submessage="Kết nối hệ sinh thái Phygital Viettoria"
+          showWordmark={true}
+        />
       </div>
     );
   }

@@ -46,7 +46,7 @@ export const FALLBACK_PRODUCTS: Product[] = [
     collectionId: 'col-1',
     epoch: 'Thời Lý (Năm 1049)',
     location: 'Ba Đình, Hà Nội',
-    shortDescription: 'Đóa sen nghìn năm ngự giữa lòng hồ Linh Chiểu, đỉnh cao triết lý Phật giáo Đại Việt và kỹ nghệ mộng gỗ truyền thống.',
+    shortDescription: 'Đóa sen nghìn năm ngự giữa lòng hồ Linh Chiểu, đỉnh cao triết lý Phật giáo Đại Việt và kiến trúc truyền thống.',
     modelSpecs: {
       scale: '1:120',
       heightCm: 12,
@@ -253,50 +253,6 @@ export const FALLBACK_STORY_BLOCKS: StoryBlock[] = [
     status: 'published'
   },
   {
-    id: 'block-3',
-    productId: 'prod-1',
-    type: 'assembly',
-    title: 'Kỹ Nghệ Khớp Mộng Âm Dương Không Dùng Keo Dán',
-    subtitle: '4 giai đoạn lắp ráp tái hiện cấu trúc mộng gỗ Thăng Long',
-    content: 'Mô hình thu nhỏ Chùa Một Cột của Viettoria được phân rã thành 24 cấu kiện mộng gỗ tinh xảo. Người sở hữu sẽ tự tay ghép nối từng chi tiết theo đúng quy chuẩn kiến trúc cổ truyền mà không cần đến bất kỳ giọt keo dán công nghiệp nào.',
-    assemblySteps: [
-      {
-        step: 1,
-        title: 'Khởi Trụ Liên Hoa',
-        nameVi: 'Khởi trụ liên hoa',
-        description: 'Đặt chân đế hồ sen Linh Chiểu phẳng phiu, gài khối cột đá tròn nguyên khối vào khớp khóa chống xoay 360 độ.',
-        detail: 'Khớp mộng đá vững chãi đảm bảo phương thẳng đứng tuyệt đối của trục vũ trụ.',
-        highlight: 'Khối đế vững chãi'
-      },
-      {
-        step: 2,
-        title: 'Bung Cánh Đòn Gánh (8 Thanh Consol)',
-        nameVi: 'Bung cánh đòn gánh',
-        description: 'Lần lượt gài 8 thanh tay đòn gỗ lim vào ngàm âm dương trên đỉnh trụ đá, xòe đều 8 hướng như đài sen đang nở.',
-        detail: 'Cảm nhận độ khít khao chính xác đến 0.1mm khi mộng khóa ăn khớp êm ái.',
-        highlight: 'Mộng khóa âm dương'
-      },
-      {
-        step: 3,
-        title: 'An Vị Liên Hoa Đài',
-        nameVi: 'An vị Liên Hoa Đài',
-        description: 'Hạ gian thờ vuông vức đặt lên bề mặt của hệ 8 đòn consol, 4 góc có chốt khóa mộng với khung mái.',
-        detail: 'Gian thờ trang nghiêm, cửa mở hướng về phía nam đón nguồn sinh khí thánh thiện.',
-        highlight: 'Điện thờ trang nghiêm'
-      },
-      {
-        step: 4,
-        title: 'Viên Mãn Đỉnh Sen (Úp Mái Đao Hoàng Triều)',
-        nameVi: 'Viên mãn đỉnh sen',
-        description: 'Đặt khối mái ngói đao cong lên 4 cột góc của lầu Phật, bờ nóc đắp nổi lưỡng long chầu nguyệt.',
-        detail: 'Tác phẩm hoàn thiện kiêu hãnh trên lòng bàn tay với chiều cao chuẩn 12cm.',
-        highlight: 'Đóa sen trọn vẹn'
-      }
-    ],
-    displayOrder: 3,
-    status: 'published'
-  },
-  {
     id: 'block-4',
     productId: 'prod-1',
     type: 'timeline',
@@ -311,7 +267,7 @@ export const FALLBACK_STORY_BLOCKS: StoryBlock[] = [
       { year: '1954', event: 'Phục Dựng Nguyên Trạng', detail: 'Bộ Văn hóa và các nghệ nhân kiến trúc phục dựng chính xác chùa theo kiến trúc thời Lý sau khi thủ đô giải phóng.' },
       { year: '2026', event: 'Số Hóa & Phygital Viettoria', detail: 'Dự án VIETTORIA tái hiện mô hình in 3D kết hợp nền tảng số hóa tương tác đa giác quan.' }
     ],
-    displayOrder: 4,
+    displayOrder: 3,
     status: 'published'
   },
   {
@@ -321,7 +277,7 @@ export const FALLBACK_STORY_BLOCKS: StoryBlock[] = [
     title: 'Triết Lý Phật Giáo & Khát Vọng Trường Tồn Dân Tộc',
     subtitle: 'Đóa sen nở từ bùn đen tượng trưng cho sự thanh tịnh vô nhiễm',
     content: 'Trong văn hóa Phật giáo Đại Việt, hoa sen là biểu tượng của sự thuần khiết, vượt lên trên mọi cám dỗ và thăng trầm của cõi tục. Chùa Một Cột ngự giữa lòng hồ nước không chỉ là một công trình tín ngưỡng, mà là tuyên ngôn về bản sắc văn hóa tự chủ, dung dị nhưng thâm sâu của cha ông ta nghìn năm trước.',
-    displayOrder: 5,
+    displayOrder: 4,
     status: 'published'
   }
 ];

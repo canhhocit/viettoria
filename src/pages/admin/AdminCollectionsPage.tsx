@@ -3,6 +3,8 @@ import { AlertCircle, Layers, Plus, Edit, Trash2, X } from 'lucide-react';
 import { adminApi } from '../../services/api';
 import type { Collection } from '../../types';
 import { resolveImageUrl, handleImageFallback } from '../../utils/mediaResolver';
+import { AdminImagePicker } from '../../components/admin/AdminImagePicker';
+import { HeritageLoader } from '../../components/common/HeritageLoader';
 
 const slugFromName = (value: string) => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/đ/g, 'd').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
@@ -72,7 +74,7 @@ export const AdminCollectionsPage: React.FC = () => {
       </div>
 
       {error && <div role="alert" className="flex items-start gap-2 border border-terracotta/40 bg-terracotta/10 p-3 text-sm text-terracotta"><AlertCircle className="mt-0.5 h-4 w-4 shrink-0"/>{error}</div>}
-      {loading ? <div className="py-20 text-center font-mono text-xs text-forest">Đang tải danh sách bộ sưu tập…</div> : collections.length === 0 ? <div className="border border-paper-border bg-paper p-10 text-center text-sm text-charcoal-muted">Chưa có bộ sưu tập nào.</div> : (
+      {loading ? <HeritageLoader variant="section" size="md" message="Đang tải danh sách bộ sưu tập di sản…" /> : collections.length === 0 ? <div className="border border-paper-border bg-paper p-10 text-center text-sm text-charcoal-muted">Chưa có bộ sưu tập nào.</div> : (
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {collections.map((col) => <article key={col.id} className="flex flex-col justify-between space-y-4 border border-paper-border bg-paper p-5 shadow-sm">
             <div className="space-y-3">
@@ -94,7 +96,13 @@ export const AdminCollectionsPage: React.FC = () => {
             <label className="block text-charcoal-muted">Tên bộ sưu tập<input value={editingCol.name || ''} onChange={e => setEditingCol({ ...editingCol, name: e.target.value, ...(editingCol.id ? {} : { slug: slugFromName(e.target.value) }) })} className="mt-1 w-full border border-paper-border bg-paper-warm px-3 py-2 text-charcoal" required/></label>
             <label className="block text-charcoal-muted">Đường dẫn (slug)<input value={editingCol.slug || ''} onChange={e => setEditingCol({ ...editingCol, slug: e.target.value })} className="mt-1 w-full border border-paper-border bg-paper-warm px-3 py-2 text-charcoal" required/></label>
             <label className="block text-charcoal-muted">Mô tả<textarea rows={3} value={editingCol.description || ''} onChange={e => setEditingCol({ ...editingCol, description: e.target.value })} className="mt-1 w-full border border-paper-border bg-paper-warm px-3 py-2 text-charcoal" required/></label>
-            <label className="block text-charcoal-muted">URL ảnh bìa<input value={editingCol.heroImage || ''} onChange={e => setEditingCol({ ...editingCol, heroImage: e.target.value })} className="mt-1 w-full border border-paper-border bg-paper-warm px-3 py-2 text-charcoal" required/></label>
+            <AdminImagePicker
+              label="URL ảnh bìa"
+              value={editingCol.heroImage || ''}
+              onChange={url => setEditingCol({ ...editingCol, heroImage: url })}
+              placeholder="/3D/chua-mot-cot-poster.webp hoặc dán link ảnh..."
+              required
+            />
             <div className="grid grid-cols-2 gap-3"><label className="block text-charcoal-muted">Thứ tự<input type="number" min="1" value={editingCol.displayOrder || 1} onChange={e => setEditingCol({ ...editingCol, displayOrder: Number(e.target.value) })} className="mt-1 w-full border border-paper-border bg-paper-warm px-3 py-2 text-charcoal"/></label><label className="block text-charcoal-muted">Trạng thái<select value={editingCol.status || 'published'} onChange={e => setEditingCol({ ...editingCol, status: e.target.value as Collection['status'] })} className="mt-1 w-full border border-paper-border bg-paper-warm px-3 py-2 text-charcoal"><option value="published">Xuất bản</option><option value="draft">Bản nháp</option><option value="hidden">Ẩn</option></select></label></div>
             {error && <div role="alert" className="text-terracotta">{error}</div>}
             <div className="flex justify-end gap-3 border-t border-paper-border pt-4"><button type="button" onClick={() => setIsModalOpen(false)} className="border border-paper-border px-4 py-2 uppercase text-charcoal hover:bg-paper-warm">Hủy</button><button type="submit" disabled={saving} className="bg-forest px-6 py-2 font-bold uppercase text-paper hover:bg-brass disabled:opacity-50">{saving ? 'Đang lưu…' : 'Lưu bộ sưu tập'}</button></div>

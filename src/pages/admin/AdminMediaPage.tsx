@@ -3,6 +3,7 @@ import { Box, Check, Copy, FileImage, Headphones, Image, Loader2, Upload } from 
 import { adminApi } from '../../services/api';
 import type { MediaItem } from '../../types';
 import { resolveAudioUrl, resolveImageUrl, handleImageFallback } from '../../utils/mediaResolver';
+import { HeritageLoader } from '../../components/common/HeritageLoader';
 
 const getUploadKind = (file: File): 'image' | 'raw' | 'video' => {
   const extension = file.name.split('.').pop()?.toLowerCase() || '';
@@ -121,8 +122,7 @@ export const AdminMediaPage: React.FC = () => {
         <div className="flex items-start gap-3 mb-4">
           <div className="border border-brass/40 p-2 text-brass"><Upload className="w-4 h-4" /></div>
           <div>
-            <h2 className="font-serif font-bold text-forest">Tải tệp lên Cloudinary</h2>
-            <p className="mt-1 text-xs leading-relaxed text-charcoal-muted">Ảnh, mô hình GLB và bản thu audio được lưu trên Cloudinary; nếu upload lỗi, tệp sẽ rơi về backend.</p>
+            <h2 className="font-serif font-bold text-forest">Tải tệp lên</h2>
           </div>
         </div>
 
@@ -154,7 +154,7 @@ export const AdminMediaPage: React.FC = () => {
       </form>}
 
       {loading ? (
-        <div className="py-20 text-center font-mono text-xs text-forest">Đang tải thư viện media...</div>
+        <HeritageLoader variant="section" size="md" message="Đang tải thư viện media di sản..." />
       ) : filteredMedia.length === 0 ? (
         <div className="border border-dashed border-paper-border py-14 text-center text-sm text-charcoal-muted">Chưa có tệp phù hợp trong thư viện.</div>
       ) : (

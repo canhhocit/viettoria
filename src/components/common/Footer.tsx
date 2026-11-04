@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, MapPin, Share2, Camera, ArrowUpRight } from 'lucide-react';
+import { Mail, MapPin, Share2, Camera, HelpingHandIcon } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   return (
@@ -20,11 +20,7 @@ export const Footer: React.FC = () => {
             <p className="font-serif text-xs sm:text-sm text-[#554231] leading-relaxed max-w-sm">
               Tái hiện kiệt tác kiến trúc Việt Nam dưới dạng mô hình in 3D tinh xảo kết hợp nền tảng số hóa tương tác đa giác quan, đưa câu chuyện sử Việt đến gần hơn với mọi thế hệ.
             </p>
-            <div className="pt-1">
-              <span className="seal-stamp px-3 py-1 font-mono text-[10px] tracking-widest font-semibold rounded-[1px]">
-                VIETTORIA ATELIER • DI SẢN ĐẠI VIỆT
-              </span>
-            </div>
+            
           </div>
 
           {/* Column 2: 5 Monuments Collection */}
@@ -69,15 +65,17 @@ export const Footer: React.FC = () => {
                   <span className="font-mono text-[11px] opacity-70">Thừa Thiên Huế</span>
                 </Link>
               </li>
+              
               <li>
                 <Link
-                  to="/products/ben-nha-rong"
+                  to="/products"
                   className="text-[#4e3c2c] hover:text-[#745C42] hover:underline transition-colors flex items-center justify-between pr-4"
                 >
-                  <span>Bến Nhà Rồng</span>
-                  <span className="font-mono text-[11px] opacity-70">TP. Hồ Chí Minh</span>
+                  <span>Tác phẩm khác</span>
+                  <span className="font-mono text-[11px] opacity-70">Khám phá ngay</span>
                 </Link>
               </li>
+
             </ul>
           </div>
 
@@ -131,6 +129,10 @@ export const Footer: React.FC = () => {
                 <MapPin className="w-3.5 h-3.5 text-[#745C42] shrink-0 mt-0.5" />
                 <span>Hà Nội, Việt Nam</span>
               </div>
+              <div className="flex items-start gap-2">
+                <HelpingHandIcon className="w-3.5 h-3.5 text-[#745C42] shrink-0 mt-0.5" />
+                <span>Hỗ trợ 24/7</span>
+              </div>
             </div>
 
             {/* Social & Action Button */}
@@ -147,13 +149,7 @@ export const Footer: React.FC = () => {
               >
                 <Camera className="w-3.5 h-3.5" />
               </button>
-              <Link
-                to="/products"
-                className="inline-flex items-center gap-1.5 border border-[#745C42] bg-[#745C42] px-3.5 py-1.5 text-xs font-medium text-white hover:bg-[#5f4a38] transition-all rounded-[2px] shadow-xs"
-              >
-                <span className="font-mono uppercase tracking-wider text-[11px]">Khám phá ngay</span>
-                <ArrowUpRight className="w-3.5 h-3.5 text-white" />
-              </Link>
+              
             </div>
           </div>
         </div>

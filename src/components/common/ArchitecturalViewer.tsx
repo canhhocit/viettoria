@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Maximize2, Eye, ShieldCheck, Ruler, Layers, X, ZoomIn, Box } from 'lucide-react';
 import type { Product } from '../../types';
 import { resolve3DModelUrl, resolveImageUrl, handleImageFallback, VIETTORIA_IMAGES } from '../../utils/mediaResolver';
+import { HeritageSpinner } from './HeritageLoader';
 
 interface ArchitecturalViewerProps {
   product: Product;
@@ -36,7 +37,7 @@ export const ArchitecturalViewer: React.FC<ArchitecturalViewerProps> = ({ produc
     },
     ...rawGallery.map((img, idx) => ({
       title: `Góc Khảo Cứu & Cấu Kiện 0${idx + 2}`,
-      caption: 'Tỉ lệ kết cấu mộng ngàm xà nách, đầu đao uốn cong thanh thoát',
+      caption: 'Tỉ lệ kết cấu hệ thống xà nách, đầu đao uốn cong thanh thoát',
       src: resolveImageUrl(img, VIETTORIA_IMAGES.monumentDetail1),
     })),
   ];
@@ -104,6 +105,14 @@ export const ArchitecturalViewer: React.FC<ArchitecturalViewerProps> = ({ produc
             loading="lazy"
             style={{ width: '100%', height: '100%', backgroundColor: '#FAF7F0' }}
           >
+            {/* Progress Bar Slot when loading 3D model */}
+            <div slot="progress-bar" className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-paper/85 backdrop-blur-md">
+              <HeritageSpinner size="lg" />
+              <p className="mt-3 font-mono text-xs uppercase tracking-widest text-forest font-semibold">
+                Đang nạp mô hình 3D Draco...
+              </p>
+            </div>
+
             {/* Fallback Slot inside model-viewer if WebGL is disabled */}
             <div slot="poster" className="w-full h-full flex items-center justify-center bg-[#FAF7F0]">
               <img
@@ -122,13 +131,7 @@ export const ArchitecturalViewer: React.FC<ArchitecturalViewerProps> = ({ produc
             <span>Tệp 3D Draco Chuẩn PBR</span>
           </div>
 
-          {/* Bottom Floating Control Hint */}
-          <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between pointer-events-none">
-            <div className="bg-[#142820]/85 backdrop-blur-sm border border-white/15 text-white px-3 py-1.5 text-xs font-mono tracking-wider max-w-[85%] rounded-[2px]">
-              <span className="text-[#B88A38] font-bold">Tương tác 3D:</span>{' '}
-              <span className="text-white/80 font-light hidden sm:inline">Kéo chuột để xoay 360°, cuộn để phóng to/thu nhỏ</span>
-            </div>
-          </div>
+          
         </div>
       ) : (
         /* Photographic Inspection Viewport */

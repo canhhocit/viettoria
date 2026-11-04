@@ -3,6 +3,7 @@ import { AlertCircle, Check, FileText, Headphones, Loader2, Mic, Save, Search, T
 import { adminApi } from '../../services/api';
 import type { AudioGuideData, Product } from '../../types';
 import { resolveAudioUrl } from '../../utils/mediaResolver';
+import { HeritageLoader } from '../../components/common/HeritageLoader';
 
 const emptyGuide = (productName: string): AudioGuideData => ({
   title: `Lời kể về ${productName}`,
@@ -171,7 +172,14 @@ export const AdminAudioGuidesPage: React.FC = () => {
             </label>
           </div>
           <div className="max-h-[68vh] overflow-y-auto">
-            {loading ? <p className="p-6 text-center font-mono text-xs text-charcoal-muted">Đang tải công trình...</p> : filteredProducts.length === 0 ? (
+            {loading ? (
+              <HeritageLoader
+                variant="section"
+                size="sm"
+                message="Đang tải công trình..."
+                className="py-8"
+              />
+            ) : filteredProducts.length === 0 ? (
               <p className="p-6 text-center text-sm text-charcoal-muted">Không tìm thấy công trình.</p>
             ) : filteredProducts.map((product) => {
               const hasAudio = Boolean(product.audioGuide?.audioUrl?.trim());

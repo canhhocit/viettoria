@@ -11,7 +11,8 @@ import {
   Shield, 
   Menu, 
   X,
-  Eye
+  Eye,
+  Headphones
 } from 'lucide-react';
 import { adminApi } from '../services/api';
 import { resolveAvatarUrl } from '../utils/mediaResolver';
@@ -47,6 +48,7 @@ export const AdminLayout: React.FC = () => {
   const navItems = [
     { to: '/admin/dashboard', icon: LayoutDashboard, label: 'Tổng Quan' },
     { to: '/admin/products', icon: Box, label: 'Mô Hình & Stories' },
+    { to: '/admin/audio-guides', icon: Headphones, label: 'Hướng Dẫn Viên Audio' },
     { to: '/admin/collections', icon: Layers, label: 'Bộ Sưu Tập' },
     { to: '/admin/blogs', icon: FileText, label: 'Góc Văn Hóa' },
     { to: '/admin/media', icon: Image, label: 'Thư Viện Media' },

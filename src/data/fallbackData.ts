@@ -67,7 +67,7 @@ export const FALLBACK_PRODUCTS: Product[] = [
     audioGuide: {
       title: 'Hào Khí Thăng Long & Giấc Mơ Đài Sen',
       duration: '03:15',
-      audioUrl: '/audio/chua-mot-cot-audio-guide.mp3',
+      audioUrl: '',
       narrator: 'Nghệ nhân Thuyết minh Viettoria (Giọng Hà Nội truyền cảm)',
       transcript: 'Mùa đông năm 1049, kinh thành Thăng Long sương sớm bảng lảng. Vua Lý Thái Tông mộng thấy Phật Bà Quan Âm ngự trên tòa sen dắt vua bước lên. Khi tỉnh giấc, triều thần bàn việc lập chùa Diên Hựu giữa lòng hồ Linh Chiểu với trụ đá vươn cao như đóa hoa sen thanh tịnh, cầu chúc cho xã tắc trường thọ thái bình nghìn thu.'
     },
@@ -105,7 +105,7 @@ export const FALLBACK_PRODUCTS: Product[] = [
     audioGuide: {
       title: 'Sao Khuê Tỏa Sáng Đất Tràng An',
       duration: '02:45',
-      audioUrl: '/audio/khue-van-cac-audio-guide.mp3',
+      audioUrl: '',
       narrator: 'Thuyết minh Viettoria Atelier',
       transcript: 'Khuê Văn Các soi bóng xuống giếng Thiên Quang phẳng lặng như gương soi lòng kẻ sĩ. Công trình được Tổng trấn Nguyễn Văn Thành cho dựng năm 1805, tượng trưng cho nền học vấn thanh cao và truyền thống tôn sư trọng đạo của dân tộc.'
     },
@@ -142,7 +142,7 @@ export const FALLBACK_PRODUCTS: Product[] = [
     audioGuide: {
       title: 'Hào Khí Kỳ Đài Thăng Long',
       duration: '02:30',
-      audioUrl: '/audio/cot-co-audio-guide.mp3',
+      audioUrl: '',
       narrator: 'Thuyết minh Viettoria Atelier',
       transcript: 'Kỳ đài Hà Nội xây dựng năm 1812, là một trong số ít công trình còn nguyên vẹn trong khuôn viên Hoàng thành Thăng Long, ghi dấu thời khắc thiêng liêng ngày giải phóng Thủ đô 10/10/1954.'
     },
@@ -180,7 +180,7 @@ export const FALLBACK_PRODUCTS: Product[] = [
     audioGuide: {
       title: 'Âm Sắc Cung Đình Bên Dòng Hương Giang',
       duration: '03:10',
-      audioUrl: '/audio/ngo-mon-audio-guide.mp3',
+      audioUrl: '',
       narrator: 'Thuyết minh Cố Đô Viettoria',
       transcript: 'Ngọ Môn nhìn về hướng nam theo dịch lý, nơi hội tụ ánh sáng và quyền uy vương triều. Phía trên là Lầu Ngũ Phụng, nơi tổ chức các đại lễ truyền lô, ban sóc và là nơi chứng kiến sự kiện thoái vị năm 1945.'
     },
@@ -218,7 +218,7 @@ export const FALLBACK_PRODUCTS: Product[] = [
     audioGuide: {
       title: 'Khúc Tráng Ca Trên Bến Cảng Sài Gòn',
       duration: '02:50',
-      audioUrl: '/audio/ben-nha-rong-audio-guide.mp3',
+      audioUrl: '',
       narrator: 'Thuyết minh Viettoria Atelier',
       transcript: 'Ngày 5 tháng 6 năm 1911, con tàu Đô đốc Latouche-Tréville rời bến cảng Sài Gòn chở theo khát vọng độc lập tự do cháy bỏng của người thanh niên 21 tuổi Nguyễn Tất Thành.'
     },

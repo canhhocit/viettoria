@@ -42,6 +42,54 @@
   background-color: #B88A44;
 }
 
+.audio-guide-emblem.is-speaking {
+  box-shadow: 0 0 0 5px rgba(184, 138, 68, 0.08);
+}
+
+.audio-guide-wave span {
+  width: 2px;
+  height: 5px;
+  background: #142820;
+  transform-origin: center bottom;
+}
+
+.audio-guide-emblem.is-speaking .audio-guide-wave span {
+  animation: audio-guide-wave 850ms ease-in-out infinite alternate;
+}
+
+.audio-guide-emblem.is-speaking .audio-guide-wave span:nth-child(2) { animation-delay: 90ms; }
+.audio-guide-emblem.is-speaking .audio-guide-wave span:nth-child(3) { animation-delay: 180ms; }
+.audio-guide-emblem.is-speaking .audio-guide-wave span:nth-child(4) { animation-delay: 270ms; }
+.audio-guide-emblem.is-speaking .audio-guide-wave span:nth-child(5) { animation-delay: 360ms; }
+
+@keyframes audio-guide-wave {
+  from { transform: scaleY(0.55); }
+  to { transform: scaleY(2.2); }
+}
+
+.audio-guide-seek {
+  height: 4px;
+  appearance: none;
+  background: rgba(250, 247, 240, 0.27);
+}
+
+.audio-guide-seek::-webkit-slider-thumb {
+  width: 14px;
+  height: 14px;
+  appearance: none;
+  border: 2px solid #142820;
+  background: #D4AF67;
+  cursor: pointer;
+}
+
+.audio-guide-seek::-moz-range-thumb {
+  width: 10px;
+  height: 10px;
+  border: 2px solid #142820;
+  background: #D4AF67;
+  cursor: pointer;
+}
+
 .home-reveal-ready [data-home-reveal] {
   opacity: 0;
   transform: translate3d(0, 18px, 0);
@@ -68,6 +116,7 @@
 @media (prefers-reduced-motion: reduce) {
   .home-dong-son { animation: none; }
   .home-reveal-ready [data-home-reveal] { opacity: 1; transform: none; transition: none; }
+  .audio-guide-emblem.is-speaking .audio-guide-wave span { animation: none; }
 }
 
 @layer base {

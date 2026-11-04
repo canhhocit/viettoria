@@ -160,6 +160,18 @@ export function resolveImageUrl(
   return clean.startsWith('/') ? clean : `/${clean}`;
 }
 
+/** Resolve audio URLs from Cloudinary, backend uploads, or local public assets. */
+export function resolveAudioUrl(audioPath?: string | null): string {
+  if (!audioPath || audioPath.trim() === '') return '';
+  const clean = audioPath.trim();
+  if (clean.startsWith('http://') || clean.startsWith('https://') || clean.startsWith('blob:')) return clean;
+  if (clean.startsWith('/uploads/') || clean.startsWith('uploads/')) {
+    const sub = clean.startsWith('/') ? clean : `/${clean}`;
+    return `${BACKEND_HOST}${sub}`;
+  }
+  return clean.startsWith('/') ? clean : `/${clean}`;
+}
+
 /**
  * Phân giải đường dẫn Avatar người dùng hoặc nghệ nhân
  * Fallback mặc định về /viettoria_img/IMG_5791.PNG

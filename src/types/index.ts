@@ -112,7 +112,7 @@ export interface MediaItem {
   fileSize: number;
   url: string;
   publicId?: string | null;
-  resourceType?: 'image' | 'raw' | null;
+  resourceType?: 'image' | 'raw' | 'video' | null;
   altText: string;
   uploadedAt: string;
 }
@@ -124,7 +124,7 @@ export interface CloudinaryUploadSignature {
   signature: string;
   folder: string;
   publicId: string;
-  resourceType: 'image' | 'raw';
+  resourceType: 'image' | 'raw' | 'video';
   overwrite: boolean;
 }
 

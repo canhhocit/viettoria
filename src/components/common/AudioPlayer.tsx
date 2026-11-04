@@ -1,294 +1,227 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Play, Pause, Volume2, VolumeX, FileText, ChevronDown, ChevronUp, Headphones, RotateCcw, X, ArrowUp } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { ArrowUp, ChevronDown, ChevronUp, FileText, Headphones, Pause, Play, RotateCcw, Volume2, VolumeX, X } from 'lucide-react';
 import type { AudioGuideData } from '../../types';
+import { resolveAudioUrl } from '../../utils/mediaResolver';
 
 interface AudioPlayerProps {
   audioGuide: AudioGuideData;
   heritageName: string;
 }
 
+const parseDuration = (value?: string) => {
+  if (!value) return 0;
+  const parts = value.split(':').map(Number);
+  if (parts.some((part) => !Number.isFinite(part))) return 0;
+  return parts.length === 3 ? parts[0] * 3600 + parts[1] * 60 + parts[2] : parts.length === 2 ? parts[0] * 60 + parts[1] : parts[0] || 0;
+};
+
+const formatTime = (seconds: number) => {
+  if (!Number.isFinite(seconds) || seconds < 0) return '00:00';
+  const wholeSeconds = Math.floor(seconds);
+  const hours = Math.floor(wholeSeconds / 3600);
+  const minutes = Math.floor((wholeSeconds % 3600) / 60);
+  const remainder = wholeSeconds % 60;
+  return hours > 0
+    ? `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${remainder.toString().padStart(2, '0')}`
+    : `${minutes.toString().padStart(2, '0')}:${remainder.toString().padStart(2, '0')}`;
+};
+
 export const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioGuide, heritageName }) => {
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(275); // 04:35 default if metadata not loaded
   const [isMuted, setIsMuted] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(() => parseDuration(audioGuide.duration));
   const [showTranscript, setShowTranscript] = useState(false);
   const [isOutOfView, setIsOutOfView] = useState(false);
   const [dismissSticky, setDismissSticky] = useState(false);
+  const [audioError, setAudioError] = useState(false);
 
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const containerRef = useRef<HTMLDivElement | null>(null);
+  const audioUrl = resolveAudioUrl(audioGuide.audioUrl);
+  const hasAudio = Boolean(audioUrl);
 
-  // Monitor visibility of main audio container
   useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsOutOfView(!entry.isIntersecting);
-      },
-      { threshold: 0.1 }
-    );
-
-    observer.observe(el);
+    const element = containerRef.current;
+    if (!element || typeof IntersectionObserver === 'undefined') return;
+    const observer = new IntersectionObserver(([entry]) => setIsOutOfView(!entry.isIntersecting), { threshold: 0.1 });
+    observer.observe(element);
     return () => observer.disconnect();
   }, []);
 
-  // Format seconds to mm:ss
-  const formatTime = (secs: number) => {
-    const minutes = Math.floor(secs / 60);
-    const seconds = Math.floor(secs % 60);
-    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-  };
+  useEffect(() => {
+    setIsPlaying(false);
+    setCurrentTime(0);
+    setDuration(parseDuration(audioGuide.duration));
+    setAudioError(false);
+    setDismissSticky(false);
+    if (audioRef.current) audioRef.current.pause();
+  }, [audioUrl, audioGuide.duration]);
 
-  const togglePlay = () => {
-    if (!audioRef.current) return;
-    if (isPlaying) {
-      audioRef.current.pause();
-      setIsPlaying(false);
+  const togglePlay = async () => {
+    const audio = audioRef.current;
+    if (!audio || !hasAudio || audioError) return;
+    setDismissSticky(false);
+    if (audio.paused) {
+      try {
+        await audio.play();
+      } catch {
+        setAudioError(true);
+        setIsPlaying(false);
+      }
     } else {
-      audioRef.current.play().catch(() => {
-        setIsPlaying(true);
-      });
-      setIsPlaying(true);
-      setDismissSticky(false);
+      audio.pause();
     }
   };
 
-  const handleTimeUpdate = () => {
-    if (audioRef.current) {
-      setCurrentTime(audioRef.current.currentTime);
-    }
-  };
-
-  const handleLoadedMetadata = () => {
-    if (audioRef.current && !isNaN(audioRef.current.duration)) {
-      setDuration(audioRef.current.duration);
-    }
-  };
-
-  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const time = parseFloat(e.target.value);
-    setCurrentTime(time);
-    if (audioRef.current) {
-      audioRef.current.currentTime = time;
-    }
-  };
-
-  const toggleMute = () => {
-    if (audioRef.current) {
-      audioRef.current.muted = !isMuted;
-      setIsMuted(!isMuted);
-    }
+  const seek = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const nextTime = Number(event.target.value);
+    setCurrentTime(nextTime);
+    if (audioRef.current && Number.isFinite(nextTime)) audioRef.current.currentTime = nextTime;
   };
 
   const handleReset = () => {
-    if (audioRef.current) {
-      audioRef.current.currentTime = 0;
-      setCurrentTime(0);
-    }
+    if (!audioRef.current || !hasAudio) return;
+    audioRef.current.currentTime = 0;
+    setCurrentTime(0);
   };
 
-  const scrollToMainPlayer = () => {
-    containerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  const toggleMute = () => {
+    if (!audioRef.current || !hasAudio) return;
+    const muted = !audioRef.current.muted;
+    audioRef.current.muted = muted;
+    setIsMuted(muted);
   };
 
-  // Simulating time progress if dummy audio file doesn't stream
-  useEffect(() => {
-    let interval: ReturnType<typeof setInterval>;
-    if (isPlaying && (!audioRef.current || audioRef.current.paused)) {
-      interval = setInterval(() => {
-        setCurrentTime((prev) => {
-          if (prev >= duration) {
-            setIsPlaying(false);
-            return 0;
-          }
-          return prev + 1;
-        });
-      }, 1000);
-    }
-    return () => clearInterval(interval);
-  }, [isPlaying, duration]);
-
-  const showStickyBar = isPlaying && isOutOfView && !dismissSticky;
+  const scrollToPlayer = () => containerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  const stickyPlayerVisible = isPlaying && isOutOfView && !dismissSticky;
+  const durationLabel = duration > 0 ? formatTime(duration) : (audioGuide.duration || '—:—');
+  const progressPercent = duration > 0 ? Math.min(100, (currentTime / duration) * 100) : 0;
 
   return (
     <>
-      <div 
-        ref={containerRef}
-        className="bg-forest text-paper border border-brass/40 shadow-xl overflow-hidden corner-frame"
-      >
-        <audio
-          ref={audioRef}
-          src={audioGuide.audioUrl}
-          onTimeUpdate={handleTimeUpdate}
-          onLoadedMetadata={handleLoadedMetadata}
-          onEnded={() => setIsPlaying(false)}
-          preload="metadata"
-        />
+      <section ref={containerRef} className="overflow-hidden border border-[#B88A44]/55 bg-[#142820] text-[#FAF7F0] shadow-lg">
+        {hasAudio && (
+          <audio
+            key={audioUrl}
+            ref={audioRef}
+            src={audioUrl}
+            preload="metadata"
+            onPlay={() => setIsPlaying(true)}
+            onPause={() => setIsPlaying(false)}
+            onTimeUpdate={(event) => setCurrentTime(event.currentTarget.currentTime)}
+            onLoadedMetadata={(event) => {
+              const actualDuration = event.currentTarget.duration;
+              if (Number.isFinite(actualDuration)) setDuration(actualDuration);
+            }}
+            onDurationChange={(event) => {
+              const actualDuration = event.currentTarget.duration;
+              if (Number.isFinite(actualDuration)) setDuration(actualDuration);
+            }}
+            onEnded={() => setIsPlaying(false)}
+            onError={() => { setAudioError(true); setIsPlaying(false); }}
+          />
+        )}
 
-        {/* Main Player Bar */}
-        <div className="p-6 sm:p-8">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            {/* Identity & Title */}
-            <div className="space-y-1.5 max-w-xl">
-              <div className="flex items-center gap-2 text-brass text-[11px] font-mono tracking-widest uppercase">
-                <Headphones className="w-3.5 h-3.5" />
-                <span>Chuyên Mục Thuyết Minh Di Sản Độc Quyền</span>
+        <div className="grid lg:grid-cols-[220px_minmax(0,1fr)]">
+          <aside className="flex flex-row items-center gap-4 border-b border-[#FAF7F0]/10 bg-[#0D1C16] px-5 py-5 lg:flex-col lg:items-start lg:justify-between lg:border-b-0 lg:border-r lg:border-[#FAF7F0]/10 lg:px-6 lg:py-7">
+            <div className={`audio-guide-emblem relative flex h-[62px] w-[62px] shrink-0 items-center justify-center border border-[#B88A44]/55 bg-[#142820] text-[#D4AF67] ${isPlaying ? 'is-speaking' : ''}`} aria-hidden="true">
+              <Headphones className="h-6 w-6" strokeWidth={1.5} />
+              <div className="audio-guide-wave absolute -bottom-2 -right-2 flex h-7 items-center gap-[3px] border border-[#142820] bg-[#B88A44] px-1.5">
+                {[0, 1, 2, 3, 4].map((bar) => <span key={bar} />)}
               </div>
-              <h3 className="font-serif text-xl sm:text-2xl font-bold text-paper tracking-wide">
-                {audioGuide.title}
-              </h3>
-              <p className="text-xs text-paper/70 font-light">
-                Lời dẫn: <span className="text-brass-light font-medium">{audioGuide.narrator || 'Ban Cố Vấn Nghiên Cứu Lịch Sử'}</span> • Thời lượng chuẩn: <span className="font-mono">{audioGuide.duration}</span>
+            </div>
+            <div className="min-w-0 lg:mt-auto">
+              <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#D4AF67]">Hướng dẫn viên di sản</p>
+              <p className="mt-1 truncate font-serif text-base font-semibold text-[#FAF7F0]">{audioGuide.narrator || 'Viettoria'}</p>
+              <p className="mt-2 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-wider text-[#FAF7F0]/55" role="status">
+                <span className={`h-1.5 w-1.5 ${isPlaying ? 'bg-[#D4AF67]' : hasAudio && !audioError ? 'bg-[#7E9A75]' : 'bg-[#9C3D28]'}`} />
+                {isPlaying ? 'Đang kể chuyện' : audioError ? 'Bản thu lỗi' : hasAudio ? 'Sẵn sàng dẫn chuyện' : 'Đang chờ bản thu'}
               </p>
             </div>
+          </aside>
 
-            {/* Controls */}
-            <div className="flex items-center gap-4">
-              <button
-                onClick={handleReset}
-                className="p-2 border border-paper/20 hover:border-brass text-paper/80 hover:text-brass transition-colors"
-                title="Phát lại từ đầu"
-              >
-                <RotateCcw className="w-4 h-4" />
-              </button>
+          <div className="min-w-0 p-5 sm:p-7 lg:p-8">
+            <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-start">
+              <div className="min-w-0 max-w-2xl">
+                <p className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-[#D4AF67] sm:text-[11px]">
+                  <span className="h-px w-5 bg-[#B88A44]" />
+                  Chuyện kể tại {heritageName}
+                </p>
+                <h3 className="mt-3 font-display text-2xl leading-tight text-[#FAF7F0] sm:text-3xl">{audioGuide.title || `Lời kể về ${heritageName}`}</h3>
+                <p className="mt-2 text-xs leading-5 text-[#FAF7F0]/65">
+                  Giọng đọc <span className="text-[#E3C989]">{audioGuide.narrator || 'Hướng dẫn viên Viettoria'}</span>
+                  <span className="mx-2 text-[#B88A44]">·</span>
+                  Thời lượng <span className="font-mono text-[#FAF7F0]/80">{durationLabel}</span>
+                </p>
+              </div>
 
-              <button
-                onClick={togglePlay}
-                className="w-14 h-14 flex items-center justify-center bg-brass text-forest hover:bg-brass-light transition-colors shadow-lg group focus:outline-none"
-                aria-label={isPlaying ? 'Tạm dừng thuyết minh' : 'Nghe thuyết minh di sản'}
-              >
-                {isPlaying ? (
-                  <Pause className="w-6 h-6 fill-current" />
-                ) : (
-                  <Play className="w-6 h-6 fill-current ml-1" />
-                )}
-              </button>
-
-              <button
-                onClick={toggleMute}
-                className="p-2 border border-paper/20 hover:border-brass text-paper/80 hover:text-brass transition-colors"
-                title={isMuted ? 'Bật âm thanh' : 'Tắt tiếng'}
-              >
-                {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-              </button>
+              <div className="flex shrink-0 items-center gap-3 sm:pt-2">
+                <button type="button" onClick={handleReset} disabled={!hasAudio || audioError} className="flex h-10 w-10 items-center justify-center border border-[#FAF7F0]/20 text-[#FAF7F0]/75 transition-colors hover:border-[#B88A44] hover:text-[#D4AF67] disabled:cursor-not-allowed disabled:opacity-35" title="Phát lại từ đầu" aria-label="Phát lại từ đầu">
+                  <RotateCcw className="h-4 w-4" strokeWidth={1.5} />
+                </button>
+                <button type="button" onClick={() => void togglePlay()} disabled={!hasAudio || audioError} className="flex h-14 w-14 items-center justify-center bg-[#B88A44] text-[#142820] transition-colors hover:bg-[#D4AF67] disabled:cursor-not-allowed disabled:opacity-40" aria-label={isPlaying ? 'Tạm dừng thuyết minh' : 'Nghe thuyết minh'}>
+                  {isPlaying ? <Pause className="h-6 w-6 fill-current" /> : <Play className="ml-1 h-6 w-6 fill-current" />}
+                </button>
+                <button type="button" onClick={toggleMute} disabled={!hasAudio || audioError} className="flex h-10 w-10 items-center justify-center border border-[#FAF7F0]/20 text-[#FAF7F0]/75 transition-colors hover:border-[#B88A44] hover:text-[#D4AF67] disabled:cursor-not-allowed disabled:opacity-35" title={isMuted ? 'Bật âm thanh' : 'Tắt tiếng'} aria-label={isMuted ? 'Bật âm thanh' : 'Tắt tiếng'}>
+                  {isMuted ? <VolumeX className="h-4 w-4" strokeWidth={1.5} /> : <Volume2 className="h-4 w-4" strokeWidth={1.5} />}
+                </button>
+              </div>
             </div>
-          </div>
 
-          {/* Scrubber Progress Bar */}
-          <div className="mt-6 space-y-2">
-            <input
-              type="range"
-              min="0"
-              max={duration || 100}
-              value={currentTime}
-              onChange={handleSeek}
-              className="w-full h-1.5 bg-paper/20 accent-brass cursor-pointer"
-              aria-label="Tiến trình âm thanh"
-            />
-            <div className="flex justify-between items-center text-[11px] font-mono text-paper/60">
-              <span>{formatTime(currentTime)}</span>
-              <span>{formatTime(duration)}</span>
+            <div className="mt-7">
+              <input type="range" min={0} max={Math.max(duration, 1)} step="0.1" value={Math.min(currentTime, Math.max(duration, 1))} onChange={seek} disabled={!hasAudio || audioError || duration <= 0} style={{ background: `linear-gradient(90deg, #B88A44 ${progressPercent}%, rgba(250,247,240,0.27) ${progressPercent}%)` }} className="audio-guide-seek w-full cursor-pointer disabled:cursor-not-allowed disabled:opacity-40" aria-label="Tiến trình thuyết minh" />
+              <div className="mt-2 flex justify-between font-mono text-[11px] text-[#FAF7F0]/60">
+                <span>{formatTime(currentTime)}</span>
+                <span>{durationLabel}</span>
+              </div>
             </div>
-          </div>
 
-          {/* Toggle Transcript Button */}
-          <div className="mt-6 pt-4 border-t border-paper/10 flex items-center justify-between">
-            <button
-              onClick={() => setShowTranscript(!showTranscript)}
-              className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-brass hover:text-brass-light transition-colors"
-            >
-              <FileText className="w-4 h-4" />
-              <span>{showTranscript ? 'Thu Gọn Bản Lời Thoại' : 'Xem Trọn Vẹn Bản Lời Thoại Thuyết Minh'}</span>
-              {showTranscript ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-            </button>
-            <span className="text-[10px] font-mono text-paper/40 uppercase hidden sm:inline">
-              Tư liệu nghiên cứu lịch sử thẩm định
-            </span>
+            {!hasAudio || audioError ? (
+              <p className="mt-4 border-t border-[#FAF7F0]/10 pt-3 text-xs leading-relaxed text-[#FAF7F0]/60" role="status">
+                {audioError ? 'Không tải được bản thu này. Vui lòng báo quản trị viên kiểm tra URL audio.' : 'Bản thu đang được chuẩn bị. Bạn có thể đọc lời thoại bên dưới.'}
+              </p>
+            ) : null}
+
+            <div className="mt-5 flex flex-col justify-between gap-3 border-t border-[#FAF7F0]/10 pt-4 sm:flex-row sm:items-center">
+              <button type="button" onClick={() => setShowTranscript((shown) => !shown)} aria-expanded={showTranscript} className="inline-flex items-center gap-2 text-left font-mono text-[10px] uppercase tracking-[0.12em] text-[#D4AF67] transition-colors hover:text-[#FAF7F0] sm:text-[11px]">
+                <FileText className="h-4 w-4" strokeWidth={1.5} />
+                {showTranscript ? 'Thu gọn lời dẫn' : 'Đọc toàn bộ lời dẫn'}
+                {showTranscript ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+              </button>
+              <span className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#FAF7F0]/40">Tư liệu thuyết minh · Viettoria</span>
+            </div>
           </div>
         </div>
 
-        {/* Expandable Transcript Drawer */}
         {showTranscript && (
-          <div className="bg-forest-dark border-t border-brass/30 p-6 sm:p-8 animate-fadeIn">
-            <div className="max-w-3xl mx-auto space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-paper/10">
-                <h4 className="font-serif text-sm font-bold text-brass uppercase tracking-widest">
-                  Văn Bản Gốc — {heritageName}
-                </h4>
-                <span className="text-[10px] font-mono text-paper/50 uppercase">Ngữ liệu thuyết minh</span>
-              </div>
-              <div className="prose prose-invert max-w-none text-xs sm:text-sm text-paper/85 leading-relaxed font-light whitespace-pre-line max-h-96 overflow-y-auto pr-3">
-                {audioGuide.transcript}
-              </div>
+          <div className="border-t border-[#B88A44]/35 bg-[#0D1C16] px-5 py-5 sm:px-8 sm:py-7 animate-fade-up">
+            <div className="mx-auto max-w-4xl">
+              <h4 className="font-mono text-[10px] uppercase tracking-[0.17em] text-[#D4AF67]">Lời dẫn · {heritageName}</h4>
+              {audioGuide.transcript?.trim() ? (
+                <p className="mt-4 whitespace-pre-line font-serif text-sm leading-7 text-[#FAF7F0]/85 sm:text-base sm:leading-8">{audioGuide.transcript}</p>
+              ) : (
+                <p className="mt-4 text-sm text-[#FAF7F0]/55">Bản chép lời đang được cập nhật.</p>
+              )}
             </div>
           </div>
         )}
-      </div>
+      </section>
 
-      {/* Persistent Sticky Mini Player Bar (When scrolled away while playing) */}
-      {showStickyBar && (
-        <div 
-          className="fixed bottom-0 left-0 right-0 z-40 bg-forest-dark/95 border-t border-brass/50 backdrop-blur-md text-paper px-4 sm:px-8 py-2.5 shadow-2xl animate-fade-up"
-          role="region"
-          aria-label="Thanh phát thanh mini"
-        >
-          <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
-            {/* Title & Heritage Info */}
-            <div className="flex items-center gap-3 min-w-0">
-              <span className="w-2 h-2 bg-brass inline-block animate-ping" />
-              <div className="truncate">
-                <div className="text-[10px] font-mono uppercase text-brass tracking-widest">
-                  Đang phát thuyết minh • {heritageName}
-                </div>
-                <div className="font-serif text-xs sm:text-sm font-bold text-paper truncate">
-                  {audioGuide.title}
-                </div>
-              </div>
+      {stickyPlayerVisible && (
+        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-[#B88A44]/55 bg-[#0D1C16] px-4 py-3 text-[#FAF7F0] shadow-2xl animate-fade-up" role="region" aria-label="Hướng dẫn viên audio đang phát">
+          <div className="mx-auto flex max-w-7xl items-center gap-3 sm:gap-5">
+            <div className="hidden h-9 w-9 shrink-0 items-center justify-center border border-[#B88A44]/50 text-[#D4AF67] sm:flex"><Headphones className="h-4 w-4" /></div>
+            <div className="min-w-0 flex-1">
+              <p className="truncate font-serif text-sm font-semibold">{audioGuide.title}</p>
+              <p className="mt-0.5 truncate font-mono text-[9px] uppercase tracking-wider text-[#D4AF67]">Đang dẫn chuyện · {heritageName}</p>
             </div>
-
-            {/* Quick Controls & Scrubber */}
-            <div className="flex items-center gap-4 shrink-0">
-              <span className="font-mono text-xs text-paper/70 hidden md:inline">
-                {formatTime(currentTime)} / {formatTime(duration)}
-              </span>
-
-              <button
-                onClick={togglePlay}
-                className="w-9 h-9 flex items-center justify-center bg-brass text-forest hover:bg-brass-light transition-colors shadow-sm"
-                aria-label={isPlaying ? 'Tạm dừng' : 'Tiếp tục phát'}
-              >
-                {isPlaying ? <Pause className="w-4 h-4 fill-current" /> : <Play className="w-4 h-4 fill-current ml-0.5" />}
-              </button>
-
-              <button
-                onClick={scrollToMainPlayer}
-                className="p-2 border border-paper/20 hover:border-brass text-paper/80 hover:text-brass transition-colors text-xs font-mono uppercase hidden sm:flex items-center gap-1"
-                title="Quay lại khung phát chính"
-              >
-                <ArrowUp className="w-3.5 h-3.5" />
-                <span className="text-[11px]">Trình phát</span>
-              </button>
-
-              <button
-                onClick={() => setDismissSticky(true)}
-                className="p-1.5 text-paper/50 hover:text-paper transition-colors"
-                title="Đóng thanh ghim (vẫn tiếp tục nghe)"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
+            <span className="hidden font-mono text-[10px] text-[#FAF7F0]/65 md:block">{formatTime(currentTime)} / {durationLabel}</span>
+            <button type="button" onClick={() => void togglePlay()} className="flex h-9 w-9 shrink-0 items-center justify-center bg-[#B88A44] text-[#142820]" aria-label="Tạm dừng thuyết minh"><Pause className="h-4 w-4 fill-current" /></button>
+            <button type="button" onClick={scrollToPlayer} className="hidden items-center gap-1 border border-[#FAF7F0]/20 px-2.5 py-2 font-mono text-[9px] uppercase tracking-wider text-[#FAF7F0]/75 hover:border-[#B88A44] sm:flex" title="Quay lại trình phát"><ArrowUp className="h-3 w-3" />Trình phát</button>
+            <button type="button" onClick={() => setDismissSticky(true)} className="px-1.5 text-[#FAF7F0]/45 hover:text-[#FAF7F0]" aria-label="Ẩn trình phát thu gọn"><X className="h-4 w-4" strokeWidth={1.5} /></button>
           </div>
-
-          {/* Thin Progress line at top edge */}
-          <div className="absolute top-0 left-0 right-0 h-0.5 bg-paper/20">
-            <div 
-              className="h-full bg-brass transition-all duration-300"
-              style={{ width: `${(currentTime / (duration || 1)) * 100}%` }}
-            />
-          </div>
+          <div className="absolute inset-x-0 top-0 h-px bg-[#FAF7F0]/10"><div className="h-full bg-[#B88A44] transition-[width]" style={{ width: `${duration > 0 ? Math.min(100, (currentTime / duration) * 100) : 0}%` }} /></div>
         </div>
       )}
     </>

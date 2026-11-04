@@ -23,6 +23,7 @@ import AdminStoryBuilderPage from '../pages/admin/AdminStoryBuilderPage';
 import AdminCollectionsPage from '../pages/admin/AdminCollectionsPage';
 import AdminBlogsPage from '../pages/admin/AdminBlogsPage';
 import AdminMediaPage from '../pages/admin/AdminMediaPage';
+import AdminAudioGuidesPage from '../pages/admin/AdminAudioGuidesPage';
 
 export const AppRoutes: React.FC = () => {
   return (
@@ -55,6 +56,7 @@ export const AppRoutes: React.FC = () => {
         <Route index element={<Navigate to="/admin/dashboard" replace />} />
         <Route path="dashboard" element={<AdminDashboardPage />} />
         <Route path="products" element={<AdminProductsPage />} />
+        <Route path="audio-guides" element={<AdminAudioGuidesPage />} />
         <Route path="products/:id/stories" element={<AdminStoryBuilderPage />} />
         <Route path="collections" element={<AdminCollectionsPage />} />
         <Route path="blogs" element={<AdminBlogsPage />} />

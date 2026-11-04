@@ -1,24 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Box, Check, Copy, FileImage, Image, Loader2, Upload } from 'lucide-react';
+import { Box, Check, Copy, FileImage, Headphones, Image, Loader2, Upload } from 'lucide-react';
 import { adminApi } from '../../services/api';
 import type { MediaItem } from '../../types';
-import { resolveImageUrl, handleImageFallback } from '../../utils/mediaResolver';
+import { resolveAudioUrl, resolveImageUrl, handleImageFallback } from '../../utils/mediaResolver';
 
-type CloudinaryUploadResponse = {
-  secure_url?: string;
-  public_id?: string;
-  bytes?: number;
-  error?: { message?: string };
-};
-
-const getUploadKind = (file: File): { resourceType: 'image' | 'raw'; extension: string } => {
-  if (['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif'].includes(file.type)) {
-    return { resourceType: 'image', extension: file.name.split('.').pop()?.toLowerCase() || '' };
-  }
-  if (file.name.toLowerCase().endsWith('.glb')) {
-    return { resourceType: 'raw', extension: 'glb' };
-  }
-  throw new Error('Chỉ hỗ trợ ảnh (JPG, PNG, WebP, AVIF) và mô hình 3D GLB.');
+const getUploadKind = (file: File): 'image' | 'raw' | 'video' => {
+  const extension = file.name.split('.').pop()?.toLowerCase() || '';
+  if (['jpg', 'jpeg', 'png', 'webp', 'avif', 'gif'].includes(extension)) return 'image';
+  if (extension === 'glb') return 'raw';
+  if (['mp3', 'wav', 'm4a', 'ogg', 'flac'].includes(extension)) return 'video';
+  throw new Error('Chỉ hỗ trợ ảnh, mô hình 3D GLB và audio MP3, WAV, M4A, OGG hoặc FLAC.');
 };
 
 const getDisplayName = (fileName: string) => fileName.replace(/\.[^.]+$/, '');
@@ -66,52 +57,14 @@ export const AdminMediaPage: React.FC = () => {
     setError(null);
     setNotice(null);
     try {
-      const { resourceType, extension } = getUploadKind(selectedFile);
-      let uploadResult: CloudinaryUploadResponse | null = null;
-      let cloudinaryError: Error | null = null;
-      try {
-        const signature = await adminApi.createMediaUploadSignature(resourceType, extension);
-        const formData = new FormData();
-        formData.append('file', selectedFile);
-        formData.append('api_key', signature.apiKey);
-        formData.append('timestamp', String(signature.timestamp));
-        formData.append('signature', signature.signature);
-        formData.append('folder', signature.folder);
-        formData.append('public_id', signature.publicId);
-        formData.append('overwrite', String(signature.overwrite));
-
-        const uploadResponse = await fetch(
-          `https://api.cloudinary.com/v1_1/${encodeURIComponent(signature.cloudName)}/${signature.resourceType}/upload`,
-          { method: 'POST', body: formData },
-        );
-        const result = await uploadResponse.json() as CloudinaryUploadResponse;
-        if (!uploadResponse.ok || !result.secure_url || !result.public_id) {
-          throw new Error(result.error?.message || 'Cloudinary không nhận được tệp tải lên.');
-        }
-        uploadResult = result;
-      } catch (err) {
-        cloudinaryError = err instanceof Error ? err : new Error('Không thể kết nối Cloudinary.');
-      }
-
+      getUploadKind(selectedFile);
       const displayName = assetName.trim() || getDisplayName(selectedFile.name);
       const description = altText.trim();
-      const saved = uploadResult?.secure_url && uploadResult.public_id
-        ? await adminApi.saveMedia({
-          name: displayName,
-          fileName: selectedFile.name,
-          fileType: selectedFile.type || (resourceType === 'raw' ? 'model/gltf-binary' : 'application/octet-stream'),
-          fileSize: uploadResult.bytes ?? selectedFile.size,
-          url: uploadResult.secure_url,
-          publicId: uploadResult.public_id,
-          resourceType,
-          altText: description,
-        })
-        : await adminApi.uploadMediaFallback(selectedFile, displayName, description);
-
-      setNotice(cloudinaryError
-        ? `Cloudinary chưa sẵn sàng (${cloudinaryError.message}); tệp đã được lưu trên backend.`
+      const result = await adminApi.uploadMediaAsset(selectedFile, displayName, description);
+      setNotice(result.storage === 'backend'
+        ? `Cloudinary chưa sẵn sàng (${result.fallbackReason}); tệp đã được lưu trên backend.`
         : 'Tệp đã được lưu trên Cloudinary và ghi vào thư viện.');
-      setMediaList(current => [saved, ...current]);
+      setMediaList(current => [result.item, ...current]);
       setSelectedFile(null);
       setAssetName('');
       setAltText('');
@@ -169,17 +122,17 @@ export const AdminMediaPage: React.FC = () => {
           <div className="border border-brass/40 p-2 text-brass"><Upload className="w-4 h-4" /></div>
           <div>
             <h2 className="font-serif font-bold text-forest">Tải tệp lên Cloudinary</h2>
-            <p className="mt-1 text-xs leading-relaxed text-charcoal-muted">Ảnh và mô hình GLB được lưu trên Cloudinary; đường dẫn cùng thông tin tài sản được ghi vào database.</p>
+            <p className="mt-1 text-xs leading-relaxed text-charcoal-muted">Ảnh, mô hình GLB và bản thu audio được lưu trên Cloudinary; nếu upload lỗi, tệp sẽ rơi về backend.</p>
           </div>
         </div>
 
         <div className="grid gap-3 md:grid-cols-[1fr_1fr_1fr_auto] md:items-end">
           <label className="block text-[11px] font-mono uppercase tracking-wider text-charcoal-muted">
-            Tệp ảnh hoặc mô hình GLB
+            Tệp ảnh, GLB hoặc audio
             <input
               ref={fileInputRef}
               type="file"
-              accept="image/jpeg,image/png,image/webp,image/avif,image/gif,.glb"
+              accept="image/jpeg,image/png,image/webp,image/avif,image/gif,.glb,audio/mpeg,audio/wav,audio/mp4,audio/ogg,audio/flac,.mp3,.wav,.m4a,.ogg,.flac"
               onChange={event => selectFile(event.target.files?.[0])}
               className="mt-1 block w-full text-xs normal-case file:mr-2 file:border file:border-paper-border file:bg-paper-warm file:px-2 file:py-1.5 file:text-[11px] file:font-mono file:text-charcoal"
             />
@@ -208,11 +161,18 @@ export const AdminMediaPage: React.FC = () => {
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
           {filteredMedia.map(item => {
             const isModel = item.resourceType === 'raw' || (item.fileName || '').toLowerCase().endsWith('.glb');
+            const isAudio = item.resourceType === 'video' || (item.fileType || '').startsWith('audio/') || /\.(mp3|wav|m4a|ogg|flac)$/i.test(item.fileName || '');
             return (
               <article key={item.id} className="flex flex-col justify-between overflow-hidden border border-paper-border bg-paper shadow-sm group">
                 <div>
                   <div className={`relative aspect-[4/3] overflow-hidden ${isModel ? 'flex flex-col items-center justify-center gap-2 bg-forest text-paper' : 'bg-paper-warm'}`}>
-                    {isModel ? <><Box className="h-9 w-9 text-brass" /><span className="font-mono text-[10px] uppercase tracking-[0.18em]">Mô hình 3D · GLB</span></> : (
+                    {isModel ? <><Box className="h-9 w-9 text-brass" /><span className="font-mono text-[10px] uppercase tracking-[0.18em]">Mô hình 3D · GLB</span></> : isAudio ? (
+                      <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-forest px-3 text-paper">
+                        <Headphones className="h-7 w-7 text-brass" />
+                        <span className="font-mono text-[10px] uppercase tracking-[0.14em]">Bản thu hướng dẫn viên</span>
+                        <audio controls preload="metadata" src={resolveAudioUrl(item.url)} className="h-8 w-full max-w-[220px]" aria-label={`Nghe thử ${item.name}`} />
+                      </div>
+                    ) : (
                       <img src={resolveImageUrl(item.url)} alt={item.altText || item.name} onError={event => handleImageFallback(event)} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]" />
                     )}
                   </div>

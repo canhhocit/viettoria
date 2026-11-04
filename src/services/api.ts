@@ -246,6 +246,29 @@ export const publicApi = {
 };
 
 // --- ADMIN CMS API ---
+type MediaResourceType = 'image' | 'raw' | 'video';
+
+const describeMediaFile = (file: File): { resourceType: MediaResourceType; extension: string; fileType: string } => {
+  const extension = file.name.split('.').pop()?.toLowerCase() || '';
+  const imageMimeTypes: Record<string, string> = {
+    jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp', avif: 'image/avif', gif: 'image/gif',
+  };
+  const audioMimeTypes: Record<string, string> = {
+    mp3: 'audio/mpeg', wav: 'audio/wav', m4a: 'audio/mp4', ogg: 'audio/ogg', flac: 'audio/flac',
+  };
+  if (imageMimeTypes[extension]) return { resourceType: 'image', extension, fileType: file.type || imageMimeTypes[extension] };
+  if (extension === 'glb') return { resourceType: 'raw', extension, fileType: file.type || 'model/gltf-binary' };
+  if (audioMimeTypes[extension]) return { resourceType: 'video', extension, fileType: file.type || audioMimeTypes[extension] };
+  throw new Error('Tệp chỉ hỗ trợ ảnh, mô hình GLB và audio MP3, WAV, M4A, OGG hoặc FLAC.');
+};
+
+type CloudinaryMediaResponse = {
+  secure_url?: string;
+  public_id?: string;
+  bytes?: number;
+  error?: { message?: string };
+};
+
 export const adminApi = {
   async login(username: string, password: string): Promise<AdminLoginResult> {
     let response: Response;
@@ -385,7 +408,7 @@ export const adminApi = {
     return adminRequest('/admin/media');
   },
 
-  async createMediaUploadSignature(resourceType: 'image' | 'raw', fileExtension: string): Promise<CloudinaryUploadSignature> {
+  async createMediaUploadSignature(resourceType: MediaResourceType, fileExtension: string): Promise<CloudinaryUploadSignature> {
     return adminRequest('/admin/media/upload-signature', {
       method: 'POST',
       body: JSON.stringify({ resourceType, fileExtension }),
@@ -402,5 +425,49 @@ export const adminApi = {
     formData.append('name', name);
     formData.append('altText', altText);
     return adminMultipartRequest('/admin/media/fallback-upload', formData);
+  },
+
+  async uploadMediaAsset(file: File, name: string, altText: string): Promise<{ item: MediaItem; storage: 'cloudinary' | 'backend'; fallbackReason?: string }> {
+    const { resourceType, extension, fileType } = describeMediaFile(file);
+    let signature: CloudinaryUploadSignature;
+    let uploaded: CloudinaryMediaResponse;
+    try {
+      signature = await this.createMediaUploadSignature(resourceType, extension);
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('api_key', signature.apiKey);
+      formData.append('timestamp', String(signature.timestamp));
+      formData.append('signature', signature.signature);
+      formData.append('folder', signature.folder);
+      formData.append('public_id', signature.publicId);
+      formData.append('overwrite', String(signature.overwrite));
+      const response = await fetch(
+        `https://api.cloudinary.com/v1_1/${encodeURIComponent(signature.cloudName)}/${signature.resourceType}/upload`,
+        { method: 'POST', body: formData },
+      );
+      uploaded = await response.json() as CloudinaryMediaResponse;
+      if (!response.ok || !uploaded.secure_url || !uploaded.public_id) {
+        throw new Error(uploaded.error?.message || 'Cloudinary không nhận được tệp tải lên.');
+      }
+    } catch (error) {
+      const fallback = await this.uploadMediaFallback(file, name, altText);
+      return {
+        item: fallback,
+        storage: 'backend',
+        fallbackReason: error instanceof Error ? error.message : 'Không thể kết nối Cloudinary.',
+      };
+    }
+
+    const saved = await this.saveMedia({
+      name,
+      fileName: file.name,
+      fileType,
+      fileSize: uploaded.bytes ?? file.size,
+      url: uploaded.secure_url!,
+      publicId: uploaded.public_id!,
+      resourceType,
+      altText,
+    });
+    return { item: saved, storage: 'cloudinary' };
   }
 };

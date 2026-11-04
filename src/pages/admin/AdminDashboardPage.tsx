@@ -9,20 +9,23 @@ import {
 } from 'lucide-react';
 import { adminApi } from '../../services/api';
 import type { DashboardStats, Product, BlogPost } from '../../types';
+import { resolveImageUrl, handleImageFallback } from '../../utils/mediaResolver';
 
 export const AdminDashboardPage: React.FC = () => {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [recentProducts, setRecentProducts] = useState<Product[]>([]);
   const [recentBlogs, setRecentBlogs] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     adminApi.getDashboard().then((data) => {
       setStats(data.stats);
       setRecentProducts(data.recentProducts);
       setRecentBlogs(data.recentBlogs);
-      setLoading(false);
-    });
+    }).catch((err: unknown) => {
+      setError(err instanceof Error ? err.message : 'Không tải được dữ liệu điều hành.');
+    }).finally(() => setLoading(false));
   }, []);
 
   if (loading) {
@@ -35,6 +38,7 @@ export const AdminDashboardPage: React.FC = () => {
 
   return (
     <div className="space-y-8">
+      {error && <div role="alert" className="border border-terracotta/40 bg-terracotta/10 p-3 text-sm text-terracotta">{error}</div>}
       {/* Top Banner */}
       <div className="bg-forest text-paper p-6 sm:p-8 border border-brass corner-frame flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-md">
         <div className="space-y-2">
@@ -135,8 +139,9 @@ export const AdminDashboardPage: React.FC = () => {
               <div key={p.id} className="py-3.5 flex items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
                   <img
-                    src={p.heroImage}
+                    src={resolveImageUrl(p.heroImage)}
                     alt={p.name}
+                    onError={(e) => handleImageFallback(e)}
                     className="w-12 h-10 object-cover border border-paper-border bg-forest"
                   />
                   <div>

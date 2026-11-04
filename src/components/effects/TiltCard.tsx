@@ -3,15 +3,15 @@ import React, { useState, useRef } from 'react';
 interface TiltCardProps {
   children: React.ReactNode;
   className?: string;
-  tiltAmount?: number; // Maximum rotation in degrees (default 6)
+  tiltAmount?: number; // Maximum rotation in degrees (default 2)
   glareEffect?: boolean;
 }
 
 export const TiltCard: React.FC<TiltCardProps> = ({
   children,
   className = '',
-  tiltAmount = 5,
-  glareEffect = true,
+  tiltAmount = 2,
+  glareEffect = false,
 }) => {
   const cardRef = useRef<HTMLDivElement | null>(null);
   const [transformStyle, setTransformStyle] = useState<string>('');
@@ -41,7 +41,7 @@ export const TiltCard: React.FC<TiltCardProps> = ({
     const rotateY = ((x - centerX) / centerX) * tiltAmount;
 
     setTransformStyle(
-      `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) scale3d(1.015, 1.015, 1.015)`
+      `perspective(1200px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) scale3d(1.006, 1.006, 1.006)`
     );
 
     if (glareEffect) {

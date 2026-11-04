@@ -11,10 +11,9 @@ import {
   FALLBACK_PRODUCTS, 
   FALLBACK_STORY_BLOCKS, 
   FALLBACK_BLOGS,
-  FALLBACK_MEDIA 
 } from '../data/fallbackData';
 
-const API_BASE = (import.meta.env.VITE_API_BASE_URL as string) || 'http://localhost:5000/api';
+const API_BASE = (import.meta.env.VITE_API_BASE_URL as string) || 'http://localhost:8081/api';
 
 const getAuthHeaders = (): Record<string, string> => {
   const token = localStorage.getItem('viettoria_admin_token');
@@ -26,6 +25,28 @@ const getAuthHeaders = (): Record<string, string> => {
   }
   return headers;
 };
+
+async function adminRequest<T>(path: string, init: RequestInit = {}): Promise<T> {
+  const response = await fetch(`${API_BASE}${path}`, {
+    ...init,
+    headers: { ...getAuthHeaders(), ...init.headers },
+  });
+  const payload = await response.json().catch(() => null) as {
+    data?: T;
+    message?: string;
+    success?: boolean;
+  } | null;
+
+  if (!response.ok || payload?.success === false) {
+    if (response.status === 401 || response.status === 403) {
+      localStorage.removeItem('viettoria_admin_token');
+      window.dispatchEvent(new Event('viettoria:unauthorized'));
+    }
+    throw new Error(payload?.message || `Yêu cầu thất bại (${response.status})`);
+  }
+
+  return payload?.data as T;
+}
 
 // --- PUBLIC API ---
 export const publicApi = {
@@ -189,35 +210,31 @@ export const publicApi = {
 // --- ADMIN CMS API ---
 export const adminApi = {
   async login(username: string, password: string): Promise<{ token: string; user: { fullName: string; username: string } }> {
+    let response: Response;
     try {
-      const res = await fetch(`${API_BASE}/admin/auth/login`, {
+      response = await fetch(`${API_BASE}/admin/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
       });
-      if (res.ok) {
-        const json = await res.json();
-        localStorage.setItem('viettoria_admin_token', json.data.token);
-        return json.data;
-      }
-      const errJson = await res.json();
-      throw new Error(errJson.message || 'Đăng nhập thất bại');
-    } catch (err: unknown) {
-      // Local fallback auth
-      if (username === 'admin' && password === 'viettoria@2026') {
-        const mockToken = 'mock-jwt-token-viettoria-2026';
-        localStorage.setItem('viettoria_admin_token', mockToken);
-        return {
-          token: mockToken,
-          user: { fullName: 'Quản Trị Viên Viettoria', username: 'admin' }
-        };
-      }
-      throw err;
+    } catch {
+      throw new Error('Không kết nối được máy chủ. Kiểm tra backend rồi thử lại.');
     }
+    const payload = await response.json().catch(() => null) as {
+      data?: { token: string; user: { fullName: string; username: string } };
+      message?: string;
+    } | null;
+    if (!response.ok || !payload?.data?.token) {
+      throw new Error(payload?.message || (response.ok ? 'Máy chủ không trả token đăng nhập.' : 'Đăng nhập thất bại.'));
+    }
+    localStorage.setItem('viettoria_admin_token', payload.data.token);
+    localStorage.setItem('viettoria_admin_user', JSON.stringify(payload.data.user));
+    return payload.data;
   },
 
   logout(): void {
     localStorage.removeItem('viettoria_admin_token');
+    localStorage.removeItem('viettoria_admin_user');
   },
 
   isAuthenticated(): boolean {
@@ -225,214 +242,82 @@ export const adminApi = {
   },
 
   async getDashboard(): Promise<{ stats: DashboardStats; recentProducts: Product[]; recentBlogs: BlogPost[] }> {
-    try {
-      const res = await fetch(`${API_BASE}/admin/dashboard`, {
-        headers: getAuthHeaders()
-      });
-      if (res.ok) {
-        const json = await res.json();
-        return json.data;
-      }
-    } catch {
-      // Fallback
-    }
-    return {
-      stats: {
-        totalProducts: FALLBACK_PRODUCTS.length,
-        publishedProducts: FALLBACK_PRODUCTS.filter(p => p.status === 'published').length,
-        totalCollections: FALLBACK_COLLECTIONS.length,
-        totalBlogs: FALLBACK_BLOGS.length,
-        totalStoryBlocks: FALLBACK_STORY_BLOCKS.length,
-        totalMedia: FALLBACK_MEDIA.length
-      },
-      recentProducts: FALLBACK_PRODUCTS.slice(0, 5),
-      recentBlogs: FALLBACK_BLOGS.slice(0, 5)
-    };
+    return adminRequest('/admin/dashboard');
   },
 
   async getProducts(): Promise<Product[]> {
-    try {
-      const res = await fetch(`${API_BASE}/admin/products`, { headers: getAuthHeaders() });
-      if (res.ok) {
-        const json = await res.json();
-        return json.data;
-      }
-    } catch {
-      // Fallback
-    }
-    return FALLBACK_PRODUCTS;
+    return adminRequest('/admin/products');
   },
 
   async getProductById(id: string): Promise<Product & { storyBlocks: StoryBlock[] }> {
-    try {
-      const res = await fetch(`${API_BASE}/admin/products/${id}`, { headers: getAuthHeaders() });
-      if (res.ok) {
-        const json = await res.json();
-        return json.data;
-      }
-    } catch {
-      // Fallback
-    }
-    const p = FALLBACK_PRODUCTS.find(item => item.id === id) || FALLBACK_PRODUCTS[0];
-    const storyBlocks = FALLBACK_STORY_BLOCKS.filter(b => b.productId === p.id);
-    return { ...p, storyBlocks };
+    return adminRequest(`/admin/products/${encodeURIComponent(id)}`);
   },
 
   async createProduct(data: Partial<Product>): Promise<Product> {
-    try {
-      const res = await fetch(`${API_BASE}/admin/products`, {
-        method: 'POST',
-        headers: getAuthHeaders(),
-        body: JSON.stringify(data)
-      });
-      if (res.ok) {
-        const json = await res.json();
-        return json.data;
-      }
-      const err = await res.json();
-      throw new Error(err.message || 'Lỗi tạo sản phẩm');
-    } catch (err) {
-      console.warn('Backend not responding, updating local state', err);
-      return data as Product;
-    }
+    return adminRequest('/admin/products', { method: 'POST', body: JSON.stringify(data) });
   },
 
   async updateProduct(id: string, data: Partial<Product>): Promise<Product> {
-    try {
-      const res = await fetch(`${API_BASE}/admin/products/${id}`, {
-        method: 'PUT',
-        headers: getAuthHeaders(),
-        body: JSON.stringify(data)
-      });
-      if (res.ok) {
-        const json = await res.json();
-        return json.data;
-      }
-      const err = await res.json();
-      throw new Error(err.message || 'Lỗi cập nhật sản phẩm');
-    } catch (err) {
-      console.warn('Backend not responding', err);
-      return { id, ...data } as Product;
-    }
+    return adminRequest(`/admin/products/${encodeURIComponent(id)}`, { method: 'PUT', body: JSON.stringify(data) });
   },
 
   async deleteProduct(id: string): Promise<void> {
-    try {
-      await fetch(`${API_BASE}/admin/products/${id}`, {
-        method: 'DELETE',
-        headers: getAuthHeaders()
-      });
-    } catch (err) {
-      console.warn('Backend delete error', err);
-    }
+    await adminRequest(`/admin/products/${encodeURIComponent(id)}`, { method: 'DELETE' });
   },
 
   async getStories(productId: string): Promise<StoryBlock[]> {
-    try {
-      const res = await fetch(`${API_BASE}/admin/products/${productId}/stories`, { headers: getAuthHeaders() });
-      if (res.ok) {
-        const json = await res.json();
-        return json.data;
-      }
-    } catch {
-      // Fallback
-    }
-    return FALLBACK_STORY_BLOCKS.filter(b => b.productId === productId);
+    return adminRequest(`/admin/products/${encodeURIComponent(productId)}/stories`);
   },
 
   async createStory(productId: string, data: Partial<StoryBlock>): Promise<StoryBlock> {
-    try {
-      const res = await fetch(`${API_BASE}/admin/products/${productId}/stories`, {
-        method: 'POST',
-        headers: getAuthHeaders(),
-        body: JSON.stringify(data)
-      });
-      if (res.ok) {
-        const json = await res.json();
-        return json.data;
-      }
-    } catch (err) {
-      console.warn('Backend error', err);
-    }
-    return { id: `block-${Date.now()}`, productId, ...data } as StoryBlock;
+    return adminRequest(`/admin/products/${encodeURIComponent(productId)}/stories`, { method: 'POST', body: JSON.stringify(data) });
   },
 
   async updateStory(id: string, data: Partial<StoryBlock>): Promise<StoryBlock> {
-    try {
-      const res = await fetch(`${API_BASE}/admin/stories/${id}`, {
-        method: 'PUT',
-        headers: getAuthHeaders(),
-        body: JSON.stringify(data)
-      });
-      if (res.ok) {
-        const json = await res.json();
-        return json.data;
-      }
-    } catch (err) {
-      console.warn('Backend error', err);
-    }
-    return { id, ...data } as StoryBlock;
+    return adminRequest(`/admin/stories/${encodeURIComponent(id)}`, { method: 'PUT', body: JSON.stringify(data) });
   },
 
   async deleteStory(id: string): Promise<void> {
-    try {
-      await fetch(`${API_BASE}/admin/stories/${id}`, {
-        method: 'DELETE',
-        headers: getAuthHeaders()
-      });
-    } catch (err) {
-      console.warn('Backend error', err);
-    }
+    await adminRequest(`/admin/stories/${encodeURIComponent(id)}`, { method: 'DELETE' });
   },
 
   async reorderStories(productId: string, blockIds: string[]): Promise<void> {
-    try {
-      await fetch(`${API_BASE}/admin/products/${productId}/stories/reorder`, {
-        method: 'PUT',
-        headers: getAuthHeaders(),
-        body: JSON.stringify({ blockIds })
-      });
-    } catch (err) {
-      console.warn('Backend error', err);
-    }
+    await adminRequest(`/admin/products/${encodeURIComponent(productId)}/stories/reorder`, { method: 'PUT', body: JSON.stringify({ blockIds }) });
   },
 
   async getCollections(): Promise<Collection[]> {
-    try {
-      const res = await fetch(`${API_BASE}/admin/collections`, { headers: getAuthHeaders() });
-      if (res.ok) {
-        const json = await res.json();
-        return json.data;
-      }
-    } catch {
-      // Fallback
-    }
-    return FALLBACK_COLLECTIONS;
+    return adminRequest('/admin/collections');
+  },
+
+  async createCollection(data: Partial<Collection>): Promise<Collection> {
+    return adminRequest('/admin/collections', { method: 'POST', body: JSON.stringify(data) });
+  },
+
+  async updateCollection(id: string, data: Partial<Collection>): Promise<Collection> {
+    return adminRequest(`/admin/collections/${encodeURIComponent(id)}`, { method: 'PUT', body: JSON.stringify(data) });
+  },
+
+  async deleteCollection(id: string): Promise<void> {
+    await adminRequest(`/admin/collections/${encodeURIComponent(id)}`, { method: 'DELETE' });
   },
 
   async getBlogs(): Promise<BlogPost[]> {
-    try {
-      const res = await fetch(`${API_BASE}/admin/blogs`, { headers: getAuthHeaders() });
-      if (res.ok) {
-        const json = await res.json();
-        return json.data;
-      }
-    } catch {
-      // Fallback
-    }
-    return FALLBACK_BLOGS;
+    return adminRequest('/admin/blogs');
+  },
+
+  async createBlog(data: Partial<BlogPost>): Promise<BlogPost> {
+    return adminRequest('/admin/blogs', { method: 'POST', body: JSON.stringify(data) });
+  },
+
+  async updateBlog(id: string, data: Partial<BlogPost>): Promise<BlogPost> {
+    return adminRequest(`/admin/blogs/${encodeURIComponent(id)}`, { method: 'PUT', body: JSON.stringify(data) });
+  },
+
+  async deleteBlog(id: string): Promise<void> {
+    await adminRequest(`/admin/blogs/${encodeURIComponent(id)}`, { method: 'DELETE' });
   },
 
   async getMedia(): Promise<MediaItem[]> {
-    try {
-      const res = await fetch(`${API_BASE}/admin/media`, { headers: getAuthHeaders() });
-      if (res.ok) {
-        const json = await res.json();
-        return json.data;
-      }
-    } catch {
-      // Fallback
-    }
-    return FALLBACK_MEDIA;
+    return adminRequest('/admin/media');
   }
 };

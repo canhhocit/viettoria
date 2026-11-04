@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
-import { KeyRound, User, ArrowRight, AlertCircle, Sparkles } from 'lucide-react';
+import { KeyRound, User, ArrowRight, AlertCircle } from 'lucide-react';
 import { adminApi } from '../../services/api';
 
 export const AdminLoginPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [username, setUsername] = useState('admin');
-  const [password, setPassword] = useState('viettoria@2026');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -24,7 +24,7 @@ export const AdminLoginPage: React.FC = () => {
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError('Đăng nhập thất bại. Vui lòng kiểm tra lại tài khoản.');
+        setError('Đăng nhập thất bại. Vui lòng kiểm tra kết nối và thông tin đăng nhập.');
       }
     } finally {
       setLoading(false);
@@ -35,12 +35,7 @@ export const AdminLoginPage: React.FC = () => {
     <div className="min-h-screen bg-forest flex flex-col justify-center items-center p-4 relative overflow-hidden select-none">
       {/* Background Subtle Elements */}
       <div className="heritage-grain absolute inset-0 opacity-20 pointer-events-none" />
-      <img
-        src="/images/trong-dong.webp"
-        alt=""
-        aria-hidden="true"
-        className="pointer-events-none absolute -right-32 top-1/2 -translate-y-1/2 h-[130%] opacity-[0.06] object-contain mix-blend-screen"
-      />
+      <div aria-hidden="true" className="heritage-dong-son pointer-events-none absolute -right-32 top-1/2 h-[85vh] w-[85vh] -translate-y-1/2 opacity-[0.15] mix-blend-screen" />
 
       <div className="relative z-10 w-full max-w-md bg-paper border border-brass corner-frame p-8 sm:p-10 shadow-2xl space-y-6">
         {/* Atelier Logo Header */}
@@ -96,16 +91,6 @@ export const AdminLoginPage: React.FC = () => {
                 required
               />
             </div>
-          </div>
-
-          {/* Test Credentials Quick Box */}
-          <div className="p-3 bg-paper-warm border border-paper-border text-[11px] font-mono text-charcoal/80 space-y-1">
-            <div className="flex items-center gap-1.5 text-brass font-bold uppercase">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Tài Khoản Thử Nghiệm Hệ Thống:</span>
-            </div>
-            <p>Tài khoản: <code className="bg-paper px-1 py-0.5 border border-paper-border">admin</code></p>
-            <p>Mật khẩu: <code className="bg-paper px-1 py-0.5 border border-paper-border">viettoria@2026</code></p>
           </div>
 
           <button

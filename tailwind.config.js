@@ -67,10 +67,10 @@ export default {
         },
       },
       fontFamily: {
-        display: ['"Cormorant Garamond"', 'Garamond', '"Times New Roman"', 'serif'],
-        serif: ['"Cormorant Garamond"', 'Garamond', '"Times New Roman"', 'serif'],
-        body: ['"Source Serif 4"', '"Source Serif Pro"', 'Charter', 'Baskerville', 'serif'],
-        sans: ['"Source Serif 4"', '"Source Serif Pro"', 'Charter', 'serif'],
+        display: ['"Playfair Display"', 'Georgia', 'serif'],
+        serif: ['"Playfair Display"', 'Georgia', 'serif'],
+        body: ['"Be Vietnam Pro"', 'sans-serif'],
+        sans: ['"Be Vietnam Pro"', 'sans-serif'],
         mono: ['"Roboto Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
       },
       borderRadius: {

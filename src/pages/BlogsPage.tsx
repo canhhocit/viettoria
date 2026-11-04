@@ -103,7 +103,7 @@ export const BlogsPage: React.FC = () => {
                       </Link>
                     </h2>
 
-                    <p className="text-xs text-charcoal/80 font-light line-clamp-3 leading-relaxed">
+                    <p className="text-sm text-charcoal/80 font-light line-clamp-3 leading-6">
                       {blog.excerpt}
                     </p>
                   </div>

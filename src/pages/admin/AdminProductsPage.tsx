@@ -11,7 +11,7 @@ import {
   BookOpen,
   X
 } from 'lucide-react';
-import { adminApi, publicApi } from '../../services/api';
+import { adminApi } from '../../services/api';
 import type { Product, Collection } from '../../types';
 import { resolveImageUrl, handleImageFallback } from '../../utils/mediaResolver';
 
@@ -19,18 +19,23 @@ export const AdminProductsPage: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [collections, setCollections] = useState<Collection[]>([]);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Partial<Product> | null>(null);
 
   const loadData = async () => {
     setLoading(true);
-    const [prods, cols] = await Promise.all([
-      adminApi.getProducts(),
-      publicApi.getCollections(),
-    ]);
-    setProducts(prods);
-    setCollections(cols);
-    setLoading(false);
+    try {
+      const [prods, cols] = await Promise.all([adminApi.getProducts(), adminApi.getCollections()]);
+      setProducts(prods);
+      setCollections(cols);
+      setError(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Không tải được danh sách mô hình.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -47,7 +52,7 @@ export const AdminProductsPage: React.FC = () => {
       epoch: 'Thời Lý',
       location: 'Hà Nội',
       shortDescription: '',
-      heroImage: '/images/chua-mot-cot.webp',
+      heroImage: '/3D/chua-mot-cot-poster.webp',
       galleryImages: [],
       displayOrder: products.length + 1,
       status: 'published',
@@ -74,26 +79,33 @@ export const AdminProductsPage: React.FC = () => {
     e.preventDefault();
     if (!editingProduct || !editingProduct.name) return;
 
-    if (editingProduct.id) {
-      await adminApi.updateProduct(editingProduct.id, editingProduct);
-    } else {
-      await adminApi.createProduct(editingProduct);
+    setSaving(true);
+    setError(null);
+    try {
+      if (editingProduct.id) await adminApi.updateProduct(editingProduct.id, editingProduct);
+      else await adminApi.createProduct(editingProduct);
+      setIsModalOpen(false);
+      await loadData();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Không lưu được tác phẩm.');
+    } finally {
+      setSaving(false);
     }
-    setIsModalOpen(false);
-    loadData();
   };
 
   const handleDelete = async (id: string) => {
     if (window.confirm('Bạn có chắc chắn muốn xóa tác phẩm này?')) {
-      await adminApi.deleteProduct(id);
-      loadData();
+      setError(null);
+      try { await adminApi.deleteProduct(id); await loadData(); }
+      catch (err) { setError(err instanceof Error ? err.message : 'Không xóa được tác phẩm.'); }
     }
   };
 
   const handleToggleStatus = async (p: Product) => {
     const newStatus = p.status === 'published' ? 'draft' : 'published';
-    await adminApi.updateProduct(p.id, { status: newStatus });
-    loadData();
+    setError(null);
+    try { await adminApi.updateProduct(p.id, { status: newStatus }); await loadData(); }
+    catch (err) { setError(err instanceof Error ? err.message : 'Không đổi được trạng thái tác phẩm.'); }
   };
 
   return (
@@ -118,6 +130,8 @@ export const AdminProductsPage: React.FC = () => {
           <span>Thêm Mô Hình Mới</span>
         </button>
       </div>
+
+      {error && <div role="alert" className="border border-terracotta/40 bg-terracotta/10 p-3 text-sm text-terracotta">{error}</div>}
 
       {/* Table Card */}
       <div className="bg-paper border border-paper-border corner-frame overflow-hidden shadow-sm">
@@ -254,6 +268,8 @@ export const AdminProductsPage: React.FC = () => {
             <h2 className="font-serif text-2xl font-bold text-forest mb-6">
               {editingProduct.id ? 'Chỉnh Sửa Thông Tin Mô Hình' : 'Thêm Mô Hình Kiến Trúc Mới'}
             </h2>
+
+            {error && <div role="alert" className="mb-4 border border-terracotta/40 bg-terracotta/10 p-3 text-sm text-terracotta">{error}</div>}
 
             <form onSubmit={handleSave} className="space-y-4 font-mono text-xs">
               <div className="grid grid-cols-2 gap-4">
@@ -395,7 +411,7 @@ export const AdminProductsPage: React.FC = () => {
                     type="text"
                     value={editingProduct.heroImage || ''}
                     onChange={e => setEditingProduct({ ...editingProduct, heroImage: e.target.value })}
-                    placeholder="/images/chua-mot-cot.webp hoặc https://res.cloudinary.com/..."
+                  placeholder="/3D/chua-mot-cot-poster.webp hoặc URL Cloudinary..."
                     className="w-full px-3 py-2 bg-paper-warm border border-paper-border focus:border-brass focus:outline-none"
                     required
                   />
@@ -406,7 +422,7 @@ export const AdminProductsPage: React.FC = () => {
                     type="text"
                     value={editingProduct.model3dUrl || ''}
                     onChange={e => setEditingProduct({ ...editingProduct, model3dUrl: e.target.value })}
-                    placeholder="/3D/chua-mot-cot.glb hoặc Cloudinary / Backend URL"
+                  placeholder="/3D/chua-mot-cot.glb hoặc URL Cloudinary/backend"
                     className="w-full px-3 py-2 bg-paper-warm border border-paper-border focus:border-brass focus:outline-none"
                   />
                 </div>
@@ -422,9 +438,10 @@ export const AdminProductsPage: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2 bg-forest text-paper hover:bg-brass uppercase tracking-wider font-bold shadow-md"
+                  disabled={saving}
+                  className="px-6 py-2 bg-forest text-paper hover:bg-brass uppercase tracking-wider font-bold shadow-md disabled:opacity-50"
                 >
-                  Lưu Thông Tin
+                  {saving ? 'Đang lưu…' : 'Lưu Thông Tin'}
                 </button>
               </div>
             </form>

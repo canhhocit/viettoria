@@ -54,7 +54,7 @@ npm run dev
 npm run build
 ```
 
-Truy cập cục bộ: `http://localhost:5173`
+Truy cập cục bộ: `http://localhost:5174`
 
 ---
 
@@ -62,3 +62,16 @@ Truy cập cục bộ: `http://localhost:5173`
 - **Hình khối:** Góc vuông sắc sảo (`rounded-none` / `rounded-sm`), viền tranh bảo tàng (Passe-partout matting).
 - **Màu sắc:** Nền Giấy Dó Ấm (`#FAF7F0`), Rêu Phong Cổ Tự (`#142820`), Thếp Vàng Đồng Cổ (`#B88A44`), Mực Tàu (`#1B1E1B`), Ngói Đỏ Gạch Vồ (`#9C3D28`).
 - **Typography:** Tiêu đề `Cinzel` / `Playfair Display`, nội dung chuẩn bộ gõ Việt `Be Vietnam Pro`.
+
+---
+
+# Deploy FE lên Vercel
+
+Repo có `vercel.json` để build Vite và điều hướng deep link của React Router về `index.html`.
+
+Trong Project Settings → Environment Variables, cấu hình cho Production (và Preview nếu cần):
+
+- `VITE_API_BASE_URL=https://<render-service>.onrender.com/api`
+- `VITE_BACKEND_UPLOADS_URL=https://<render-service>.onrender.com/uploads`
+
+Trong Render, đặt `CORS_ALLOWED_ORIGINS` bằng domain production của Vercel. Sau khi tạo hai dịch vụ, cập nhật đúng domain thực tế ở cả hai nơi rồi redeploy.

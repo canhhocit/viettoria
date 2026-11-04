@@ -1,198 +1,105 @@
-import React, { useEffect, useState } from 'react';
-import { Layers, Plus, Edit, X } from 'lucide-react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { AlertCircle, Layers, Plus, Edit, Trash2, X } from 'lucide-react';
 import { adminApi } from '../../services/api';
 import type { Collection } from '../../types';
+import { resolveImageUrl, handleImageFallback } from '../../utils/mediaResolver';
+
+const slugFromName = (value: string) => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/đ/g, 'd').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
 export const AdminCollectionsPage: React.FC = () => {
   const [collections, setCollections] = useState<Collection[]>([]);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCol, setEditingCol] = useState<Partial<Collection> | null>(null);
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     setLoading(true);
-    const cols = await adminApi.getCollections();
-    setCollections(cols);
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    loadData();
+    try {
+      setCollections(await adminApi.getCollections());
+      setError(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Không tải được danh sách bộ sưu tập.');
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  const handleOpenAdd = () => {
-    setEditingCol({
-      code: `COL-00${collections.length + 1}`,
-      name: '',
-      slug: '',
-      description: '',
-      heroImage: '/images/chua-mot-cot.webp',
-      displayOrder: collections.length + 1,
-      status: 'published'
-    });
-    setIsModalOpen(true);
-  };
+  useEffect(() => { void loadData(); }, [loadData]);
 
-  const handleOpenEdit = (col: Collection) => {
-    setEditingCol({ ...col });
+  const handleOpenAdd = () => {
+    setEditingCol({ code: `COL-${String(collections.length + 1).padStart(3, '0')}`, name: '', slug: '', description: '', heroImage: '/3D/chua-mot-cot-poster.webp', displayOrder: collections.length + 1, status: 'published' });
+    setError(null);
     setIsModalOpen(true);
   };
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!editingCol || !editingCol.name) return;
-    setIsModalOpen(false);
-    // Simulating save
-    loadData();
+    if (!editingCol?.name?.trim()) return;
+    setSaving(true);
+    setError(null);
+    try {
+      const payload = { ...editingCol, name: editingCol.name.trim(), slug: editingCol.slug?.trim() || slugFromName(editingCol.name), description: editingCol.description?.trim(), heroImage: editingCol.heroImage?.trim(), displayOrder: Number(editingCol.displayOrder) || 1 };
+      if (editingCol.id) await adminApi.updateCollection(editingCol.id, payload);
+      else await adminApi.createCollection(payload);
+      setIsModalOpen(false);
+      await loadData();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Không lưu được bộ sưu tập.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDelete = async (collection: Collection) => {
+    if (!window.confirm(`Xóa bộ sưu tập “${collection.name}”?`)) return;
+    setError(null);
+    try {
+      await adminApi.deleteCollection(collection.id);
+      await loadData();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Không xóa được bộ sưu tập.');
+    }
   };
 
   return (
     <div className="space-y-6">
-      {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-paper-border">
-        <div>
-          <div className="flex items-center gap-2 text-brass text-xs font-mono uppercase tracking-widest">
-            <Layers className="w-4 h-4" />
-            <span>Phân Loại Niên Đại & Thời Kỳ</span>
-          </div>
-          <h1 className="font-serif text-2xl sm:text-3xl font-bold text-forest mt-1">
-            Quản Lý Bộ Sưu Tập
-          </h1>
-        </div>
-
-        <button
-          onClick={handleOpenAdd}
-          className="px-4 py-2.5 bg-forest text-paper hover:bg-brass transition-colors font-mono text-xs uppercase tracking-wider font-bold flex items-center gap-2 shadow-sm"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Thêm Bộ Sưu Tập Mới</span>
-        </button>
+      <div className="flex flex-col justify-between gap-4 border-b border-paper-border pb-4 sm:flex-row sm:items-center">
+        <div><div className="flex items-center gap-2 text-brass text-xs font-mono uppercase tracking-widest"><Layers className="h-4 w-4"/><span>Phân loại niên đại & thời kỳ</span></div><h1 className="mt-1 font-serif text-2xl font-bold text-forest sm:text-3xl">Quản lý bộ sưu tập</h1></div>
+        <button onClick={handleOpenAdd} className="flex items-center gap-2 bg-forest px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-paper transition-colors hover:bg-brass"><Plus className="h-4 w-4"/>Thêm bộ sưu tập</button>
       </div>
 
-      {/* Collections Grid */}
-      {loading ? (
-        <div className="py-20 text-center font-mono text-xs text-forest">
-          Đang tải danh sách bộ sưu tập...
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {collections.map((col) => (
-            <div
-              key={col.id}
-              className="bg-paper border border-paper-border corner-frame p-5 space-y-4 shadow-sm flex flex-col justify-between"
-            >
-              <div className="space-y-3">
-                <div className="aspect-[16/10] overflow-hidden bg-forest relative border border-paper-border">
-                  <img
-                    src={col.heroImage}
-                    alt={col.name}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute top-2 left-2 bg-forest/90 px-2 py-0.5 font-mono text-[10px] text-brass border border-brass/40">
-                    {col.code}
-                  </div>
-                </div>
-
-                <h3 className="font-serif text-lg font-bold text-forest">{col.name}</h3>
-                <p className="text-xs text-charcoal/80 font-light line-clamp-3 leading-relaxed">
-                  {col.description}
-                </p>
-              </div>
-
-              <div className="pt-3 border-t border-paper-border flex items-center justify-between font-mono text-xs">
-                <span className="text-charcoal-muted">Thứ tự: {col.displayOrder}</span>
-                <button
-                  onClick={() => handleOpenEdit(col)}
-                  className="px-2.5 py-1 border border-paper-border hover:border-brass text-charcoal transition-colors flex items-center gap-1"
-                >
-                  <Edit className="w-3 h-3 text-brass" />
-                  <span>Sửa</span>
-                </button>
-              </div>
+      {error && <div role="alert" className="flex items-start gap-2 border border-terracotta/40 bg-terracotta/10 p-3 text-sm text-terracotta"><AlertCircle className="mt-0.5 h-4 w-4 shrink-0"/>{error}</div>}
+      {loading ? <div className="py-20 text-center font-mono text-xs text-forest">Đang tải danh sách bộ sưu tập…</div> : collections.length === 0 ? <div className="border border-paper-border bg-paper p-10 text-center text-sm text-charcoal-muted">Chưa có bộ sưu tập nào.</div> : (
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {collections.map((col) => <article key={col.id} className="flex flex-col justify-between space-y-4 border border-paper-border bg-paper p-5 shadow-sm">
+            <div className="space-y-3">
+              <div className="relative aspect-[16/10] overflow-hidden border border-paper-border bg-paper-warm"><img src={resolveImageUrl(col.heroImage)} alt={col.name} onError={(e) => handleImageFallback(e)} className="h-full w-full object-contain"/><span className="absolute left-2 top-2 border border-brass/40 bg-forest/90 px-2 py-1 font-mono text-[10px] text-brass">{col.code}</span></div>
+              <div className="flex items-start justify-between gap-3"><h2 className="font-serif text-lg font-bold text-forest">{col.name}</h2><span className={`shrink-0 border px-2 py-1 text-[10px] uppercase ${col.status === 'published' ? 'border-forest/30 bg-forest/10 text-forest' : 'border-charcoal/20 bg-charcoal/5 text-charcoal-muted'}`}>{col.status === 'published' ? 'Đã xuất bản' : col.status === 'hidden' ? 'Đang ẩn' : 'Bản nháp'}</span></div>
+              <p className="line-clamp-3 text-xs leading-relaxed text-charcoal/80">{col.description}</p>
             </div>
-          ))}
+            <div className="flex items-center justify-between border-t border-paper-border pt-3 font-mono text-xs"><span className="text-charcoal-muted">Thứ tự: {col.displayOrder}</span><div className="flex gap-2"><button onClick={() => { setEditingCol({ ...col }); setError(null); setIsModalOpen(true); }} className="flex items-center gap-1 border border-paper-border px-2.5 py-1.5 text-charcoal hover:border-brass" aria-label={`Sửa ${col.name}`}><Edit className="h-3 w-3 text-brass"/>Sửa</button><button onClick={() => void handleDelete(col)} className="border border-paper-border p-1.5 text-terracotta hover:border-terracotta" aria-label={`Xóa ${col.name}`}><Trash2 className="h-3.5 w-3.5"/></button></div></div>
+          </article>)}
         </div>
       )}
 
-      {/* Edit Modal */}
-      {isModalOpen && editingCol && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-forest-dark/80 backdrop-blur-sm">
-          <div className="relative w-full max-w-lg bg-paper border border-brass corner-frame p-6 sm:p-8 shadow-2xl">
-            <button
-              onClick={() => setIsModalOpen(false)}
-              className="absolute top-4 right-4 p-1 text-charcoal-muted hover:text-charcoal"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            <h2 className="font-serif text-2xl font-bold text-forest mb-4">
-              {editingCol.id ? 'Sửa Bộ Sưu Tập' : 'Thêm Bộ Sưu Tập Mới'}
-            </h2>
-
-            <form onSubmit={handleSave} className="space-y-4 font-mono text-xs">
-              <div>
-                <label className="block text-charcoal-muted uppercase mb-1">Mã Bộ Sưu Tập</label>
-                <input
-                  type="text"
-                  value={editingCol.code || ''}
-                  onChange={e => setEditingCol({ ...editingCol, code: e.target.value })}
-                  className="w-full px-3 py-2 bg-paper-warm border border-paper-border focus:border-brass focus:outline-none"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-charcoal-muted uppercase mb-1">Tên Bộ Sưu Tập</label>
-                <input
-                  type="text"
-                  value={editingCol.name || ''}
-                  onChange={e => setEditingCol({ ...editingCol, name: e.target.value })}
-                  className="w-full px-3 py-2 bg-paper-warm border border-paper-border focus:border-brass focus:outline-none"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-charcoal-muted uppercase mb-1">Mô Tả Lịch Sử</label>
-                <textarea
-                  rows={3}
-                  value={editingCol.description || ''}
-                  onChange={e => setEditingCol({ ...editingCol, description: e.target.value })}
-                  className="w-full px-3 py-2 bg-paper-warm border border-paper-border focus:border-brass focus:outline-none font-sans"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-charcoal-muted uppercase mb-1">URL Hình Ảnh</label>
-                <input
-                  type="text"
-                  value={editingCol.heroImage || ''}
-                  onChange={e => setEditingCol({ ...editingCol, heroImage: e.target.value })}
-                  className="w-full px-3 py-2 bg-paper-warm border border-paper-border focus:border-brass focus:outline-none"
-                  required
-                />
-              </div>
-
-              <div className="pt-4 border-t border-paper-border flex justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 border border-paper-border text-charcoal uppercase tracking-wider hover:bg-paper-warm"
-                >
-                  Hủy Bỏ
-                </button>
-                <button
-                  type="submit"
-                  className="px-6 py-2 bg-forest text-paper hover:bg-brass uppercase tracking-wider font-bold shadow-md"
-                >
-                  Lưu Thông Tin
-                </button>
-              </div>
-            </form>
-          </div>
+      {isModalOpen && editingCol && <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-forest-dark/80 p-4">
+        <div className="relative my-auto max-h-[92vh] w-full max-w-lg overflow-y-auto border border-brass bg-paper p-6 shadow-2xl sm:p-8">
+          <button onClick={() => setIsModalOpen(false)} className="absolute right-4 top-4 p-1 text-charcoal-muted hover:text-charcoal" aria-label="Đóng"><X className="h-5 w-5"/></button>
+          <h2 className="mb-5 pr-8 font-serif text-2xl font-bold text-forest">{editingCol.id ? 'Sửa bộ sưu tập' : 'Thêm bộ sưu tập'}</h2>
+          <form onSubmit={handleSave} className="space-y-4 font-mono text-xs">
+            <label className="block text-charcoal-muted">Mã bộ sưu tập<input value={editingCol.code || ''} onChange={e => setEditingCol({ ...editingCol, code: e.target.value })} className="mt-1 w-full border border-paper-border bg-paper-warm px-3 py-2 text-charcoal" required/></label>
+            <label className="block text-charcoal-muted">Tên bộ sưu tập<input value={editingCol.name || ''} onChange={e => setEditingCol({ ...editingCol, name: e.target.value, ...(editingCol.id ? {} : { slug: slugFromName(e.target.value) }) })} className="mt-1 w-full border border-paper-border bg-paper-warm px-3 py-2 text-charcoal" required/></label>
+            <label className="block text-charcoal-muted">Đường dẫn (slug)<input value={editingCol.slug || ''} onChange={e => setEditingCol({ ...editingCol, slug: e.target.value })} className="mt-1 w-full border border-paper-border bg-paper-warm px-3 py-2 text-charcoal" required/></label>
+            <label className="block text-charcoal-muted">Mô tả<textarea rows={3} value={editingCol.description || ''} onChange={e => setEditingCol({ ...editingCol, description: e.target.value })} className="mt-1 w-full border border-paper-border bg-paper-warm px-3 py-2 text-charcoal" required/></label>
+            <label className="block text-charcoal-muted">URL ảnh bìa<input value={editingCol.heroImage || ''} onChange={e => setEditingCol({ ...editingCol, heroImage: e.target.value })} className="mt-1 w-full border border-paper-border bg-paper-warm px-3 py-2 text-charcoal" required/></label>
+            <div className="grid grid-cols-2 gap-3"><label className="block text-charcoal-muted">Thứ tự<input type="number" min="1" value={editingCol.displayOrder || 1} onChange={e => setEditingCol({ ...editingCol, displayOrder: Number(e.target.value) })} className="mt-1 w-full border border-paper-border bg-paper-warm px-3 py-2 text-charcoal"/></label><label className="block text-charcoal-muted">Trạng thái<select value={editingCol.status || 'published'} onChange={e => setEditingCol({ ...editingCol, status: e.target.value as Collection['status'] })} className="mt-1 w-full border border-paper-border bg-paper-warm px-3 py-2 text-charcoal"><option value="published">Xuất bản</option><option value="draft">Bản nháp</option><option value="hidden">Ẩn</option></select></label></div>
+            {error && <div role="alert" className="text-terracotta">{error}</div>}
+            <div className="flex justify-end gap-3 border-t border-paper-border pt-4"><button type="button" onClick={() => setIsModalOpen(false)} className="border border-paper-border px-4 py-2 uppercase text-charcoal hover:bg-paper-warm">Hủy</button><button type="submit" disabled={saving} className="bg-forest px-6 py-2 font-bold uppercase text-paper hover:bg-brass disabled:opacity-50">{saving ? 'Đang lưu…' : 'Lưu bộ sưu tập'}</button></div>
+          </form>
         </div>
-      )}
+      </div>}
     </div>
   );
 };

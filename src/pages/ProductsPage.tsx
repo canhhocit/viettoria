@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { Search, Box, MapPin, ArrowRight, Sparkles } from 'lucide-react';
+import { Search, Box, MapPin, ArrowRight } from 'lucide-react';
 import { publicApi } from '../services/api';
 import type { Product, Collection } from '../types';
 import { TiltCard } from '../components/effects/TiltCard';
@@ -150,15 +150,14 @@ export const ProductsPage: React.FC = () => {
                         src={resolveImageUrl(product.heroImage)}
                         alt={product.name}
                         onError={(e) => handleImageFallback(e)}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        className="w-full h-full object-cover brightness-110 group-hover:scale-[1.025] transition-transform duration-500"
                       />
                       {product.isHeroRelease ? (
-                        <div className="absolute top-3 right-3 bg-brass text-forest px-2.5 py-1 text-[10px] font-sans uppercase font-bold flex items-center gap-1 shadow-sm">
-                          <Sparkles className="w-3 h-3" />
+                          <div className="absolute top-3 right-3 bg-brass text-forest px-2.5 py-1 text-[11px] font-sans uppercase font-bold shadow-sm">
                           <span>Hero Release</span>
                         </div>
                       ) : (
-                        <div className="absolute top-3 right-3 bg-forest/80 text-paper/80 px-2.5 py-1 text-[10px] font-sans uppercase">
+                        <div className="absolute top-3 right-3 bg-forest/80 text-paper/80 px-2.5 py-1 text-[11px] font-sans uppercase">
                           Khảo Cứu Lưu Trữ
                         </div>
                       )}
@@ -175,16 +174,16 @@ export const ProductsPage: React.FC = () => {
                       <h2 className="font-serif text-2xl font-bold text-forest group-hover:text-brass transition-colors">
                         {product.name}
                       </h2>
-                      <p className="text-xs font-serif italic text-brass-dark">
+                      <p className="text-sm font-serif italic text-brass-dark">
                         {product.subName}
                       </p>
 
-                      <p className="text-xs text-charcoal/80 font-light line-clamp-3 leading-relaxed">
+                      <p className="text-sm text-charcoal/80 font-light line-clamp-3 leading-6">
                         {product.shortDescription}
                       </p>
 
                       {/* Quick Specs */}
-                      <div className="pt-2 grid grid-cols-2 gap-2 text-[11px] font-mono text-charcoal-muted">
+                      <div className="pt-2 grid grid-cols-2 gap-2 text-xs font-mono text-charcoal-muted">
                         <div>
                           <span>Tỷ lệ:</span>{' '}
                           <span className="text-forest font-semibold">{product.modelSpecs.scale}</span>
@@ -199,7 +198,7 @@ export const ProductsPage: React.FC = () => {
 
                   <div className="p-6 pt-0 border-t border-paper-border mt-4">
                     <div className="pt-4 flex items-center justify-between">
-                      <span className="text-[11px] font-mono text-charcoal-muted">
+                      <span className="text-xs font-mono text-charcoal-muted">
                         Cao {product.modelSpecs.heightCm}cm
                       </span>
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, Link } from 'react-router-dom';
-import { QrCode, Menu, X, Shield } from 'lucide-react';
+import { QrCode, Menu, X } from 'lucide-react';
 
 interface HeaderProps {
   onOpenQRModal: () => void;
@@ -82,18 +82,6 @@ export const Header: React.FC<HeaderProps> = ({ onOpenQRModal }) => {
               <QrCode className="w-3.5 h-3.5 text-[#B88A38]" />
               <span className="hidden sm:inline">Quét Tem QR</span>
             </button>
-
-            {/* Admin CMS Portal Link */}
-            <Link
-              to="/admin/dashboard"
-              className={`hidden md:inline-flex items-center gap-1.5 border border-[#D8CCB8] hover:border-[#745C42] text-[#796857] hover:text-[#3B2B1D] font-mono uppercase tracking-wider transition-colors rounded-[2px] ${
-                isScrolled ? 'px-2.5 py-1.5 text-[11px]' : 'px-3 py-2 text-xs'
-              }`}
-              title="Cổng quản trị nội dung CMS"
-            >
-              <Shield className="w-3.5 h-3.5 text-[#B88A38]" />
-              <span>CMS</span>
-            </Link>
 
             {/* Mobile Menu Toggle Button */}
             <button

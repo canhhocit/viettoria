@@ -25,16 +25,24 @@ export const AdminStoryBuilderPage: React.FC = () => {
   const [product, setProduct] = useState<Product | null>(null);
   const [stories, setStories] = useState<StoryBlock[]>([]);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [editingBlock, setEditingBlock] = useState<Partial<StoryBlock> | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const loadData = async () => {
     if (!id) return;
     setLoading(true);
-    const prod = await adminApi.getProductById(id);
-    setProduct(prod);
-    setStories(prod.storyBlocks || []);
-    setLoading(false);
+    try {
+      const prod = await adminApi.getProductById(id);
+      setProduct(prod);
+      setStories(prod.storyBlocks || []);
+      setError(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Không tải được nội dung tác phẩm.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -66,26 +74,33 @@ export const AdminStoryBuilderPage: React.FC = () => {
     e.preventDefault();
     if (!editingBlock || !editingBlock.title || !id) return;
 
-    if (editingBlock.id) {
-      await adminApi.updateStory(editingBlock.id, editingBlock);
-    } else {
-      await adminApi.createStory(id, editingBlock);
+    setSaving(true);
+    setError(null);
+    try {
+      if (editingBlock.id) await adminApi.updateStory(editingBlock.id, editingBlock);
+      else await adminApi.createStory(id, editingBlock);
+      setIsModalOpen(false);
+      await loadData();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Không lưu được khối nội dung.');
+    } finally {
+      setSaving(false);
     }
-    setIsModalOpen(false);
-    loadData();
   };
 
   const handleDeleteBlock = async (blockId: string) => {
     if (window.confirm('Bạn có chắc muốn xóa khối nội dung này?')) {
-      await adminApi.deleteStory(blockId);
-      loadData();
+      setError(null);
+      try { await adminApi.deleteStory(blockId); await loadData(); }
+      catch (err) { setError(err instanceof Error ? err.message : 'Không xóa được khối nội dung.'); }
     }
   };
 
   const handleToggleStatus = async (block: StoryBlock) => {
     const newStatus = block.status === 'published' ? 'hidden' : 'published';
-    await adminApi.updateStory(block.id, { status: newStatus });
-    loadData();
+    setError(null);
+    try { await adminApi.updateStory(block.id, { status: newStatus }); await loadData(); }
+    catch (err) { setError(err instanceof Error ? err.message : 'Không đổi được trạng thái khối nội dung.'); }
   };
 
   const handleMove = async (index: number, direction: 'up' | 'down') => {
@@ -93,6 +108,7 @@ export const AdminStoryBuilderPage: React.FC = () => {
     const targetIndex = direction === 'up' ? index - 1 : index + 1;
     if (targetIndex < 0 || targetIndex >= stories.length) return;
 
+    const previousStories = stories;
     const newStories = [...stories];
     const temp = newStories[index];
     newStories[index] = newStories[targetIndex];
@@ -100,7 +116,12 @@ export const AdminStoryBuilderPage: React.FC = () => {
 
     setStories(newStories);
     const blockIds = newStories.map(s => s.id);
-    await adminApi.reorderStories(id, blockIds);
+    setError(null);
+    try { await adminApi.reorderStories(id, blockIds); }
+    catch (err) {
+      setStories(previousStories);
+      setError(err instanceof Error ? err.message : 'Không đổi được thứ tự khối nội dung.');
+    }
   };
 
   const getBlockTypeIcon = (type: StoryBlockType) => {
@@ -136,7 +157,7 @@ export const AdminStoryBuilderPage: React.FC = () => {
 
         {/* Add Block Dropdown / Quick Buttons */}
         <div className="flex flex-wrap gap-2">
-          {(['text', 'image', 'text_image', 'timeline', 'highlight'] as StoryBlockType[]).map((type) => (
+          {(['text', 'image', 'text_image', 'timeline', 'highlight', 'assembly'] as StoryBlockType[]).map((type) => (
             <button
               key={type}
               onClick={() => handleOpenAdd(type)}
@@ -148,6 +169,8 @@ export const AdminStoryBuilderPage: React.FC = () => {
           ))}
         </div>
       </div>
+
+      {error && <div role="alert" className="border border-terracotta/40 bg-terracotta/10 p-3 text-sm text-terracotta">{error}</div>}
 
       {/* Story Blocks List */}
       {loading ? (
@@ -269,6 +292,8 @@ export const AdminStoryBuilderPage: React.FC = () => {
               {editingBlock.id ? 'Biên Tập Story Block' : `Thêm Khối [${editingBlock.type?.toUpperCase()}]`}
             </h2>
 
+            {error && <div role="alert" className="mb-4 border border-terracotta/40 bg-terracotta/10 p-3 text-sm text-terracotta">{error}</div>}
+
             <form onSubmit={handleSaveBlock} className="space-y-4 font-mono text-xs">
               <div>
                 <label className="block text-charcoal-muted uppercase mb-1">Tiêu Đề Khối</label>
@@ -311,7 +336,7 @@ export const AdminStoryBuilderPage: React.FC = () => {
                       type="text"
                       value={editingBlock.mediaUrl || ''}
                       onChange={e => setEditingBlock({ ...editingBlock, mediaUrl: e.target.value })}
-                      placeholder="/images/chua-mot-cot.webp"
+                      placeholder="/3D/chua-mot-cot-poster.webp hoặc URL Cloudinary/backend"
                       className="w-full px-3 py-2 bg-paper-warm border border-paper-border focus:border-brass focus:outline-none"
                     />
                   </div>
@@ -350,9 +375,10 @@ export const AdminStoryBuilderPage: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2 bg-forest text-paper hover:bg-brass uppercase tracking-wider font-bold shadow-md"
+                  disabled={saving}
+                  className="px-6 py-2 bg-forest text-paper hover:bg-brass uppercase tracking-wider font-bold shadow-md disabled:opacity-50"
                 >
-                  Lưu Khối Nội Dung
+                  {saving ? 'Đang lưu…' : 'Lưu Khối Nội Dung'}
                 </button>
               </div>
             </form>

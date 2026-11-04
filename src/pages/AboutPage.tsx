@@ -1,6 +1,6 @@
 import React from 'react';
 import { 
-  Sparkles, 
+  Headphones,
   Layers, 
   ShieldCheck, 
   Award, 
@@ -56,9 +56,9 @@ export const AboutPage: React.FC = () => {
           <div className="bg-forest text-paper p-8 border border-brass corner-frame space-y-4">
             <span className="text-xs font-mono text-brass uppercase tracking-widest block">Cam Kết Atelier</span>
             <p className="font-serif text-2xl font-bold text-paper">
-              100% Khảo Cứu Thực Địa & Chuẩn Xác Tỷ Lệ
+              Khảo Cứu Tư Liệu & Đối Chiếu Tỷ Lệ
             </p>
-            <p className="text-xs text-paper/80 font-light leading-relaxed">
+            <p className="text-sm text-paper/80 font-light leading-6">
               Tất cả chi tiết kiến trúc—từ vòm cuốn gạch vồ, con sơn kẻ chuyền, đến từng đầu đao mái ngói—đều được đối sánh trực tiếp với hồ sơ trùng tu và bản vẽ khảo cổ học.
             </p>
           </div>
@@ -83,7 +83,7 @@ export const AboutPage: React.FC = () => {
               <h3 className="font-serif text-xl font-bold text-forest">
                 1. Vật Liệu Xanh BioPETG
               </h3>
-              <p className="text-xs sm:text-sm text-charcoal/80 font-light leading-relaxed">
+              <p className="text-sm text-charcoal/80 font-light leading-6">
                 Ứng dụng sợi sinh học BioPETG kết hợp bột khoáng tự nhiên, đạt độ bền cơ học cao, chịu ẩm nhiệt đới và an toàn tuyệt đối với sức khỏe con người cũng như môi trường.
               </p>
             </div>
@@ -95,19 +95,19 @@ export const AboutPage: React.FC = () => {
               <h3 className="font-serif text-xl font-bold text-forest">
                 2. Mộng Gỗ Không Dùng Keo
               </h3>
-              <p className="text-xs sm:text-sm text-charcoal/80 font-light leading-relaxed">
+              <p className="text-sm text-charcoal/80 font-light leading-6">
                 Kế thừa trọn vẹn trí tuệ của thợ mộc xưa: cấu kiện ghép nối hoàn toàn bằng khớp mộng âm dương chính xác đến từng micro-mét, cho phép tháo lắp và khám phá cấu trúc rường cột bên trong.
               </p>
             </div>
 
             <div className="bg-paper p-8 border border-paper-border hover:border-brass transition-all corner-frame space-y-4">
               <div className="w-12 h-12 bg-forest text-brass flex items-center justify-center border border-brass">
-                <Sparkles className="w-6 h-6" />
+                <Headphones className="w-6 h-6" />
               </div>
               <h3 className="font-serif text-xl font-bold text-forest">
                 3. Trải Nghiệm Thuyết Minh Số
               </h3>
-              <p className="text-xs sm:text-sm text-charcoal/80 font-light leading-relaxed">
+              <p className="text-sm text-charcoal/80 font-light leading-6">
                 Tích hợp mã QR độc bản dẫn đến không gian số hoá riêng biệt. Người sở hữu được lắng nghe bản thu âm độc quyền và đọc các tư liệu lịch sử lưu trữ chuyên sâu.
               </p>
             </div>
@@ -143,7 +143,7 @@ export const AboutPage: React.FC = () => {
               </div>
               <div className="px-1">
                 <p className="font-serif font-bold text-base text-forest">Mô Hình Khảo Cứu Thực Tế</p>
-                <p className="text-xs text-charcoal/75 font-light">Tái hiện chân thực đường cong mái đao và kết cấu cột trụ đá</p>
+                <p className="text-sm text-charcoal/75 font-light leading-6">Tái hiện chân thực đường cong mái đao và kết cấu cột trụ đá</p>
               </div>
             </div>
 
@@ -158,7 +158,7 @@ export const AboutPage: React.FC = () => {
               </div>
               <div className="px-1">
                 <p className="font-serif font-bold text-base text-forest">Bao Bì & Thẻ Định Danh Độc Bản</p>
-                <p className="text-xs text-charcoal/75 font-light">Mỗi mô hình được cấp một số hiệu bảo chứng và tem QR riêng</p>
+                <p className="text-sm text-charcoal/75 font-light leading-6">Mỗi mô hình được cấp một số hiệu bảo chứng và tem QR riêng</p>
               </div>
             </div>
 
@@ -173,7 +173,7 @@ export const AboutPage: React.FC = () => {
               </div>
               <div className="px-1">
                 <p className="font-serif font-bold text-base text-forest">Chi Tiết Cấu Kiện Mộng Khớp</p>
-                <p className="text-xs text-charcoal/75 font-light">Độ chuẩn xác cao, tái hiện kỹ thuật mộng truyền thống của tiền nhân</p>
+                <p className="text-sm text-charcoal/75 font-light leading-6">Độ chuẩn xác cao, tái hiện kỹ thuật mộng truyền thống của tiền nhân</p>
               </div>
             </div>
           </div>

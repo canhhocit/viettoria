@@ -78,7 +78,7 @@ export const CollectionsPage: React.FC = () => {
                     <h3 className="font-serif text-2xl font-bold text-forest group-hover:text-brass transition-colors">
                       {col.name}
                     </h3>
-                    <p className="text-xs sm:text-sm text-charcoal/80 font-light leading-relaxed">
+                    <p className="text-sm text-charcoal/80 font-light leading-6">
                       {col.description}
                     </p>
                   </div>

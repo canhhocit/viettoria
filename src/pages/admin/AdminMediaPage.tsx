@@ -9,18 +9,23 @@ export const AdminMediaPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [search, setSearch] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    adminApi.getMedia().then((data) => {
-      setMediaList(data);
-      setLoading(false);
-    });
+    adminApi.getMedia().then((data) => setMediaList(data))
+      .catch((err: unknown) => setError(err instanceof Error ? err.message : 'Không tải được thư viện media.'))
+      .finally(() => setLoading(false));
   }, []);
 
-  const handleCopy = (url: string, id: string) => {
-    navigator.clipboard.writeText(url);
-    setCopiedId(id);
-    setTimeout(() => setCopiedId(null), 2000);
+  const handleCopy = async (url: string, id: string) => {
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopiedId(id);
+      setError(null);
+      setTimeout(() => setCopiedId(null), 2000);
+    } catch {
+      setError('Trình duyệt không cho phép sao chép. Hãy chọn và sao chép URL thủ công.');
+    }
   };
 
   const filteredMedia = mediaList.filter(m =>
@@ -53,6 +58,9 @@ export const AdminMediaPage: React.FC = () => {
           />
         </div>
       </div>
+
+      {error && <div role="alert" className="border border-terracotta/40 bg-terracotta/10 p-3 text-sm text-terracotta">{error}</div>}
+      <p className="border-l-2 border-brass bg-paper-warm px-3 py-2 text-xs leading-relaxed text-charcoal-muted">Thư viện hiện hỗ trợ tra cứu và sao chép URL. Chức năng tải tệp lên chưa được cấu hình ở backend.</p>
 
       {/* Media Grid */}
       {loading ? (
@@ -88,7 +96,7 @@ export const AdminMediaPage: React.FC = () => {
 
               <div className="p-3.5 pt-0 border-t border-paper-border mt-2">
                 <button
-                  onClick={() => handleCopy(item.url, item.id)}
+                  onClick={() => void handleCopy(item.url, item.id)}
                   className="w-full py-1.5 px-2 bg-paper-warm hover:bg-forest hover:text-paper border border-paper-border text-charcoal font-mono text-[11px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition-colors"
                 >
                   {copiedId === item.id ? (

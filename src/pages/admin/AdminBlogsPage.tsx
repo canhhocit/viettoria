@@ -1,239 +1,86 @@
-import React, { useEffect, useState } from 'react';
-import { Plus, Edit, CheckCircle, X, ExternalLink } from 'lucide-react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { AlertCircle, Plus, Edit, CheckCircle, Circle, X, ExternalLink, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { adminApi } from '../../services/api';
-import type { BlogPost } from '../../types';
+import type { BlogPost, ContentStatus } from '../../types';
+
+const slugFromTitle = (value: string) => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/đ/g, 'd').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const today = () => new Date().toISOString().slice(0, 10);
 
 export const AdminBlogsPage: React.FC = () => {
   const [blogs, setBlogs] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingBlog, setEditingBlog] = useState<Partial<BlogPost> | null>(null);
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     setLoading(true);
-    const data = await adminApi.getBlogs();
-    setBlogs(data);
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    loadData();
+    try { setBlogs(await adminApi.getBlogs()); setError(null); }
+    catch (err) { setError(err instanceof Error ? err.message : 'Không tải được danh sách bài viết.'); }
+    finally { setLoading(false); }
   }, []);
 
+  useEffect(() => { void loadData(); }, [loadData]);
+
   const handleOpenAdd = () => {
-    setEditingBlog({
-      title: '',
-      slug: '',
-      excerpt: '',
-      content: '',
-      coverImage: '/images/chua-mot-cot.webp',
-      author: 'Ban Cố Vấn Văn Hóa',
-      category: 'Khảo Cứu Kiến Trúc',
-      readTime: '5 phút đọc',
-      publishedAt: '2026-03-30',
-      status: 'published'
-    });
+    setEditingBlog({ title: '', slug: '', excerpt: '', content: '', coverImage: '/3D/chua-mot-cot-poster.webp', author: '', category: '', readTime: '5 phút đọc', publishedAt: today(), status: 'draft' });
+    setError(null);
     setIsModalOpen(true);
   };
 
-  const handleOpenEdit = (blog: BlogPost) => {
-    setEditingBlog({ ...blog });
-    setIsModalOpen(true);
-  };
-
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!editingBlog || !editingBlog.title) return;
-    setIsModalOpen(false);
-    loadData();
+    if (!editingBlog?.title?.trim()) return;
+    setSaving(true); setError(null);
+    try {
+      const payload = { ...editingBlog, title: editingBlog.title.trim(), slug: editingBlog.slug?.trim() || slugFromTitle(editingBlog.title), publishedAt: editingBlog.publishedAt || today() };
+      if (editingBlog.id) await adminApi.updateBlog(editingBlog.id, payload);
+      else await adminApi.createBlog(payload);
+      setIsModalOpen(false);
+      await loadData();
+    } catch (err) { setError(err instanceof Error ? err.message : 'Không lưu được bài viết.'); }
+    finally { setSaving(false); }
+  };
+
+  const handleToggleStatus = async (blog: BlogPost) => {
+    const status: ContentStatus = blog.status === 'published' ? 'draft' : 'published';
+    setError(null);
+    try { await adminApi.updateBlog(blog.id, { status }); await loadData(); }
+    catch (err) { setError(err instanceof Error ? err.message : 'Không đổi được trạng thái bài viết.'); }
+  };
+
+  const handleDelete = async (blog: BlogPost) => {
+    if (!window.confirm(`Xóa bài viết “${blog.title}”?`)) return;
+    setError(null);
+    try { await adminApi.deleteBlog(blog.id); await loadData(); }
+    catch (err) { setError(err instanceof Error ? err.message : 'Không xóa được bài viết.'); }
   };
 
   return (
     <div className="space-y-6">
-      {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-paper-border">
-        <div>
-          <h1 className="font-serif text-2xl sm:text-3xl font-bold text-forest mt-1">
-            Quản Lý Góc Văn Hóa
-          </h1>
-        </div>
-
-        <button
-          onClick={handleOpenAdd}
-          className="px-4 py-2.5 bg-forest text-paper hover:bg-brass transition-colors font-mono text-xs uppercase tracking-wider font-bold flex items-center gap-2 shadow-sm"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Bài Viết Mới</span>
-        </button>
+      <div className="flex flex-col justify-between gap-4 border-b border-paper-border pb-4 sm:flex-row sm:items-center"><div><h1 className="mt-1 font-serif text-2xl font-bold text-forest sm:text-3xl">Quản lý Góc Văn Hóa</h1><p className="mt-1 text-xs text-charcoal-muted">Soạn, xuất bản và cập nhật bài viết di sản.</p></div><button onClick={handleOpenAdd} className="flex items-center gap-2 bg-forest px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-paper hover:bg-brass"><Plus className="h-4 w-4"/>Bài viết mới</button></div>
+      {error && <div role="alert" className="flex items-start gap-2 border border-terracotta/40 bg-terracotta/10 p-3 text-sm text-terracotta"><AlertCircle className="mt-0.5 h-4 w-4 shrink-0"/>{error}</div>}
+      <div className="overflow-hidden border border-paper-border bg-paper shadow-sm">
+        <div className="overflow-x-auto"><table className="w-full min-w-[780px] border-collapse text-left text-xs"><thead><tr className="border-b border-paper-border bg-paper-warm font-mono uppercase tracking-wider text-charcoal-muted"><th className="p-4">Bài viết</th><th className="p-4">Chuyên mục</th><th className="p-4">Tác giả</th><th className="p-4">Ngày đăng</th><th className="p-4">Trạng thái</th><th className="p-4 text-right">Thao tác</th></tr></thead>
+          <tbody className="divide-y divide-paper-border font-mono">{loading ? <tr><td colSpan={6} className="p-8 text-center text-forest">Đang tải danh sách bài viết…</td></tr> : blogs.length === 0 ? <tr><td colSpan={6} className="p-8 text-center text-charcoal-muted">Chưa có bài viết nào.</td></tr> : blogs.map(blog => <tr key={blog.id} className="transition-colors hover:bg-paper-warm/50"><td className="max-w-sm p-4"><div className="line-clamp-1 font-serif text-sm font-bold text-forest">{blog.title}</div><div className="line-clamp-1 text-[11px] text-charcoal-muted">{blog.excerpt}</div></td><td className="p-4">{blog.category}</td><td className="p-4">{blog.author}</td><td className="p-4 text-charcoal-muted">{blog.publishedAt}</td><td className="p-4"><button onClick={() => void handleToggleStatus(blog)} className={`inline-flex items-center gap-1 border px-2 py-1 text-[10px] font-bold uppercase ${blog.status === 'published' ? 'border-forest/20 bg-forest/10 text-forest' : 'border-charcoal/20 bg-charcoal/5 text-charcoal-muted'}`} title="Nhấn để đổi trạng thái">{blog.status === 'published' ? <><CheckCircle className="h-3 w-3"/>Đã xuất bản</> : <><Circle className="h-3 w-3"/>Bản nháp</>}</button></td><td className="p-4"><div className="flex items-center justify-end gap-2"><button onClick={() => { setEditingBlog({ ...blog }); setError(null); setIsModalOpen(true); }} className="border border-paper-border p-1.5 text-charcoal hover:border-brass" title="Sửa bài viết"><Edit className="h-3.5 w-3.5"/></button><Link to={`/blogs/${blog.slug}`} target="_blank" rel="noreferrer" className="border border-paper-border p-1.5 text-charcoal hover:border-forest" title="Xem bài viết công khai"><ExternalLink className="h-3.5 w-3.5"/></Link><button onClick={() => void handleDelete(blog)} className="border border-paper-border p-1.5 text-terracotta hover:border-terracotta" title="Xóa bài viết"><Trash2 className="h-3.5 w-3.5"/></button></div></td></tr>)}</tbody>
+        </table></div>
       </div>
 
-      {/* Blog List Table */}
-      <div className="bg-paper border border-paper-border corner-frame overflow-hidden shadow-sm">
-        <table className="w-full text-left border-collapse text-xs">
-          <thead>
-            <tr className="bg-paper-warm border-b border-paper-border text-charcoal-muted font-mono uppercase tracking-wider">
-              <th className="p-4">Tiêu Đề Bài Viết</th>
-              <th className="p-4">Chuyên Mục</th>
-              <th className="p-4">Tác Giả</th>
-              <th className="p-4">Ngày Đăng</th>
-              <th className="p-4">Trạng Thái</th>
-              <th className="p-4 text-right">Thao Tác</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-paper-border font-mono">
-            {loading ? (
-              <tr>
-                <td colSpan={6} className="p-8 text-center text-forest">
-                  Đang tải danh sách bài viết...
-                </td>
-              </tr>
-            ) : blogs.map((b) => (
-              <tr key={b.id} className="hover:bg-paper-warm/50 transition-colors">
-                <td className="p-4">
-                  <div className="font-serif font-bold text-forest text-sm line-clamp-1">{b.title}</div>
-                  <div className="text-[11px] font-sans text-charcoal-muted line-clamp-1">{b.excerpt}</div>
-                </td>
-                <td className="p-4">
-                  <span className="bg-paper-warm px-2 py-1 border border-paper-border text-brass font-bold">
-                    {b.category}
-                  </span>
-                </td>
-                <td className="p-4 text-charcoal">{b.author}</td>
-                <td className="p-4 text-charcoal-muted">{b.publishedAt}</td>
-                <td className="p-4">
-                  <span className="inline-flex items-center gap-1 text-[10px] uppercase font-bold text-forest bg-forest/10 px-2 py-0.5 border border-forest/20">
-                    <CheckCircle className="w-3 h-3" />
-                    <span>Xuất Bản</span>
-                  </span>
-                </td>
-                <td className="p-4 text-right">
-                  <div className="flex items-center justify-end gap-2">
-                    <button
-                      onClick={() => handleOpenEdit(b)}
-                      className="p-1.5 border border-paper-border hover:border-brass text-charcoal"
-                      title="Sửa bài viết"
-                    >
-                      <Edit className="w-3.5 h-3.5" />
-                    </button>
-                    <Link
-                      to={`/blogs/${b.slug}`}
-                      target="_blank"
-                      className="p-1.5 border border-paper-border hover:border-forest text-charcoal"
-                      title="Xem bài viết công khai"
-                    >
-                      <ExternalLink className="w-3.5 h-3.5" />
-                    </Link>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Edit Modal */}
-      {isModalOpen && editingBlog && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-forest-dark/80 backdrop-blur-sm overflow-y-auto">
-          <div className="relative w-full max-w-2xl bg-paper border border-brass corner-frame p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
-            <button
-              onClick={() => setIsModalOpen(false)}
-              className="absolute top-4 right-4 p-1 text-charcoal-muted hover:text-charcoal"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            <h2 className="font-serif text-2xl font-bold text-forest mb-4">
-              {editingBlog.id ? 'Biên Tập Bài Viết Khảo Cứu' : 'Soạn Bài Viết Mới'}
-            </h2>
-
-            <form onSubmit={handleSave} className="space-y-4 font-mono text-xs">
-              <div>
-                <label className="block text-charcoal-muted uppercase mb-1">Tiêu Đề Bài Viết</label>
-                <input
-                  type="text"
-                  value={editingBlog.title || ''}
-                  onChange={e => setEditingBlog({ ...editingBlog, title: e.target.value })}
-                  className="w-full px-3 py-2 bg-paper-warm border border-paper-border focus:border-brass focus:outline-none"
-                  required
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-charcoal-muted uppercase mb-1">Chuyên Mục</label>
-                  <input
-                    type="text"
-                    value={editingBlog.category || ''}
-                    onChange={e => setEditingBlog({ ...editingBlog, category: e.target.value })}
-                    className="w-full px-3 py-2 bg-paper-warm border border-paper-border focus:border-brass focus:outline-none"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-charcoal-muted uppercase mb-1">Tác Giả</label>
-                  <input
-                    type="text"
-                    value={editingBlog.author || ''}
-                    onChange={e => setEditingBlog({ ...editingBlog, author: e.target.value })}
-                    className="w-full px-3 py-2 bg-paper-warm border border-paper-border focus:border-brass focus:outline-none"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-charcoal-muted uppercase mb-1">Đoạn Trích Tóm Tắt (Excerpt)</label>
-                <textarea
-                  rows={2}
-                  value={editingBlog.excerpt || ''}
-                  onChange={e => setEditingBlog({ ...editingBlog, excerpt: e.target.value })}
-                  className="w-full px-3 py-2 bg-paper-warm border border-paper-border focus:border-brass focus:outline-none font-sans"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-charcoal-muted uppercase mb-1">Nội Dung Đầy Đủ (Đoạn văn cách nhau bởi 2 dấu xuống dòng)</label>
-                <textarea
-                  rows={8}
-                  value={editingBlog.content || ''}
-                  onChange={e => setEditingBlog({ ...editingBlog, content: e.target.value })}
-                  className="w-full px-3 py-2 bg-paper-warm border border-paper-border focus:border-brass focus:outline-none font-sans"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-charcoal-muted uppercase mb-1">URL Ảnh Bìa</label>
-                <input
-                  type="text"
-                  value={editingBlog.coverImage || ''}
-                  onChange={e => setEditingBlog({ ...editingBlog, coverImage: e.target.value })}
-                  className="w-full px-3 py-2 bg-paper-warm border border-paper-border focus:border-brass focus:outline-none"
-                  required
-                />
-              </div>
-
-              <div className="pt-4 border-t border-paper-border flex justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 border border-paper-border text-charcoal uppercase tracking-wider hover:bg-paper-warm"
-                >
-                  Hủy Bỏ
-                </button>
-                <button
-                  type="submit"
-                  className="px-6 py-2 bg-forest text-paper hover:bg-brass uppercase tracking-wider font-bold shadow-md"
-                >
-                  Lưu Bài Viết
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      {isModalOpen && editingBlog && <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-forest-dark/80 p-4"><div className="relative my-auto max-h-[92vh] w-full max-w-2xl overflow-y-auto border border-brass bg-paper p-6 shadow-2xl sm:p-8"><button onClick={() => setIsModalOpen(false)} className="absolute right-4 top-4 p-1 text-charcoal-muted hover:text-charcoal" aria-label="Đóng"><X className="h-5 w-5"/></button><h2 className="mb-5 pr-8 font-serif text-2xl font-bold text-forest">{editingBlog.id ? 'Sửa bài viết' : 'Soạn bài viết mới'}</h2>
+        <form onSubmit={handleSave} className="space-y-4 font-mono text-xs">
+          <label className="block text-charcoal-muted">Tiêu đề<input value={editingBlog.title || ''} onChange={e => setEditingBlog({ ...editingBlog, title: e.target.value, ...(editingBlog.id ? {} : { slug: slugFromTitle(e.target.value) }) })} className="mt-1 w-full border border-paper-border bg-paper-warm px-3 py-2 text-charcoal" required/></label>
+          <label className="block text-charcoal-muted">Đường dẫn (slug)<input value={editingBlog.slug || ''} onChange={e => setEditingBlog({ ...editingBlog, slug: e.target.value })} className="mt-1 w-full border border-paper-border bg-paper-warm px-3 py-2 text-charcoal" required/></label>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2"><label className="block text-charcoal-muted">Chuyên mục<input value={editingBlog.category || ''} onChange={e => setEditingBlog({ ...editingBlog, category: e.target.value })} className="mt-1 w-full border border-paper-border bg-paper-warm px-3 py-2 text-charcoal" required/></label><label className="block text-charcoal-muted">Tác giả<input value={editingBlog.author || ''} onChange={e => setEditingBlog({ ...editingBlog, author: e.target.value })} className="mt-1 w-full border border-paper-border bg-paper-warm px-3 py-2 text-charcoal" required/></label></div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3"><label className="block text-charcoal-muted sm:col-span-1">Thời gian đọc<input value={editingBlog.readTime || ''} onChange={e => setEditingBlog({ ...editingBlog, readTime: e.target.value })} className="mt-1 w-full border border-paper-border bg-paper-warm px-3 py-2 text-charcoal" required/></label><label className="block text-charcoal-muted sm:col-span-1">Ngày đăng<input type="date" value={editingBlog.publishedAt || today()} onChange={e => setEditingBlog({ ...editingBlog, publishedAt: e.target.value })} className="mt-1 w-full border border-paper-border bg-paper-warm px-3 py-2 text-charcoal" required/></label><label className="block text-charcoal-muted sm:col-span-1">Trạng thái<select value={editingBlog.status || 'draft'} onChange={e => setEditingBlog({ ...editingBlog, status: e.target.value as ContentStatus })} className="mt-1 w-full border border-paper-border bg-paper-warm px-3 py-2 text-charcoal"><option value="draft">Bản nháp</option><option value="published">Xuất bản</option><option value="hidden">Ẩn</option></select></label></div>
+          <label className="block text-charcoal-muted">Đoạn trích<textarea rows={2} value={editingBlog.excerpt || ''} onChange={e => setEditingBlog({ ...editingBlog, excerpt: e.target.value })} className="mt-1 w-full border border-paper-border bg-paper-warm px-3 py-2 text-charcoal" required/></label>
+          <label className="block text-charcoal-muted">Nội dung<textarea rows={8} value={editingBlog.content || ''} onChange={e => setEditingBlog({ ...editingBlog, content: e.target.value })} className="mt-1 w-full border border-paper-border bg-paper-warm px-3 py-2 text-charcoal" required/></label>
+          <label className="block text-charcoal-muted">URL ảnh bìa<input value={editingBlog.coverImage || ''} onChange={e => setEditingBlog({ ...editingBlog, coverImage: e.target.value })} className="mt-1 w-full border border-paper-border bg-paper-warm px-3 py-2 text-charcoal" required/></label>
+          {error && <div role="alert" className="text-terracotta">{error}</div>}
+          <div className="flex justify-end gap-3 border-t border-paper-border pt-4"><button type="button" onClick={() => setIsModalOpen(false)} className="border border-paper-border px-4 py-2 uppercase text-charcoal hover:bg-paper-warm">Hủy</button><button type="submit" disabled={saving} className="bg-forest px-6 py-2 font-bold uppercase text-paper hover:bg-brass disabled:opacity-50">{saving ? 'Đang lưu…' : 'Lưu bài viết'}</button></div>
+        </form>
+      </div></div>}
     </div>
   );
 };

@@ -7,7 +7,7 @@ export const FALLBACK_COLLECTIONS: Collection[] = [
     name: 'Dấu Ấn Hoàng Thành Thăng Long',
     slug: 'dau-an-hoang-thanh-thang-long',
     description: 'Hành trình nghìn năm văn vật nơi kinh thành Thăng Long, hội tụ tinh hoa kiến trúc cung đình và triết lý Phật giáo Đại Việt.',
-    heroImage: '/images/hoang-thanh-thang-long.webp',
+    heroImage: '/3D/cot-co-ha-noi-poster.webp',
     displayOrder: 1,
     status: 'published',
     productsCount: 3
@@ -18,7 +18,7 @@ export const FALLBACK_COLLECTIONS: Collection[] = [
     name: 'Quần Thể Di Tích Cố Đô Huế',
     slug: 'quan-the-di-tich-co-do-hue',
     description: 'Kiệt tác kiến trúc cung đình triều Nguyễn, vẻ đẹp trầm mặc uy nghiêm bên bờ dòng sông Hương êm đềm.',
-    heroImage: '/images/thua-thien-hue.webp',
+    heroImage: '/3D/ngo-mon-hue-poster.webp',
     displayOrder: 2,
     status: 'published',
     productsCount: 1
@@ -29,7 +29,7 @@ export const FALLBACK_COLLECTIONS: Collection[] = [
     name: 'Dấu Ấn Sài Gòn - Gia Định',
     slug: 'dau-an-sai-gon-gia-dinh',
     description: 'Nơi giao thoa phong cách kiến trúc Đông Dương, chứng nhân của những bước chân lịch sử vĩ đại của dân tộc.',
-    heroImage: '/images/dinh-doc-lap.webp',
+    heroImage: '/3D/ben-nha-rong-poster.webp',
     displayOrder: 3,
     status: 'published',
     productsCount: 1
@@ -56,10 +56,10 @@ export const FALLBACK_PRODUCTS: Product[] = [
       partsCount: 24,
       finishing: 'Phủ bóng mờ sáp ong, gờ ngói cổ chạm nổi, giả lập chất gỗ lim già'
     },
-    heroImage: '/images/chua-mot-cot.webp',
+    heroImage: '/3D/chua-mot-cot-poster.webp',
     model3dUrl: '/3D/chua-mot-cot.glb',
     galleryImages: [
-      '/images/chua-mot-cot.webp',
+      '/3D/chua-mot-cot-poster.webp',
       '/viettoria_img/IMG_6026.PNG',
       '/viettoria_img/IMG_6361.PNG',
       '/viettoria_img/IMG_6368.PNG'
@@ -94,10 +94,10 @@ export const FALLBACK_PRODUCTS: Product[] = [
       partsCount: 28,
       finishing: 'Sơn son thếp vàng thủ công viền cửa tròn sao Khuê, mái ngói giả cổ'
     },
-    heroImage: '/images/van-mieu-quoc-tu-giam.webp',
+    heroImage: '/3D/khue-van-cac-poster.webp',
     model3dUrl: '/3D/khue-van-cac.glb',
     galleryImages: [
-      '/images/van-mieu-quoc-tu-giam.webp',
+      '/3D/khue-van-cac-poster.webp',
       '/viettoria_img/IMG_6362.PNG',
       '/viettoria_img/IMG_6363.PNG',
       '/viettoria_img/IMG_6370.PNG'
@@ -132,10 +132,10 @@ export const FALLBACK_PRODUCTS: Product[] = [
       partsCount: 18,
       finishing: 'Màu gạch nung cổ kính, 39 lỗ hoa thị đón sáng tinh tế'
     },
-    heroImage: '/images/hoang-thanh-thang-long.webp',
+    heroImage: '/3D/cot-co-ha-noi-poster.webp',
     model3dUrl: '/3D/cot-co-ha-noi.glb',
     galleryImages: [
-      '/images/hoang-thanh-thang-long.webp',
+      '/3D/cot-co-ha-noi-poster.webp',
       '/viettoria_img/IMG_6364.PNG',
       '/viettoria_img/IMG_6371.PNG'
     ],
@@ -169,10 +169,10 @@ export const FALLBACK_PRODUCTS: Product[] = [
       partsCount: 32,
       finishing: 'Ngói hoàng lưu ly vàng rực rỡ và ngói thanh lưu ly xanh biếc'
     },
-    heroImage: '/images/thua-thien-hue.webp',
+    heroImage: '/3D/ngo-mon-hue-poster.webp',
     model3dUrl: '/3D/ngo-mon-hue.glb',
     galleryImages: [
-      '/images/thua-thien-hue.webp',
+      '/3D/ngo-mon-hue-poster.webp',
       '/viettoria_img/IMG_6365.PNG',
       '/viettoria_img/IMG_6366.PNG',
       '/viettoria_img/IMG_6372.PNG'
@@ -207,10 +207,10 @@ export const FALLBACK_PRODUCTS: Product[] = [
       partsCount: 22,
       finishing: 'Chi tiết đôi rồng gốm men xanh ngậm ngọc chầu trăng trên đỉnh mái'
     },
-    heroImage: '/images/dinh-doc-lap.webp',
+    heroImage: '/3D/ben-nha-rong-poster.webp',
     model3dUrl: '/3D/ben-nha-rong.glb',
     galleryImages: [
-      '/images/dinh-doc-lap.webp',
+      '/3D/ben-nha-rong-poster.webp',
       '/viettoria_img/IMG_6367.PNG',
       '/viettoria_img/IMG_5825.PNG',
       '/viettoria_img/IMG_5826.PNG'
@@ -236,7 +236,7 @@ export const FALLBACK_STORY_BLOCKS: StoryBlock[] = [
     title: 'Giấc Mộng Đài Sen Mùa Đông Kỷ Sửu (1049)',
     subtitle: 'Khởi nguồn vương triều Lý và ước vọng thái bình',
     content: 'Chùa Một Cột (Diên Hựu Tự) được khởi dựng vào mùa đông năm Kỷ Sửu (1049) dưới triều vua Lý Thái Tông. Theo Đại Việt Sử Ký Toàn Thư, vua chiêm bao thấy Phật Bà Quan Âm ngự trên tòa sen dắt vua bước lên. Tỉnh mộng, triều thần bàn việc lập chùa với trụ đá vươn cao giữa hồ sen vuông vức Linh Chiểu, tựa như đóa sen tinh khiết ngàn năm tỏa hương ngự giữa lòng kinh thành Thăng Long.',
-    mediaUrl: '/images/chua-mot-cot.webp',
+    mediaUrl: '/3D/chua-mot-cot-poster.webp',
     mediaCaption: 'Diên Hựu Tự soi bóng bên hồ Linh Chiểu, quận Ba Đình, Hà Nội.',
     displayOrder: 1,
     status: 'published'
@@ -333,7 +333,7 @@ export const FALLBACK_BLOGS: BlogPost[] = [
     slug: 'ky-nghe-mong-go-am-duong-trong-kien-truc-co-viet-nam',
     excerpt: 'Tìm hiểu triết lý không dùng một giọt keo dán hay đinh vít sắt của người xưa, và cách Viettoria module hóa từng khớp mộng thành mô hình in 3D sinh thái.',
     content: 'Trong nền kiến trúc truyền thống Việt Nam, kỹ thuật liên kết rường cột hoàn toàn dựa trên các mộng gỗ âm dương. Các thợ mộc xưa đo đạc bằng thước tầm, đục đẽo từng thanh đòn consol để khi gài vào nhau sẽ tự khóa chặt dưới sức nặng của chính công trình. Viettoria đã ứng dụng công nghệ quét 3D và thuật toán phân tích dung sai 0.1mm để tái hiện trọn vẹn vẻ đẹp này trên mô hình in 3D BioPETG.',
-    coverImage: '/images/chua-mot-cot.webp',
+    coverImage: '/3D/chua-mot-cot-poster.webp',
     author: 'Ban Nghiên Cứu Di Sản Viettoria',
     category: 'Kỹ Nghệ & Kiến Trúc',
     readTime: '5 phút đọc',
@@ -346,7 +346,7 @@ export const FALLBACK_BLOGS: BlogPost[] = [
     slug: 'dien-huu-tu-doa-sen-nghin-nam-tu-giac-mong-vua-ly-thai-tong',
     excerpt: 'Giải mã những ẩn ngữ phong thủy, triết lý Trời tròn Đất vuông và bối cảnh lịch sử Thăng Long thời Lý thế kỷ 11.',
     content: 'Mùa đông năm Kỷ Sửu (1049), kinh thành Thăng Long đón nhận một công trình có một không hai trong lịch sử kiến trúc nhân loại. Chùa Một Cột không chỉ ghi dấu lòng sùng đạo của vua Lý Thái Tông mà còn biểu trưng cho lời chúc quốc thái dân an, đưa Đại Việt bước vào kỷ nguyên văn minh rực rỡ.',
-    coverImage: '/images/van-mieu-quoc-tu-giam.webp',
+    coverImage: '/3D/khue-van-cac-poster.webp',
     author: 'Nguyễn Văn Cảnh',
     category: 'Lịch Sử & Giai Thoại',
     readTime: '7 phút đọc',
@@ -359,7 +359,7 @@ export const FALLBACK_BLOGS: BlogPost[] = [
     slug: 'phygital-heritage-xu-huong-dua-hien-vat-lich-su-den-the-he-tre',
     excerpt: 'Tại sao việc kết hợp giữa mô hình vật thể cầm tay và trải nghiệm số QR là chìa khóa mở cánh cửa tình yêu văn hóa cho Gen Z.',
     content: 'Mô hình vật lý mang lại cảm giác xúc giác (tactile feeling), trong khi nền tảng web số mang lại chiều sâu thông tin qua âm thanh, đồ họa và dữ liệu lịch sử chuẩn xác. Đó chính là sứ mệnh Phygital mà Viettoria kiên định theo đuổi tại cuộc thi Sáng tạo Khởi nghiệp Phenikaa PSI 2026.',
-    coverImage: '/images/hoang-thanh-thang-long.webp',
+    coverImage: '/3D/cot-co-ha-noi-poster.webp',
     author: 'Đội Ngũ Sáng Lập Viettoria',
     category: 'Đổi Mới Sáng Tạo',
     readTime: '4 phút đọc',
@@ -372,30 +372,30 @@ export const FALLBACK_MEDIA: MediaItem[] = [
   {
     id: 'media-1',
     name: 'Chùa Một Cột Chính Diện',
-    fileName: 'chua-mot-cot.webp',
+    fileName: 'chua-mot-cot-poster.webp',
     fileType: 'image/webp',
     fileSize: 299290,
-    url: '/images/chua-mot-cot.webp',
+    url: '/3D/chua-mot-cot-poster.webp',
     altText: 'Ảnh chụp chính diện Chùa Một Cột Ba Đình Hà Nội',
     uploadedAt: new Date().toISOString()
   },
   {
     id: 'media-2',
     name: 'Văn Miếu Quốc Tử Giám',
-    fileName: 'van-mieu-quoc-tu-giam.webp',
+    fileName: 'khue-van-cac-poster.webp',
     fileType: 'image/webp',
     fileSize: 297804,
-    url: '/images/van-mieu-quoc-tu-giam.webp',
+    url: '/3D/khue-van-cac-poster.webp',
     altText: 'Khuê Văn Các soi bóng xuống giếng Thiên Quang',
     uploadedAt: new Date().toISOString()
   },
   {
     id: 'media-3',
     name: 'Kỳ Đài Thăng Long',
-    fileName: 'hoang-thanh-thang-long.webp',
+    fileName: 'cot-co-ha-noi-poster.webp',
     fileType: 'image/webp',
     fileSize: 191866,
-    url: '/images/hoang-thanh-thang-long.webp',
+    url: '/3D/cot-co-ha-noi-poster.webp',
     altText: 'Cột Cờ Hà Nội trong khuôn viên di tích Hoàng thành',
     uploadedAt: new Date().toISOString()
   },

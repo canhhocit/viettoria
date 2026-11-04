@@ -25,12 +25,17 @@ export const AdminLayout: React.FC = () => {
     if (!adminApi.isAuthenticated()) {
       navigate('/admin/login', { replace: true, state: { from: location } });
     } else {
-      setUser({
-        fullName: 'Quản Trị Viên',
-        username: 'admin',
-        avatarUrl: resolveAvatarUrl()
-      });
+      try {
+        const storedUser = localStorage.getItem('viettoria_admin_user');
+        const parsedUser = storedUser ? JSON.parse(storedUser) as { fullName?: string; username?: string } : null;
+        setUser({ fullName: parsedUser?.fullName || 'Quản Trị Viên', username: parsedUser?.username || '', avatarUrl: resolveAvatarUrl() });
+      } catch {
+        setUser({ fullName: 'Quản Trị Viên', username: '', avatarUrl: resolveAvatarUrl() });
+      }
     }
+    const handleUnauthorized = () => navigate('/admin/login', { replace: true, state: { from: location } });
+    window.addEventListener('viettoria:unauthorized', handleUnauthorized);
+    return () => window.removeEventListener('viettoria:unauthorized', handleUnauthorized);
   }, [navigate, location]);
 
   const handleLogout = () => {
@@ -63,6 +68,8 @@ export const AdminLayout: React.FC = () => {
         </button>
       </div>
 
+      {mobileMenuOpen && <button type="button" aria-label="Đóng menu" onClick={() => setMobileMenuOpen(false)} className="fixed inset-0 z-30 bg-black/40 md:hidden" />}
+
       {/* Sidebar Navigation */}
       <aside className={`
         fixed inset-y-0 left-0 z-40 w-64 bg-[#142820] text-white flex flex-col justify-between border-r border-[#B88A38]/25 transform transition-transform duration-200 ease-in-out md:translate-x-0 md:static md:h-screen
@@ -89,6 +96,7 @@ export const AdminLayout: React.FC = () => {
                 <NavLink
                   key={item.to}
                   to={item.to}
+                  end={item.to === '/admin/dashboard'}
                   onClick={() => setMobileMenuOpen(false)}
                   className={({ isActive }) =>
                     `flex items-center gap-3 px-3.5 py-3 rounded-[2px] transition-colors ${

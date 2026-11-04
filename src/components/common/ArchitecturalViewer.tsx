@@ -200,7 +200,6 @@ export const ArchitecturalViewer: React.FC<ArchitecturalViewerProps> = ({ produc
                 : 'bg-[#F3EBDD] border-[#D8CCB8] text-[#554231] hover:border-[#B88A38] hover:text-[#3B2B1D]'
             }`}
           >
-            <Eye className="w-3.5 h-3.5 text-[#B88A38]" />
             <span>Góc 0{idx + 1}</span>
           </button>
         ))}

@@ -9,7 +9,7 @@
  *      - Hình ảnh, avatar và tư liệu web lưu tại: /viettoria_img/ hoặc /images/
  */
 
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL as string) || 'http://localhost:8080/api';
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL as string) || 'http://localhost:8081/api';
 const CLOUDINARY_BASE_URL = (import.meta.env.VITE_CLOUDINARY_BASE_URL as string) || '';
 const CLOUDINARY_CLOUD_NAME = (import.meta.env.VITE_CLOUDINARY_CLOUD_NAME as string) || '';
 

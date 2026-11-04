@@ -1,20 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { 
-  ArrowRight, 
-  Sparkles, 
-  ShieldCheck, 
-  Layers, 
-  QrCode, 
-  BookOpen
-} from 'lucide-react';
+import { ArrowDown, ArrowRight, ArrowUpRight, Ruler, ScanLine } from 'lucide-react';
 import { publicApi } from '../services/api';
 import type { Product, Collection, BlogPost } from '../types';
 import { PageLoadingHeritage } from '../components/common/HeritageSkeleton';
-import { HeritageMap } from '../components/common/HeritageMap';
-import { HeritageParticles } from '../components/effects/HeritageParticles';
-import { TiltCard } from '../components/effects/TiltCard';
 import { resolveImageUrl, handleImageFallback } from '../utils/mediaResolver';
+
+const productPoster: Record<string, string> = {
+  'chua-mot-cot': '/3D/chua-mot-cot-poster.webp',
+  'khue-van-cac': '/3D/khue-van-cac-poster.webp',
+  'cot-co-ha-noi': '/3D/cot-co-ha-noi-poster.webp',
+  'ngo-mon-hue': '/3D/ngo-mon-hue-poster.webp',
+  'ben-nha-rong': '/3D/ben-nha-rong-poster.webp',
+};
+
+const imageFor = (path?: string | null, slug?: string) => {
+  if (slug && productPoster[slug]) return productPoster[slug];
+  if (path?.startsWith('/images/')) return '/3D/chua-mot-cot-poster.webp';
+  return resolveImageUrl(path);
+};
 
 export const HomePage: React.FC = () => {
   const [heroProduct, setHeroProduct] = useState<Product | null>(null);
@@ -25,414 +29,119 @@ export const HomePage: React.FC = () => {
   useEffect(() => {
     let mounted = true;
     publicApi.getFeatured().then((data) => {
-      if (mounted) {
-        setHeroProduct(data.heroProduct);
-        setCollections(data.collections);
-        setBlogs(data.latestBlogs);
-        setLoading(false);
-      }
+      if (!mounted) return;
+      setHeroProduct(data.heroProduct);
+      setCollections(data.collections);
+      setBlogs(data.latestBlogs);
+      setLoading(false);
     });
     return () => { mounted = false; };
   }, []);
 
-  if (loading) {
-    return <PageLoadingHeritage message="Đang khởi tạo không gian di sản kiến trúc..." />;
-  }
+  if (loading) return <PageLoadingHeritage message="Đang mở hồ sơ di sản..." />;
 
   return (
-    <div className="bg-paper text-charcoal">
-      {/* 1. EDITORIAL HERO SECTION */}
-      <section className="relative min-h-[85vh] sm:min-h-[90vh] flex items-center justify-center overflow-hidden bg-forest-dark text-paper">
-        {/* Ambient Video Background */}
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover opacity-25 filter grayscale contrast-125 pointer-events-none"
-        >
-          <source src="/videos/hero-background.webm" type="video/webm" />
-        </video>
-
-        {/* Heritage Pattern Overlay */}
-        <div className="heritage-grain absolute inset-0 opacity-40 pointer-events-none" />
-
-        {/* Ambient Gold Dust Particles (Incense/Sunlight motes) */}
-        <HeritageParticles />
-        
-        {/* Faint Dong Son Watermark with Slow Celestial Rotation */}
-        <div className="absolute -right-24 sm:-right-12 top-1/2 -translate-y-1/2 h-[125%] pointer-events-none select-none overflow-hidden flex items-center justify-center">
-          <img
-            src="/images/trong-dong.webp"
-            alt=""
-            aria-hidden="true"
-            className="h-full opacity-[0.11] object-contain mix-blend-screen animate-dong-son-spin"
-          />
-        </div>
-
-        {/* Content Container */}
-        <div className="relative z-20 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center space-y-8 animate-fade-up">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 border border-brass/60 bg-forest/80 backdrop-blur-sm text-brass text-xs font-mono uppercase tracking-widest shadow-sm hover:border-brass transition-colors">
-            <Sparkles className="w-3.5 h-3.5 animate-spin" style={{ animationDuration: '8s' }} />
-            <span>Phygital Heritage Collectibles • Phenikaa PSI 2026</span>
-          </div>
-
-          <h1 className="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-paper leading-[1.15]">
-            Di Sản Kiến Trúc Việt Nam,<br />
-            <span className="italic font-normal text-brass-subtle">Thu Nhỏ Trọn Vẹn Trên Tay Bạn</span>
-          </h1>
-
-          <p className="max-w-2xl mx-auto text-base sm:text-lg text-paper/80 font-light leading-relaxed">
-            VIETTORIA không bán một mô hình thu nhỏ đơn thuần. VIETTORIA mang đến một cách mới để khám phá, hiểu và lưu giữ những câu chuyện nghìn năm của kiến trúc và văn hóa Việt Nam.
-          </p>
-
-          {/* CTA Group */}
-          <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link
-              to="/products/chua-mot-cot"
-              className="w-full sm:w-auto px-8 py-3.5 bg-brass text-forest hover:bg-brass-light transition-all font-mono text-xs uppercase tracking-widest font-bold flex items-center justify-center gap-2.5 shadow-xl hover:shadow-brass/30 active:scale-[0.98] group animate-gold-glint"
-            >
-              <span>Khám Phá Chùa Một Cột (Hero)</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform duration-200" />
-            </Link>
-
-            <Link
-              to="/collections"
-              className="w-full sm:w-auto px-8 py-3.5 border border-paper/40 text-paper hover:border-brass hover:text-brass transition-all font-mono text-xs uppercase tracking-widest active:scale-[0.98] hover:bg-forest/40"
-            >
-              <span>Xem Toàn Bộ 5 Tuyệt Tác</span>
-            </Link>
-          </div>
-
-          {/* Micro Specs Banner */}
-          <div className="pt-8 sm:pt-12 grid grid-cols-2 md:grid-cols-4 gap-4 border-t border-paper/15 text-left font-mono">
-            <div>
-              <span className="text-[10px] text-paper/50 uppercase tracking-widest block">Tỷ lệ điêu khắc</span>
-              <span className="font-serif text-base text-brass font-bold">1:120 Chuẩn Xác</span>
+    <main className="atelier-home bg-[#F5F0E5] text-[#29241D]">
+      <section className="atelier-hero relative overflow-hidden">
+        <div className="atelier-blueprint" aria-hidden="true" />
+        <div className="relative mx-auto grid min-h-[650px] max-w-[1440px] items-center gap-4 px-6 py-14 sm:px-10 lg:min-h-[700px] lg:grid-cols-[0.88fr_1.12fr] lg:px-20">
+          <div className="relative z-10 max-w-[540px] py-8 lg:py-0">
+            <div className="mb-7 flex items-center gap-3 text-[10px] uppercase tracking-[0.28em] text-[#80633D]">
+              <span className="h-px w-9 bg-[#A47D42]" />
+              Di sản Việt Nam · Tuyển tập mô hình
             </div>
-            <div>
-              <span className="text-[10px] text-paper/50 uppercase tracking-widest block">Vật liệu sinh học</span>
-              <span className="font-serif text-base text-brass font-bold">BioPETG Bền Vững</span>
-            </div>
-            <div>
-              <span className="text-[10px] text-paper/50 uppercase tracking-widest block">Kỹ thuật liên kết</span>
-              <span className="font-serif text-base text-brass font-bold">Mộng Gỗ Không Keo</span>
-            </div>
-            <div>
-              <span className="text-[10px] text-paper/50 uppercase tracking-widest block">Không gian số</span>
-              <span className="font-serif text-base text-brass font-bold">QR Audio Guide</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 2. BRAND PHILOSOPHY / 3 TRỤ CỘT PHYGITAL */}
-      <section className="py-20 sm:py-28 border-b border-paper-border bg-paper">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
-            <span className="text-xs font-mono uppercase tracking-widest text-brass font-semibold">
-              Triết Lý Chế Tác
-            </span>
-            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-forest">
-              Mô Thức Phygital Heritage
-            </h2>
-            <p className="text-sm text-charcoal-muted font-light leading-relaxed">
-              Sự giao thoa hoàn hảo giữa tay nghề thủ công, công nghệ in 3D nano-layer và nền tảng số hóa di sản.
+            <h1 className="font-display text-[clamp(3.1rem,6.2vw,6.2rem)] font-medium leading-[0.94] tracking-[-0.045em] text-[#262119]">
+              Di sản Việt Nam,<br /><em className="font-normal text-[#715739]">thu nhỏ trên tay.</em>
+            </h1>
+            <p className="mt-7 max-w-[430px] text-[15px] leading-7 text-[#5D5549] sm:text-base">
+              Những công trình đã làm nên dáng hình đất Việt, được tái hiện thành mô hình lắp ghép tinh xảo và hồ sơ di sản số.
             </p>
+            <div className="mt-9 flex flex-wrap items-center gap-3">
+              <Link to="/products" className="atelier-button inline-flex items-center gap-3 bg-[#765936] px-6 py-3.5 text-[11px] uppercase tracking-[0.16em] text-[#FFF9ED] transition-colors hover:bg-[#4E3A25]">
+                Khám phá tuyển tập <ArrowUpRight size={15} strokeWidth={1.5} />
+              </Link>
+              <Link to="/about" className="inline-flex items-center gap-2 border-b border-[#B5A78F] px-2 py-3 text-sm text-[#514635] transition-colors hover:border-[#765936] hover:text-[#765936]">
+                Câu chuyện Viettoria <ArrowRight size={14} strokeWidth={1.5} />
+              </Link>
+            </div>
+            <div className="mt-14 flex items-center gap-5 border-t border-[#CFC5B2] pt-5 text-[10px] uppercase tracking-[0.18em] text-[#776C5A]">
+              <span>Hà Nội</span><span className="h-px w-7 bg-[#B7A98F]"/><span>Huế</span><span className="h-px w-7 bg-[#B7A98F]"/><span>Sài Gòn</span>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Pillar 1 */}
-            <TiltCard className="h-full">
-              <div className="h-full p-8 bg-paper-warm border border-paper-border hover:border-brass transition-all corner-frame space-y-4 shadow-sm hover:shadow-xl">
-                <div className="w-12 h-12 flex items-center justify-center bg-forest text-brass border border-brass">
-                  <Layers className="w-6 h-6" />
-                </div>
-                <h3 className="font-serif text-xl font-bold text-forest">
-                  1. Mô Hình Vật Lý Tinh Xảo
-                </h3>
-                <p className="text-sm text-charcoal/80 font-light leading-relaxed">
-                  Được sản xuất từ vật liệu BioPETG thân thiện môi trường, tái hiện chuẩn xác từng khớp mộng ngậm gỗ và góc đao cong với dung sai quang học dưới 0.08mm.
-                </p>
-              </div>
-            </TiltCard>
-
-            {/* Pillar 2 */}
-            <TiltCard className="h-full">
-              <div className="h-full p-8 bg-paper-warm border border-paper-border hover:border-brass transition-all corner-frame space-y-4 shadow-sm hover:shadow-xl">
-                <div className="w-12 h-12 flex items-center justify-center bg-forest text-brass border border-brass">
-                  <BookOpen className="w-6 h-6" />
-                </div>
-                <h3 className="font-serif text-xl font-bold text-forest">
-                  2. Storytelling Lịch Sử Chuẩn Xác
-                </h3>
-                <p className="text-sm text-charcoal/80 font-light leading-relaxed">
-                  Mỗi công trình không đơn thuần là đồ lưu niệm, mà là một pho sử liệu sống động được thẩm định nghiêm ngặt từ các văn bia, mộc bản và chuyên gia sử học.
-                </p>
-              </div>
-            </TiltCard>
-
-            {/* Pillar 3 */}
-            <TiltCard className="h-full">
-              <div className="h-full p-8 bg-paper-warm border border-paper-border hover:border-brass transition-all corner-frame space-y-4 shadow-sm hover:shadow-xl">
-                <div className="w-12 h-12 flex items-center justify-center bg-forest text-brass border border-brass">
-                  <QrCode className="w-6 h-6" />
-                </div>
-                <h3 className="font-serif text-xl font-bold text-forest">
-                  3. Trải Nghiệm Số Qua Tem QR
-                </h3>
-                <p className="text-sm text-charcoal/80 font-light leading-relaxed">
-                  Dưới đế mỗi mô hình là tem mã QR độc bản. Người sở hữu quét mã để mở khóa bản thu âm Audio Guide độc quyền và tài liệu khảo cứu kiến trúc chuyên sâu.
-                </p>
-              </div>
-            </TiltCard>
+          <div className="atelier-hero-art relative mx-auto w-full max-w-[760px] lg:ml-auto">
+            <div className="absolute inset-[8%_4%_5%_7%] border border-[#C8B99F]" />
+            <div className="absolute inset-[11%_7%_8%_10%] border border-[#DDD2BE]" />
+            <div className="absolute right-[7%] top-[5%] z-10 hidden text-right font-mono text-[11px] leading-5 tracking-[0.13em] text-[#887552] sm:block">HỒ SƠ KIẾN TRÚC<br/>MÃ SƯU TẬP · 001</div>
+            <img
+              src="/3D/chua-mot-cot-poster.webp"
+              alt="Mô hình kiến trúc di sản Việt Nam được tái hiện dưới dạng mô hình thu nhỏ"
+              className="atelier-artifact-float relative z-[1] aspect-[1.12/1] w-full object-contain brightness-125 mix-blend-multiply"
+              onError={(e) => handleImageFallback(e, '/3D/chua-mot-cot-poster.webp')}
+            />
+            <div className="absolute bottom-[8%] left-[6%] z-10 flex items-center gap-3 border-l border-[#9A7846] bg-[#F5F0E5]/90 px-4 py-2.5">
+              <Ruler size={17} strokeWidth={1.3} className="text-[#80633D]" />
+              <div><p className="text-[11px] uppercase tracking-[0.14em] text-[#887552]">Mô hình chế tác</p><p className="mt-1 font-display text-lg leading-none text-[#30281E]">Tỷ lệ 1:120</p></div>
+            </div>
+            <div className="absolute bottom-[10%] right-[7%] z-10 flex h-12 w-12 items-center justify-center border border-[#B9A681] text-[#765936]" aria-hidden="true"><ScanLine size={19} strokeWidth={1.2}/></div>
           </div>
+        </div>
+        <a href="#tuyen-tap" className="absolute bottom-5 left-1/2 hidden -translate-x-1/2 items-center gap-2 text-[11px] uppercase tracking-[0.2em] text-[#837660] lg:flex">Cuộn để khám phá <ArrowDown size={13} /></a>
+      </section>
+
+      <section className="border-y border-[#D7CDBB] bg-[#FBF8F0]">
+        <div className="mx-auto grid max-w-[1440px] divide-y divide-[#D7CDBB] px-6 sm:px-10 md:grid-cols-3 md:divide-x md:divide-y-0 lg:px-20">
+          {[
+            ['01', 'Tái hiện công trình', 'Mô hình kiến trúc thu nhỏ với cấu kiện có thể lắp ghép.'],
+            ['02', 'Lưu giữ câu chuyện', 'Tư liệu và lát cắt lịch sử đi cùng từng công trình.'],
+            ['03', 'Khám phá không gian số', 'Mở hồ sơ di sản và mô hình 3D qua trải nghiệm trực tuyến.'],
+          ].map(([number, title, description]) => <div key={number} className="flex gap-5 py-7 md:px-8 md:first:pl-0 md:last:pr-0">
+            <span className="font-display text-2xl italic text-[#9B7A4D]">{number}</span><div><h2 className="font-display text-xl text-[#352D22]">{title}</h2><p className="mt-1.5 max-w-xs text-sm leading-6 text-[#716756]">{description}</p></div>
+          </div>)}
         </div>
       </section>
 
-      {/* 3. HERO PRODUCT SPOTLIGHT: CHÙA MỘT CỘT */}
-      {heroProduct && (
-        <section className="py-20 sm:py-28 bg-forest text-paper relative overflow-hidden">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-              {/* Left Column: Model Image & Inspection Framing */}
-              <div className="lg:col-span-7">
-                <TiltCard className="w-full" tiltAmount={4}>
-                  <div className="relative border border-brass/50 corner-frame bg-forest-dark overflow-hidden group shadow-2xl animate-pulse-aura">
-                    <img
-                      src={resolveImageUrl(heroProduct.heroImage)}
-                      alt={heroProduct.name}
-                      onError={(e) => handleImageFallback(e)}
-                      className="w-full aspect-[4/3] object-cover group-hover:scale-105 transition-transform duration-700"
-                    />
-                    <div className="absolute top-4 left-4 bg-forest/90 border border-brass/60 px-3 py-1 font-sans text-[11px] text-brass uppercase tracking-wider font-semibold shadow-md">
-                      {heroProduct.epoch}
-                    </div>
-                    <div className="absolute bottom-4 right-4 bg-forest/90 border border-paper/20 px-3 py-1 font-mono text-xs text-paper backdrop-blur-sm shadow-md">
-                      Tỷ lệ {heroProduct.modelSpecs.scale} • Cao {heroProduct.modelSpecs.heightCm}cm
-                    </div>
-                  </div>
-                </TiltCard>
+      <section id="tuyen-tap" className="mx-auto max-w-[1440px] px-6 py-20 sm:px-10 sm:py-28 lg:px-20">
+        <div className="mb-10 flex flex-wrap items-end justify-between gap-5 border-b border-[#CFC5B2] pb-5">
+          <div><p className="mb-3 text-[10px] uppercase tracking-[0.25em] text-[#9A7846]">Tuyển tập mở đầu · 2026</p><h2 className="font-display text-4xl text-[#30281E] sm:text-5xl">Những công trình tiêu biểu</h2></div>
+          <Link to="/products" className="mb-1 inline-flex items-center gap-2 text-xs uppercase tracking-[0.14em] text-[#65533A] hover:text-[#9A7846]">Toàn bộ tác phẩm <ArrowRight size={15}/></Link>
+        </div>
+        {heroProduct && <Link to={`/products/${heroProduct.slug}`} className="group mb-12 grid overflow-hidden border border-[#D5CBB9] bg-[#EAE2D3] md:grid-cols-[1.2fr_0.8fr]">
+          <div className="relative flex min-h-[300px] items-center justify-center overflow-hidden bg-[#E8DFCE] p-5 sm:min-h-[420px] sm:p-10">
+            <img src={imageFor(heroProduct.heroImage, heroProduct.slug)} alt={heroProduct.name} onError={(e) => handleImageFallback(e, '/3D/chua-mot-cot-poster.webp')} className="h-full max-h-[490px] w-full object-contain mix-blend-multiply transition-transform duration-700 group-hover:scale-[1.035]"/>
+            <span className="absolute left-5 top-5 border border-[#BDAA8A] px-3 py-1.5 text-[11px] uppercase tracking-[0.16em] text-[#725B3B]">Tác phẩm nổi bật</span>
+          </div>
+          <div className="flex flex-col justify-center p-7 sm:p-12 lg:p-16">
+            <p className="text-[10px] uppercase tracking-[0.22em] text-[#967346]">{heroProduct.epoch}</p>
+            <h3 className="mt-4 font-display text-4xl leading-tight text-[#30281E] sm:text-5xl">{heroProduct.name}</h3>
+            <p className="mt-2 font-display text-lg italic text-[#806847]">{heroProduct.subName}</p>
+            <p className="mt-6 max-w-md text-sm leading-7 text-[#665C4D]">{heroProduct.shortDescription}</p>
+            <div className="mt-8 flex flex-wrap gap-x-8 gap-y-3 border-y border-[#D0C4B0] py-4 text-[11px] uppercase tracking-[0.1em] text-[#746956]"><span>{heroProduct.modelSpecs.scale} · Tỷ lệ mô hình</span><span>{heroProduct.modelSpecs.heightCm} cm · Chiều cao</span><span>{heroProduct.modelSpecs.partsCount} cấu kiện</span></div>
+            <span className="mt-7 inline-flex items-center gap-2 text-xs uppercase tracking-[0.16em] text-[#735735]">Xem hồ sơ công trình <ArrowUpRight size={15}/></span>
+          </div>
+        </Link>}
+        <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+          {collections.map((collection, index) => {
+            const slug = ['chua-mot-cot', 'ngo-mon-hue', 'ben-nha-rong'][index] || 'khue-van-cac';
+            const poster = productPoster[slug];
+            return <Link key={collection.id} to={`/collections/${collection.slug}`} className="group border-b border-[#D7CDBB] pb-5">
+              <div className="relative mb-4 flex aspect-[1.25/0.82] items-center justify-center overflow-hidden bg-[#E9E1D2]">
+                <img src={poster || imageFor(collection.heroImage)} alt={collection.name} onError={(e) => handleImageFallback(e, '/3D/chua-mot-cot-poster.webp')} className="h-full w-full object-contain mix-blend-multiply transition-transform duration-700 group-hover:scale-[1.04]" />
+                <span className="absolute left-3 top-3 font-mono text-[11px] tracking-[0.12em] text-[#77684F]">0{index + 1} / VI</span>
               </div>
-
-              {/* Right Column: Hero Information */}
-              <div className="lg:col-span-5 space-y-6">
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2 text-brass text-xs font-mono uppercase tracking-widest">
-                    <ShieldCheck className="w-4 h-4" />
-                    <span>Tác Phẩm Tinh Hoa Trọng Tâm (Hero Release)</span>
-                  </div>
-                  <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-paper">
-                    {heroProduct.name}
-                  </h2>
-                  <p className="font-serif italic text-brass-subtle text-lg">
-                    {heroProduct.subName}
-                  </p>
-                </div>
-
-                <p className="text-sm sm:text-base text-paper/80 font-light leading-relaxed">
-                  {heroProduct.shortDescription}
-                </p>
-
-                {/* Technical Specifications Snapshot */}
-                <div className="p-4 bg-forest-dark border border-brass/30 grid grid-cols-2 gap-3 text-xs font-mono">
-                  <div>
-                    <span className="text-paper/50 block">Niên Đại:</span>
-                    <span className="text-paper font-semibold">{heroProduct.epoch}</span>
-                  </div>
-                  <div>
-                    <span className="text-paper/50 block">Địa Điểm:</span>
-                    <span className="text-paper font-semibold">{heroProduct.location}</span>
-                  </div>
-                  <div>
-                    <span className="text-paper/50 block">Số Chi Tiết Mộng:</span>
-                    <span className="text-brass font-bold">{heroProduct.modelSpecs.partsCount} Bộ phận</span>
-                  </div>
-                  <div>
-                    <span className="text-paper/50 block">Vật Liệu:</span>
-                    <span className="text-paper font-semibold">{heroProduct.modelSpecs.material}</span>
-                  </div>
-                </div>
-
-                {/* Call to action */}
-                <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-                  <Link
-                    to={`/products/${heroProduct.slug}`}
-                    className="px-6 py-3.5 bg-brass text-forest hover:bg-brass-light transition-all font-mono text-xs uppercase tracking-widest font-bold flex items-center justify-center gap-2 shadow-xl hover:shadow-brass/30 active:scale-[0.98] animate-gold-glint"
-                  >
-                    <span>Khám Phá Di Sản & Bản Thu Âm</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </Link>
-
-                  <Link
-                    to={`/products/${heroProduct.slug}?section=assembly`}
-                    className="px-5 py-3.5 border border-paper/30 text-paper hover:border-brass hover:text-brass transition-colors font-mono text-xs uppercase tracking-wider text-center"
-                  >
-                    Xem Khớp Mộng Gỗ
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* 4. FEATURED COLLECTIONS GRID */}
-      <section className="py-20 sm:py-28 border-b border-paper-border bg-paper">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
-            <div className="space-y-2">
-              <span className="text-xs font-mono uppercase tracking-widest text-brass font-semibold">
-                Tuyển Tập Di Sản
-              </span>
-              <h2 className="font-serif text-3xl sm:text-4xl font-bold text-forest">
-                Các Bộ Sưu Tập Kiến Trúc
-              </h2>
-            </div>
-
-            <Link
-              to="/collections"
-              className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-forest font-bold hover:text-brass transition-colors"
-            >
-              <span>Xem Tất Cả Bộ Sưu Tập</span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {collections.map((col) => (
-              <TiltCard key={col.id} className="h-full">
-                <Link
-                  to={`/collections/${col.slug}`}
-                  className="group block h-full bg-paper-warm border border-paper-border hover:border-brass transition-all corner-frame overflow-hidden shadow-sm hover:shadow-xl"
-                >
-                  <div className="aspect-[16/10] overflow-hidden bg-forest relative">
-                    <img
-                      src={resolveImageUrl(col.heroImage)}
-                      alt={col.name}
-                      onError={(e) => handleImageFallback(e)}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                  </div>
-
-                  <div className="p-6 space-y-3">
-                    <h3 className="font-serif text-xl font-bold text-forest group-hover:text-brass transition-colors">
-                      {col.name}
-                    </h3>
-                    <p className="text-xs text-charcoal/80 font-light line-clamp-3 leading-relaxed">
-                      {col.description}
-                    </p>
-                    <div className="pt-2 flex items-center justify-between text-xs font-mono text-charcoal-muted border-t border-paper-border">
-                      <span>{col.productsCount || 1} Tác phẩm</span>
-                      <span className="text-brass group-hover:translate-x-1.5 transition-transform flex items-center gap-1 font-bold">
-                        Chi tiết <ArrowRight className="w-3.5 h-3.5" />
-                      </span>
-                    </div>
-                  </div>
-                </Link>
-              </TiltCard>
-            ))}
-          </div>
+              <div className="flex items-start justify-between gap-3"><div><h3 className="font-display text-2xl text-[#332B20] group-hover:text-[#80633D]">{collection.name}</h3><p className="mt-1 line-clamp-2 text-sm leading-5 text-[#746A5A]">{collection.description}</p></div><ArrowUpRight size={17} strokeWidth={1.3} className="mt-1 shrink-0 text-[#9A7846] transition-transform group-hover:-translate-y-1 group-hover:translate-x-1"/></div>
+            </Link>;
+          })}
         </div>
       </section>
 
-      {/* 4.5. HERITAGE INTERACTIVE LEAFLET MAP */}
-      <section className="py-20 sm:py-28 border-b border-paper-border bg-paper">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-            <div className="space-y-2">
-              <span className="text-xs font-mono uppercase tracking-widest text-brass font-semibold">
-                Địa Linh Nhân Kiệt
-              </span>
-              <h2 className="font-serif text-3xl sm:text-4xl font-bold text-forest">
-                Bản Đồ Di Sản Kiến Trúc Thực Địa
-              </h2>
-            </div>
-
-            <Link
-              to="/map"
-              className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-forest font-bold hover:text-brass transition-colors"
-            >
-              <span>Mở Bản Đồ Toàn Màn Hình</span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-
-          <HeritageMap />
+      <section className="border-y border-[#D5CBB9] bg-[#E9E1D2]">
+        <div className="mx-auto grid max-w-[1440px] items-center gap-8 px-6 py-14 sm:px-10 md:grid-cols-[0.8fr_1.2fr] lg:px-20">
+          <div><p className="text-[10px] uppercase tracking-[0.24em] text-[#967346]">Ghi chép từ xưởng</p><h2 className="mt-3 font-display text-4xl text-[#30281E]">Vật thể và ký ức</h2><p className="mt-3 max-w-sm text-sm leading-6 text-[#6C6253]">Những câu chuyện về kiến trúc, kỹ nghệ chế tác và hành trình gìn giữ di sản.</p><Link to="/blogs" className="mt-5 inline-flex items-center gap-2 text-xs uppercase tracking-[0.14em] text-[#735735]">Đọc bài viết <ArrowRight size={14}/></Link></div>
+          <div className="grid gap-4 sm:grid-cols-2">{blogs.slice(0, 2).map((blog, index) => <article key={blog.id} className="border-t border-[#BDAE96] pt-4"><p className="text-[11px] uppercase tracking-[0.16em] text-[#92754D]">{blog.category} · 0{index + 1}</p><h3 className="mt-3 font-display text-2xl leading-snug text-[#352D22]"><Link to={`/blogs/${blog.slug}`} className="hover:text-[#80633D]">{blog.title}</Link></h3><p className="mt-2 line-clamp-2 text-sm leading-6 text-[#706656]">{blog.excerpt}</p></article>)}</div>
         </div>
       </section>
-
-      {/* 5. CULTURAL ESSAYS / BLOG PREVIEW */}
-      <section className="py-20 sm:py-28 bg-paper-warm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
-            <div className="space-y-2">
-              <span className="text-xs font-mono uppercase tracking-widest text-brass font-semibold">
-                Nghiên Cứu & Bảo Tồn
-              </span>
-              <h2 className="font-serif text-3xl sm:text-4xl font-bold text-forest">
-                Góc Nhìn Di Sản
-              </h2>
-            </div>
-
-            <Link
-              to="/blogs"
-              className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-forest font-bold hover:text-brass transition-colors"
-            >
-              <span>Xem Thư Viện Bài Viết</span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {blogs.map((blog) => (
-              <TiltCard key={blog.id} className="h-full">
-                <article
-                  className="h-full bg-paper border border-paper-border hover:border-brass transition-all corner-frame overflow-hidden flex flex-col justify-between shadow-sm hover:shadow-xl"
-                >
-                  <div>
-                    <div className="aspect-[16/10] overflow-hidden bg-forest">
-                      <img
-                        src={resolveImageUrl(blog.coverImage)}
-                        alt={blog.title}
-                        onError={(e) => handleImageFallback(e)}
-                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                      />
-                    </div>
-
-                    <div className="p-6 space-y-2.5">
-                      <div className="flex items-center justify-between text-[11px] font-mono text-charcoal-muted">
-                        <span className="text-brass font-semibold">{blog.category}</span>
-                        <span>{blog.readTime}</span>
-                      </div>
-
-                      <h3 className="font-serif text-lg font-bold text-forest hover:text-brass transition-colors leading-snug">
-                        <Link to={`/blogs/${blog.slug}`}>
-                          {blog.title}
-                        </Link>
-                      </h3>
-
-                      <p className="text-xs text-charcoal/80 font-light line-clamp-3 leading-relaxed">
-                        {blog.excerpt}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="p-6 pt-0 border-t border-paper-border mt-4">
-                    <div className="flex items-center justify-between pt-3 text-[11px] font-mono text-charcoal-muted">
-                      <span>Tác giả: {blog.author}</span>
-                      <Link to={`/blogs/${blog.slug}`} className="text-brass font-bold hover:underline">
-                        Đọc tiếp →
-                      </Link>
-                    </div>
-                  </div>
-                </article>
-              </TiltCard>
-            ))}
-          </div>
-        </div>
-      </section>
-    </div>
+    </main>
   );
 };
 

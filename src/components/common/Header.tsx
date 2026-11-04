@@ -29,7 +29,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenQRModal }) => {
 
   return (
     <header 
-      className={`sticky top-0 z-50 border-b border-[#D8CCB8] bg-[#F9F4E8]/95 backdrop-blur-md text-[#3B2B1D] transition-all duration-300 ${
+      className={`customer-header sticky top-0 z-50 border-b border-[#D8CCB8] transition-all duration-300 ${
         isScrolled ? 'py-1 shadow-sm' : 'py-0'
       }`}
     >
@@ -51,16 +51,16 @@ export const Header: React.FC<HeaderProps> = ({ onOpenQRModal }) => {
           </Link>
 
           {/* Desktop Navigation Links - Heritage Pill Style */}
-          <nav className="hidden lg:flex items-center gap-1.5 xl:gap-2 text-xs font-mono uppercase tracking-wider shrink-0" aria-label="Menu chính">
+          <nav className="hidden lg:flex items-center gap-1 xl:gap-1.5 text-[13px] font-medium shrink-0" aria-label="Menu chính">
             {navLinks.map((link) => (
               <NavLink
                 key={link.to}
                 to={link.to}
                 className={({ isActive }) =>
-                  `whitespace-nowrap transition-all duration-200 py-1.5 px-3 rounded-[2px] font-semibold ${
+                  `whitespace-nowrap border-b-2 px-2.5 py-2 transition-colors duration-200 ${
                     isActive
-                      ? 'bg-[#745C42] text-white shadow-xs'
-                      : 'text-[#554231] hover:text-[#745C42] hover:bg-[#ede4d2]/60'
+                      ? 'border-[#B88A44] text-[#735735]'
+                      : 'border-transparent text-[#3B4038] hover:border-[#D8CCB8] hover:text-[#735735]'
                   }`
                 }
               >
@@ -74,8 +74,8 @@ export const Header: React.FC<HeaderProps> = ({ onOpenQRModal }) => {
             {/* Quick QR Scanner Button */}
             <button
               onClick={onOpenQRModal}
-              className={`inline-flex items-center gap-2 border border-[#B88A38] bg-[#F3EBDD] text-[#745C42] hover:bg-[#745C42] hover:text-white transition-all font-mono uppercase tracking-wider font-semibold rounded-[2px] shadow-xs ${
-                isScrolled ? 'px-3 py-1.5 text-[11px]' : 'px-3.5 py-2 text-xs'
+              className={`inline-flex items-center gap-2 border border-[#B88A38] bg-white/75 text-[#5B432A] hover:bg-[#735735] hover:text-white transition-colors font-medium ${
+                isScrolled ? 'px-3 py-1.5 text-xs' : 'px-3.5 py-2 text-[13px]'
               }`}
               title="Mở trình quét tem QR trên đế mô hình"
             >
@@ -98,17 +98,17 @@ export const Header: React.FC<HeaderProps> = ({ onOpenQRModal }) => {
       {/* Mobile Drawer Navigation */}
       {mobileMenuOpen && (
         <div className="lg:hidden border-t border-[#D8CCB8] bg-[#F9F4E8] px-4 pt-4 pb-6 space-y-3">
-          <nav className="flex flex-col space-y-1.5 text-xs font-mono uppercase tracking-wider">
+          <nav className="flex flex-col space-y-1 text-sm font-medium">
             {navLinks.map((link) => (
               <NavLink
                 key={link.to}
                 to={link.to}
                 onClick={() => setMobileMenuOpen(false)}
                 className={({ isActive }) =>
-                  `px-3 py-2.5 rounded-[2px] transition-colors ${
+                  `border-l-2 px-3 py-2.5 transition-colors ${
                     isActive
-                      ? 'bg-[#745C42] text-white font-bold'
-                      : 'text-[#554231] hover:text-[#745C42] hover:bg-[#ede4d2]/60'
+                      ? 'border-[#B88A44] bg-[#F1E9DC] text-[#735735]'
+                      : 'border-transparent text-[#554231] hover:text-[#745C42] hover:bg-[#ede4d2]/60'
                   }`
                 }
               >
@@ -123,7 +123,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenQRModal }) => {
                 setMobileMenuOpen(false);
                 onOpenQRModal();
               }}
-              className="w-full py-2.5 px-4 bg-[#745C42] text-white font-mono text-xs uppercase tracking-wider font-bold flex items-center justify-center gap-2 rounded-[2px]"
+              className="w-full py-2.5 px-4 bg-[#745C42] text-white text-sm font-semibold flex items-center justify-center gap-2"
             >
               <QrCode className="w-4 h-4" />
               <span>Quét Tem QR Mô Hình</span>
@@ -131,7 +131,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenQRModal }) => {
             <Link
               to="/admin/dashboard"
               onClick={() => setMobileMenuOpen(false)}
-              className="w-full py-2 px-4 border border-[#D8CCB8] text-[#554231] hover:text-[#3B2B1D] font-mono text-xs uppercase tracking-wider text-center rounded-[2px]"
+              className="w-full py-2 px-4 border border-[#D8CCB8] text-[#554231] hover:text-[#3B2B1D] text-sm font-medium text-center"
             >
               Truy Cập Quản Trị CMS
             </Link>

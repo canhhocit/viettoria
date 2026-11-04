@@ -129,7 +129,7 @@ export const Footer: React.FC = () => {
               </div>
               <div className="flex items-start gap-2">
                 <MapPin className="w-3.5 h-3.5 text-[#745C42] shrink-0 mt-0.5" />
-                <span>Trường Đại học Phenikaa, Hà Nội</span>
+                <span>Hà Nội, Việt Nam</span>
               </div>
             </div>
 
@@ -162,7 +162,7 @@ export const Footer: React.FC = () => {
         <div className="mt-8 border-t border-[#D8CCB8] pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-[#796857]">
           <p>© 2026 VIETTORIA. Khắc dạ nhớ nguồn — Đưa nét Việt vươn xa.</p>
           <p className="mt-2 sm:mt-0 font-serif italic text-[#554231]">
-            Đề án tham dự Sáng tạo - Khởi nghiệp Phenikaa PSI 2026
+            Mô hình kiến trúc và câu chuyện di sản Việt Nam
           </p>
         </div>
       </div>

@@ -48,7 +48,7 @@ export const PageLoadingHeritage: React.FC<{ message?: string }> = ({
             {message}
           </span>
           <span className="text-[10px] text-paper-muted font-mono tracking-widest uppercase">
-            PSI 2026
+            VIETTORIA
           </span>
         </div>
       </div>

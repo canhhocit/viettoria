@@ -1,11 +1,12 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { 
   Headphones,
   Layers, 
   ShieldCheck, 
-  Award, 
   Compass,
-  Camera
+  Camera,
+  ArrowRight
 } from 'lucide-react';
 import { VIETTORIA_IMAGES, handleImageFallback } from '../utils/mediaResolver';
 
@@ -179,36 +180,22 @@ export const AboutPage: React.FC = () => {
           </div>
         </section>
 
-        {/* Academic & Innovation Background (Phenikaa PSI 2026) */}
+        {/* Customer-facing collection call to action */}
         <section className="bg-forest-dark text-paper border border-brass corner-frame p-8 sm:p-12 relative overflow-hidden">
           <div className="relative z-10 max-w-3xl space-y-6">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-brass text-forest text-xs font-mono uppercase tracking-widest font-bold">
-              <Award className="w-4 h-4" />
-              <span>Dự Án Khởi Nghiệp Sinh Viên Đổi Mới Sáng Tạo</span>
-            </div>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brass-subtle">Khám phá Viettoria</p>
 
             <h2 className="font-serif text-3xl sm:text-4xl font-bold text-paper">
-              Phenikaa Student Innovation 2026 (PSI 2026)
+              Mang một phần di sản về gần hơn
             </h2>
 
             <p className="text-sm sm:text-base text-paper/85 font-light leading-relaxed">
-              VIETTORIA tự hào là đề án phát triển bởi nhóm nghiên cứu sinh viên Trường Đại học Phenikaa trong khuôn khổ cuộc thi Sáng tạo - Khởi nghiệp Phenikaa 2026. Dự án hướng tới mục tiêu mang di sản kiến trúc đến gần hơn với giới trẻ, du khách quốc tế và các bảo tàng học đường thông qua công nghệ chế tác tiên tiến.
+              Mỗi tác phẩm kết hợp hình dáng kiến trúc, câu chuyện lịch sử và mô hình số để bạn có thể ngắm nhìn di sản theo cách gần gũi hơn.
             </p>
 
-            <div className="pt-4 flex flex-wrap gap-6 text-xs font-mono text-brass-subtle border-t border-paper/15">
-              <div>
-                <span className="text-paper/50 block">Đơn vị ươm mầm:</span>
-                <span className="text-paper font-semibold">Trường Đại học Phenikaa</span>
-              </div>
-              <div>
-                <span className="text-paper/50 block">Địa chỉ xưởng nghiên cứu:</span>
-                <span className="text-paper font-semibold">Tố Hữu, Nam Từ Liêm, Hà Nội</span>
-              </div>
-              <div>
-                <span className="text-paper/50 block">Thư điện tử:</span>
-                <span className="text-paper font-semibold">contact@viettoria.vn</span>
-              </div>
-            </div>
+            <Link to="/collections" className="inline-flex items-center gap-2 border-b border-brass/70 pb-1 text-sm font-semibold text-paper transition-colors hover:text-brass-subtle">
+              Xem bộ sưu tập <ArrowRight className="h-4 w-4" strokeWidth={1.6} />
+            </Link>
           </div>
         </section>
       </div>

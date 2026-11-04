@@ -2,6 +2,74 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Cinematic customer-facing landing page */
+.home-hero-scrim {
+  background:
+    linear-gradient(90deg, rgba(13, 28, 22, 0.86) 0%, rgba(13, 28, 22, 0.68) 38%, rgba(13, 28, 22, 0.28) 72%, rgba(13, 28, 22, 0.22) 100%),
+    linear-gradient(0deg, rgba(13, 28, 22, 0.48) 0%, transparent 35%, rgba(13, 28, 22, 0.12) 100%);
+}
+
+.customer-header {
+  background-color: rgba(250, 247, 240, 0.97);
+  color: #3B2B1D;
+}
+
+.customer-header nav a {
+  color: #3B4038;
+  text-decoration: none;
+}
+
+.customer-header nav a[aria-current="page"] {
+  color: #735735;
+  border-bottom-color: #B88A44;
+}
+
+.home-dong-son {
+  animation: home-dong-son-turn 260s linear infinite;
+  transform-origin: center;
+}
+
+.home-model-viewer {
+  --poster-color: transparent;
+  cursor: grab;
+}
+
+.home-model-viewer:active {
+  cursor: grabbing;
+}
+
+.home-model-viewer::part(default-progress-bar) {
+  background-color: #B88A44;
+}
+
+.home-reveal-ready [data-home-reveal] {
+  opacity: 0;
+  transform: translate3d(0, 18px, 0);
+  transition: opacity 650ms ease, transform 650ms cubic-bezier(0.2, 0.65, 0.3, 1);
+}
+
+.home-reveal-ready [data-home-reveal].is-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+@keyframes home-dong-son-turn {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 640px) {
+  .home-hero-scrim {
+    background:
+      linear-gradient(90deg, rgba(13, 28, 22, 0.82), rgba(13, 28, 22, 0.5)),
+      linear-gradient(0deg, rgba(13, 28, 22, 0.55), transparent 45%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-dong-son { animation: none; }
+  .home-reveal-ready [data-home-reveal] { opacity: 1; transform: none; transition: none; }
+}
+
 @layer base {
   :root {
     --heritage-paper: #E2D3BA;        /* Nền Footer - Sand Beige */
@@ -56,55 +124,6 @@
     color: var(--heritage-ink);
     letter-spacing: -0.01em;
   }
-}
-
-/* Editorial hero, inspired by the project's architectural reference board. */
-.atelier-home {
-  --atelier-paper: #f5f0e5;
-  --atelier-ink: #29241d;
-}
-
-.atelier-hero {
-  background-color: var(--atelier-paper);
-  background-image: radial-gradient(ellipse at 73% 45%, rgba(223, 210, 186, .52), transparent 42%),
-    repeating-linear-gradient(0deg, rgba(86, 68, 43, .018) 0 1px, transparent 1px 4px);
-}
-
-.atelier-blueprint {
-  position: absolute;
-  inset: 0 0 0 45%;
-  pointer-events: none;
-  opacity: .18;
-  background-image: linear-gradient(rgba(107, 84, 52, .18) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(107, 84, 52, .18) 1px, transparent 1px),
-    radial-gradient(circle at 54% 44%, transparent 0 27%, rgba(107, 84, 52, .42) 27.1% 27.25%, transparent 27.4% 39%, rgba(107, 84, 52, .35) 39.1% 39.25%, transparent 39.4%);
-  background-size: 44px 44px, 44px 44px, 100% 100%;
-  mask-image: linear-gradient(90deg, transparent, #000 30%, #000);
-}
-
-.atelier-button {
-  position: relative;
-}
-
-.atelier-button::after {
-  position: absolute;
-  inset: 4px;
-  border: 1px solid rgba(255, 249, 237, .24);
-  content: "";
-  pointer-events: none;
-}
-
-@keyframes artifactFloat {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
-}
-
-.atelier-artifact-float {
-  animation: artifactFloat 8s ease-in-out infinite;
-}
-
-@media (max-width: 640px) {
-  .atelier-blueprint { inset-inline-start: 18%; opacity: .1; }
 }
 
 /* Authentic Red Seal Stamp */

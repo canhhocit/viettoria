@@ -9,12 +9,11 @@
  *      - Hình ảnh, avatar và tư liệu web lưu tại: /viettoria_img/ hoặc /images/
  */
 
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL as string) || 'http://localhost:8081/api';
+import { BACKEND_HOST } from './apiConfig';
+
 const CLOUDINARY_BASE_URL = (import.meta.env.VITE_CLOUDINARY_BASE_URL as string) || '';
 const CLOUDINARY_CLOUD_NAME = (import.meta.env.VITE_CLOUDINARY_CLOUD_NAME as string) || '';
 
-// Trích xuất backend base host từ API_BASE_URL (bỏ đuôi /api nếu có)
-const BACKEND_HOST = API_BASE_URL.replace(/\/api\/?$/, '');
 const BACKEND_UPLOADS_URL = (import.meta.env.VITE_BACKEND_UPLOADS_URL as string) || `${BACKEND_HOST}/uploads`;
 
 /**

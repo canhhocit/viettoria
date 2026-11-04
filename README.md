@@ -71,7 +71,7 @@ Repo có `vercel.json` để build Vite và điều hướng deep link của Rea
 
 Trong Project Settings → Environment Variables, cấu hình cho Production (và Preview nếu cần):
 
-- `VITE_API_BASE_URL=https://<render-service>.onrender.com/api`
-- `VITE_BACKEND_UPLOADS_URL=https://<render-service>.onrender.com/uploads`
+- `VITE_API_BASE_URL=https://viettoria-be.onrender.com` (có thể thêm `/api`; FE tự chuẩn hóa cả hai dạng)
+- `VITE_BACKEND_UPLOADS_URL=https://viettoria-be.onrender.com/uploads`
 
-Trong Render, đặt `CORS_ALLOWED_ORIGINS` bằng domain production của Vercel. Sau khi tạo hai dịch vụ, cập nhật đúng domain thực tế ở cả hai nơi rồi redeploy.
+Backend cho phép origin Vercel Preview qua `CORS_ALLOWED_ORIGIN_PATTERNS=https://*.vercel.app`. Có thể đặt thêm `CORS_ALLOWED_ORIGINS` bằng domain production cụ thể của Vercel. Sau khi đổi biến môi trường, redeploy cả dịch vụ liên quan.

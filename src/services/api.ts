@@ -13,8 +13,9 @@ import {
   FALLBACK_STORY_BLOCKS, 
   FALLBACK_BLOGS,
 } from '../data/fallbackData';
+import { API_BASE_URL } from '../utils/apiConfig';
 
-const API_BASE = (import.meta.env.VITE_API_BASE_URL as string) || 'http://localhost:8081/api';
+const API_BASE = API_BASE_URL;
 
 type AdminLoginResult = {
   token: string;

@@ -82,15 +82,15 @@ export const AdminLoginPage: React.FC = () => {
 
         <div className="border border-brass/50 bg-paper-warm p-4">
           <p className="text-[10px] font-mono uppercase tracking-[0.18em] text-brass-dark">Trải nghiệm nhanh</p>
-          <p className="mt-1.5 text-xs leading-relaxed text-charcoal-muted">Thông tin đăng nhập demo được để sẵn bên dưới. Phiên này chỉ có quyền xem dữ liệu.</p>
+          <p className="mt-1.5 text-xs leading-relaxed text-charcoal-muted">Tài khoản demo dùng tên quản trị cấu hình bằng ADMIN_USERNAME ở BE. Phiên demo chỉ có quyền xem dữ liệu, không cần mật khẩu.</p>
           <dl className="mt-3 grid grid-cols-2 gap-3 border-y border-brass/25 py-3 font-mono text-[11px]">
             <div>
               <dt className="text-charcoal-muted">Tài khoản</dt>
-              <dd className="mt-1 select-all font-semibold text-forest">demo-viewer</dd>
+              <dd className="mt-1 select-all font-semibold text-forest">ADMIN_USERNAME (BE)</dd>
             </div>
             <div>
               <dt className="text-charcoal-muted">Mật khẩu</dt>
-              <dd className="mt-1 font-semibold text-forest">Không cần</dd>
+              <dd className="mt-1 font-semibold text-forest">Không cần · chỉ xem</dd>
             </div>
           </dl>
           <button

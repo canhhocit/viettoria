@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ArrowUp, ChevronDown, ChevronUp, FileText, Pause, Play, RotateCcw, Volume2, VolumeX, X } from 'lucide-react';
+import { ArrowUp, ChevronDown, ChevronUp, Pause, Play, RotateCcw, Volume2, VolumeX, X } from 'lucide-react';
 import type { AudioGuideData } from '../../types';
 import { resolveAudioUrl } from '../../utils/mediaResolver';
 
@@ -114,7 +114,11 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioGuide, heritageNa
 
   return (
     <>
-      <section ref={containerRef} className="overflow-hidden border border-[#B88A44]/55 bg-[#142820] text-[#FAF7F0] shadow-lg">
+      <section ref={containerRef} className="relative isolate min-h-[380px] overflow-hidden border border-[#B88A44]/55 bg-[#0D1C16] text-[#FAF7F0] shadow-lg sm:min-h-[440px]">
+        <div className="absolute inset-0" aria-hidden="true">
+          <img src="/videos/hero-background-poster.webp" alt="" className="h-full w-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0D1C16]/75 via-[#0D1C16]/35 to-[#0D1C16]/10" />
+        </div>
         {hasAudio && (
           <audio
             key={audioUrl}
@@ -148,84 +152,69 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioGuide, heritageNa
           />
         )}
 
-        <div className="grid grid-cols-[minmax(0,1fr)_104px] sm:grid-cols-[minmax(0,1fr)_190px]">
-          <div className="min-w-0 p-4 sm:p-7 lg:p-8">
-            <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
-              <div className="min-w-0 max-w-2xl">
-                <p className="flex items-center gap-2 font-mono text-[9px] uppercase tracking-[0.16em] text-[#D4AF67] sm:text-[10px]">
-                  <span className="h-px w-4 bg-[#B88A44]" />
-                  Hướng dẫn viên di sản
+        <div className="relative mx-auto flex min-h-[380px] w-full max-w-[760px] items-end px-3 pb-4 pt-12 sm:min-h-[440px] sm:px-8 sm:pb-6">
+          <div className="relative z-20 mr-[145px] w-[calc(100%-145px)] max-w-[430px] border border-[#B88A44]/65 bg-[#0D1C16]/95 p-4 shadow-2xl sm:mr-[280px] sm:w-full sm:p-5">
+            <div className="flex items-center justify-between gap-3 border-b border-[#FAF7F0]/10 pb-3">
+              <div className="min-w-0">
+                <p className="truncate font-serif text-sm font-semibold text-[#FAF7F0] sm:text-base">{titleLabel}</p>
+                <p className="mt-1 truncate font-mono text-[9px] text-[#D4AF67] sm:text-[10px]">
+                  Hướng dẫn viên Viettoria <span className="mx-1 text-[#B88A44]">·</span>{durationLabel}
                 </p>
-                <h3 className="mt-2 font-display text-xl leading-tight text-[#FAF7F0] sm:text-3xl">{titleLabel}</h3>
-                <p className="mt-2 text-[11px] text-[#FAF7F0]/65 sm:text-xs">
-                  Thuyết minh <span className="mx-1 text-[#B88A44]">·</span>
-                  <span className="font-mono text-[#FAF7F0]/80">{durationLabel}</span>
-                </p>
-              </div>
-
-              <div className="flex shrink-0 items-center gap-2 sm:pt-1.5 sm:gap-3">
-                <button type="button" onClick={handleReset} disabled={!hasAudio || audioError} className="flex h-10 w-10 items-center justify-center border border-[#FAF7F0]/20 text-[#FAF7F0]/75 transition-colors hover:border-[#B88A44] hover:text-[#D4AF67] disabled:cursor-not-allowed disabled:opacity-35" title="Phát lại từ đầu" aria-label="Phát lại từ đầu">
-                  <RotateCcw className="h-4 w-4" strokeWidth={1.5} />
-                </button>
-                <button type="button" onClick={() => void togglePlay()} disabled={!hasAudio || audioError} className="flex h-14 w-14 items-center justify-center bg-[#B88A44] text-[#142820] transition-colors hover:bg-[#D4AF67] disabled:cursor-not-allowed disabled:opacity-40" aria-label={isPlaying ? 'Tạm dừng thuyết minh' : 'Nghe thuyết minh'}>
-                  {isPlaying ? <Pause className="h-6 w-6 fill-current" /> : <Play className="ml-1 h-6 w-6 fill-current" />}
-                </button>
-                <button type="button" onClick={toggleMute} disabled={!hasAudio || audioError} className="flex h-10 w-10 items-center justify-center border border-[#FAF7F0]/20 text-[#FAF7F0]/75 transition-colors hover:border-[#B88A44] hover:text-[#D4AF67] disabled:cursor-not-allowed disabled:opacity-35" title={isMuted ? 'Bật âm thanh' : 'Tắt tiếng'} aria-label={isMuted ? 'Bật âm thanh' : 'Tắt tiếng'}>
-                  {isMuted ? <VolumeX className="h-4 w-4" strokeWidth={1.5} /> : <Volume2 className="h-4 w-4" strokeWidth={1.5} />}
-                </button>
               </div>
             </div>
 
-            <div className="mt-7">
-              <input type="range" min={0} max={Math.max(duration, 1)} step="0.1" value={Math.min(currentTime, Math.max(duration, 1))} onChange={seek} disabled={!hasAudio || audioError || duration <= 0} style={{ background: `linear-gradient(90deg, #B88A44 ${progressPercent}%, rgba(250,247,240,0.27) ${progressPercent}%)` }} className="audio-guide-seek w-full cursor-pointer disabled:cursor-not-allowed disabled:opacity-40" aria-label="Tiến trình thuyết minh" />
-              <div className="mt-2 flex justify-between font-mono text-[11px] text-[#FAF7F0]/60">
-                <span>{formatTime(currentTime)}</span>
-                <span>{durationLabel}</span>
-              </div>
+            <div className="my-3 min-h-[98px] border border-[#FAF7F0]/10 bg-[#070D0A]/90 p-3 sm:min-h-[106px]">
+              <p className={`whitespace-pre-line font-sans text-xs italic leading-5 text-[#E7E1D4]/85 ${showTranscript ? 'max-h-36 overflow-y-auto' : 'line-clamp-4'}`}>
+                “{transcriptLabel}”
+              </p>
+            </div>
+
+            <input type="range" min={0} max={Math.max(duration, 1)} step="0.1" value={Math.min(currentTime, Math.max(duration, 1))} onChange={seek} disabled={!hasAudio || audioError || duration <= 0} style={{ background: `linear-gradient(90deg, #D4A34F ${progressPercent}%, rgba(250,247,240,0.2) ${progressPercent}%)` }} className="audio-guide-seek w-full cursor-pointer disabled:cursor-not-allowed disabled:opacity-40" aria-label="Tiến trình thuyết minh" />
+            <div className="mt-1 flex justify-between font-mono text-[10px] text-[#FAF7F0]/65">
+              <span>{formatTime(currentTime)}</span>
+              <span>{durationLabel}</span>
             </div>
 
             {!hasAudio || audioError ? (
-              <p className="mt-4 border-t border-[#FAF7F0]/10 pt-3 text-xs leading-relaxed text-[#FAF7F0]/60" role="status">
-                {audioError ? 'Không mở được bản thu mẫu trên thiết bị này.' : 'Không tải được audio. Đang chuyển sang bản đọc mẫu.'}
+              <p className="mt-2 text-[10px] text-[#FAF7F0]/65" role="status">
+                {audioError ? 'Không mở được bản thu mẫu.' : 'Đang chuyển sang bản đọc mẫu.'}
               </p>
             ) : null}
 
-            <div className="mt-5 flex flex-col justify-between gap-3 border-t border-[#FAF7F0]/10 pt-4 sm:flex-row sm:items-center">
-              <button type="button" onClick={() => setShowTranscript((shown) => !shown)} aria-expanded={showTranscript} className="inline-flex items-center gap-2 text-left font-mono text-[10px] uppercase tracking-[0.12em] text-[#D4AF67] transition-colors hover:text-[#FAF7F0] sm:text-[11px]">
-                <FileText className="h-4 w-4" strokeWidth={1.5} />
-                {showTranscript ? 'Ẩn lời dẫn' : 'Lời dẫn'}
-                {showTranscript ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+            <div className="mt-3 flex items-center justify-between gap-2">
+              <div className="flex items-center gap-1.5">
+                <button type="button" onClick={toggleMute} disabled={!hasAudio || audioError} className="flex h-8 w-8 items-center justify-center border border-[#FAF7F0]/15 text-[#FAF7F0]/75 hover:border-[#B88A44] hover:text-[#D4AF67] disabled:opacity-35" title={isMuted ? 'Bật âm thanh' : 'Tắt tiếng'} aria-label={isMuted ? 'Bật âm thanh' : 'Tắt tiếng'}>
+                  {isMuted ? <VolumeX className="h-4 w-4" strokeWidth={1.5} /> : <Volume2 className="h-4 w-4" strokeWidth={1.5} />}
+                </button>
+                <button type="button" onClick={handleReset} disabled={!hasAudio || audioError} className="flex h-8 w-8 items-center justify-center border border-[#FAF7F0]/15 text-[#FAF7F0]/75 hover:border-[#B88A44] hover:text-[#D4AF67] disabled:opacity-35 sm:w-auto sm:gap-1.5 sm:px-2" title="Phát lại từ đầu">
+                  <RotateCcw className="h-3.5 w-3.5" strokeWidth={1.5} /><span className="hidden sm:inline">Phát lại</span>
+                </button>
+                <button type="button" onClick={() => setShowTranscript((shown) => !shown)} aria-expanded={showTranscript} className="flex h-8 w-8 items-center justify-center border border-[#FAF7F0]/15 text-[#FAF7F0]/75 hover:border-[#B88A44] hover:text-[#D4AF67]" title={showTranscript ? 'Thu gọn lời dẫn' : 'Xem toàn bộ lời dẫn'} aria-label={showTranscript ? 'Thu gọn lời dẫn' : 'Xem toàn bộ lời dẫn'}>
+                  {showTranscript ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                </button>
+              </div>
+              <button type="button" onClick={() => void togglePlay()} disabled={!hasAudio || audioError} className="flex h-10 w-10 items-center justify-center gap-2 bg-[#D4A34F] text-xs font-semibold text-[#0D1C16] transition-colors hover:bg-[#E4B967] disabled:opacity-45 sm:w-auto sm:px-4" aria-label={isPlaying ? 'Tạm dừng thuyết minh' : 'Nghe thuyết minh'}>
+                {isPlaying ? <><Pause className="h-4 w-4 fill-current" /><span className="hidden sm:inline">Tạm dừng</span></> : <><Play className="h-4 w-4 fill-current" /><span className="hidden sm:inline">Nghe</span></>}
               </button>
             </div>
           </div>
 
-          <aside className="relative row-span-1 flex min-h-[218px] flex-col items-center justify-end overflow-hidden border-l border-[#FAF7F0]/10 bg-[#0D1C16] px-1 pt-4 sm:min-h-[340px] sm:px-3" aria-label="Hướng dẫn viên Viettoria">
+          <aside className="pointer-events-none absolute bottom-0 right-0 z-10 flex h-[250px] w-[150px] items-end justify-center sm:right-6 sm:h-[405px] sm:w-[228px]" aria-label="Hướng dẫn viên Viettoria">
             <img
               src={isPlaying ? '/images/guide/guide-speaking.webp' : '/images/guide/guide-idle.png'}
               alt="Hướng dẫn viên Viettoria trong tà áo dài đỏ"
-              className="h-[218px] max-h-[230px] w-full object-contain object-bottom sm:h-[330px] sm:max-h-[330px]"
+              className="h-full w-full object-contain object-bottom"
               loading="lazy"
             />
-            <span className="absolute bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap border border-[#B88A44]/45 bg-[#0D1C16]/90 px-1.5 py-1 font-mono text-[8px] uppercase tracking-wider text-[#D4AF67] sm:bottom-3 sm:px-2 sm:text-[9px]" role="status">
-              {isPlaying ? 'Đang thuyết minh' : 'Sẵn sàng'}
-            </span>
           </aside>
         </div>
 
-        {showTranscript && (
-          <div className="border-t border-[#B88A44]/35 bg-[#0D1C16] px-5 py-5 sm:px-8 sm:py-7 animate-fade-up">
-            <div className="mx-auto max-w-4xl">
-              <h4 className="font-mono text-[10px] uppercase tracking-[0.17em] text-[#D4AF67]">Lời dẫn · {heritageName}</h4>
-              <p className="mt-4 whitespace-pre-line font-serif text-sm leading-7 text-[#FAF7F0]/85 sm:text-base sm:leading-8">{transcriptLabel}</p>
-            </div>
-          </div>
-        )}
       </section>
 
       {stickyPlayerVisible && (
         <div className="fixed inset-x-0 bottom-0 z-40 border-t border-[#B88A44]/55 bg-[#0D1C16] px-4 py-3 text-[#FAF7F0] shadow-2xl animate-fade-up" role="region" aria-label="Hướng dẫn viên audio đang phát">
           <div className="mx-auto flex max-w-7xl items-center gap-3 sm:gap-5">
-            <img src="/images/guide/guide-idle.png" alt="" className="hidden h-10 w-8 shrink-0 border border-[#B88A44]/50 object-cover object-top sm:block" />
+            <img src="/images/guide/guide-idle.png" alt="" className="hidden h-10 w-8 shrink-0 object-contain object-bottom sm:block" />
             <div className="min-w-0 flex-1">
               <p className="truncate font-serif text-sm font-semibold">{titleLabel}</p>
               <p className="mt-0.5 truncate font-mono text-[9px] uppercase tracking-wider text-[#D4AF67]">Đang dẫn chuyện · {heritageName}</p>

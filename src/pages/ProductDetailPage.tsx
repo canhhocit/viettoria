@@ -118,7 +118,7 @@ export const ProductDetailPage: React.FC = () => {
 
         {/* Audio Guide Section */}
         {product.audioGuide && (
-          <section className="space-y-4">
+          <section className="mx-auto max-w-5xl space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="font-serif text-xl sm:text-2xl font-bold text-forest">
                 Audio Guide Thuyết Minh Lịch Sử

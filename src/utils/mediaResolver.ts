@@ -34,6 +34,18 @@ const KNOWN_3D_MODELS: Record<string, string> = {
   'default': '/3D/chua-mot-cot.glb',
 };
 
+const KNOWN_3D_PREVIEWS: Record<string, { poster: string; turntable: string }> = {
+  'chua-mot-cot': { poster: '/3D/chua-mot-cot-poster.webp', turntable: '/3D/chua-mot-cot-card.webm' },
+  'khue-van-cac': { poster: '/3D/khue-van-cac-poster.webp', turntable: '/3D/khue-van-cac-card.webm' },
+  'cot-co-ha-noi': { poster: '/3D/cot-co-ha-noi-poster.webp', turntable: '/3D/cot-co-ha-noi-card.webm' },
+  'ngo-mon-hue': { poster: '/3D/ngo-mon-hue-poster.webp', turntable: '/3D/ngo-mon-hue-card.webm' },
+  'ben-nha-rong': { poster: '/3D/ben-nha-rong-poster.webp', turntable: '/3D/ben-nha-rong-card.webm' },
+};
+
+export function resolve3DPreview(slug?: string | null) {
+  return slug ? KNOWN_3D_PREVIEWS[slug] || null : null;
+}
+
 /**
  * Danh sách hình ảnh mẫu trong /viettoria_img/
  */

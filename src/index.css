@@ -42,6 +42,53 @@
   background-color: #B88A44;
 }
 
+.architectural-3d-stage {
+  background:
+    radial-gradient(ellipse at 50% 43%, rgba(255, 253, 247, 0.98) 0%, rgba(243, 237, 225, 0.94) 55%, rgba(222, 211, 192, 0.9) 100%),
+    #EAE2D3;
+}
+
+.architectural-3d-stage::before {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at center, transparent 52%, rgba(93, 74, 49, 0.08) 100%),
+    linear-gradient(90deg, rgba(116, 92, 66, 0.035) 1px, transparent 1px),
+    linear-gradient(rgba(116, 92, 66, 0.035) 1px, transparent 1px);
+  background-size: auto, 36px 36px, 36px 36px;
+}
+
+.architectural-3d-stage > img,
+.architectural-3d-stage > video,
+.architectural-3d-stage > model-viewer {
+  z-index: 1;
+}
+
+.architectural-model-viewer {
+  --poster-color: transparent;
+  cursor: grab;
+}
+
+.architectural-model-viewer:active {
+  cursor: grabbing;
+}
+
+.architectural-model-viewer::part(default-progress-bar) {
+  background-color: #B88A44;
+}
+
+.architectural-3d-stage:fullscreen,
+.architectural-3d-stage-fullscreen {
+  width: 100vw;
+  height: 100vh;
+  max-height: 100vh;
+  aspect-ratio: auto;
+  background-color: #F3EBDD;
+}
+
 .audio-guide-emblem.is-speaking {
   box-shadow: 0 0 0 5px rgba(184, 138, 68, 0.08);
 }

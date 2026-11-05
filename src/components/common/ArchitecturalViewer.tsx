@@ -1,7 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { Maximize2, Eye, ShieldCheck, Ruler, Layers, X, ZoomIn, Box } from 'lucide-react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import {
+  Box,
+  Eye,
+  Layers,
+  Maximize2,
+  Pause,
+  Play,
+  Ruler,
+  X,
+  ZoomIn,
+} from 'lucide-react';
 import type { Product } from '../../types';
-import { resolve3DModelUrl, resolveImageUrl, handleImageFallback, VIETTORIA_IMAGES } from '../../utils/mediaResolver';
+import {
+  handleImageFallback,
+  resolve3DModelUrl,
+  resolve3DPreview,
+  resolveImageUrl,
+  VIETTORIA_IMAGES,
+} from '../../utils/mediaResolver';
 import { HeritageSpinner } from './HeritageLoader';
 
 interface ArchitecturalViewerProps {
@@ -10,231 +26,322 @@ interface ArchitecturalViewerProps {
 
 export const ArchitecturalViewer: React.FC<ArchitecturalViewerProps> = ({ product }) => {
   const [activeTab, setActiveTab] = useState<'3d' | 'photos'>('3d');
-  const [selectedAngle, setSelectedAngle] = useState(0);
-  const [isZoomModalOpen, setIsZoomModalOpen] = useState(false);
+  const [selectedPhoto, setSelectedPhoto] = useState(0);
+  const [isPhotoZoomOpen, setIsPhotoZoomOpen] = useState(false);
+  const [viewerAvailable, setViewerAvailable] = useState(() =>
+    typeof window !== 'undefined' && Boolean(window.customElements?.get('model-viewer')),
+  );
+  const [modelLoaded, setModelLoaded] = useState(false);
+  const [modelFailed, setModelFailed] = useState(false);
+  const [previewFailed, setPreviewFailed] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(() =>
+    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+  );
+  const [autoRotate, setAutoRotate] = useState(() =>
+    typeof window !== 'undefined' && !window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+  );
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const viewportRef = useRef<HTMLDivElement>(null);
 
-  // Close zoom modal on Escape key
+  const preview = resolve3DPreview(product.slug);
+  const modelUrl = resolve3DModelUrl(product.model3dUrl || product.slug);
+  const posterUrl = preview?.poster || resolveImageUrl(product.heroImage, VIETTORIA_IMAGES.productHighlight);
+  const turntableUrl = preview?.turntable;
+
+  const photos = useMemo(() => {
+    const candidates = [product.heroImage, ...(product.galleryImages || [])]
+      .filter((image): image is string => Boolean(image?.trim()));
+    const uniqueImages = [...new Set(candidates)];
+    return uniqueImages.map((image, index) => ({
+      label: `Ảnh ${String(index + 1).padStart(2, '0')}`,
+      src: resolveImageUrl(image, VIETTORIA_IMAGES.productHighlight),
+    }));
+  }, [product.galleryImages, product.heroImage]);
+  const currentPhoto = photos[selectedPhoto] || photos[0];
+
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setIsZoomModalOpen(false);
-    };
-    if (isZoomModalOpen) {
-      window.addEventListener('keydown', handleKeyDown);
+    if (window.customElements.get('model-viewer')) {
+      setViewerAvailable(true);
+      return;
     }
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isZoomModalOpen]);
 
-  // Gallery angles combining hero, gallery images and authentic atelier photos
-  const rawGallery = product.galleryImages && product.galleryImages.length > 0 
-    ? product.galleryImages 
-    : [product.heroImage, VIETTORIA_IMAGES.productHighlight, VIETTORIA_IMAGES.monumentDetail1];
+    let mounted = true;
+    const fallbackTimer = window.setTimeout(() => {
+      if (mounted) setViewerAvailable(false);
+    }, 5000);
 
-  const angles = [
-    {
-      title: 'Góc Trực Diện Chính Diện',
-      caption: 'Trục đối xứng đăng đối, kết cấu chuẩn mực theo thư tịch cổ',
-      src: resolveImageUrl(product.heroImage),
-    },
-    ...rawGallery.map((img, idx) => ({
-      title: `Góc Khảo Cứu & Cấu Kiện 0${idx + 2}`,
-      caption: 'Tỉ lệ kết cấu hệ thống xà nách, đầu đao uốn cong thanh thoát',
-      src: resolveImageUrl(img, VIETTORIA_IMAGES.monumentDetail1),
-    })),
-  ];
+    void window.customElements.whenDefined('model-viewer').then(() => {
+      if (!mounted) return;
+      window.clearTimeout(fallbackTimer);
+      setViewerAvailable(true);
+    });
 
-  const currentImage = angles[selectedAngle] || angles[0];
-  const model3dUrl = resolve3DModelUrl(product.model3dUrl || product.slug);
+    return () => {
+      mounted = false;
+      window.clearTimeout(fallbackTimer);
+    };
+  }, []);
+
+  useEffect(() => {
+    const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const updatePreference = (event: MediaQueryListEvent) => setReducedMotion(event.matches);
+    preference.addEventListener('change', updatePreference);
+    return () => preference.removeEventListener('change', updatePreference);
+  }, []);
+
+  useEffect(() => {
+    setModelLoaded(false);
+    setModelFailed(false);
+    setPreviewFailed(false);
+    setSelectedPhoto(0);
+  }, [modelUrl, product.id]);
+
+  useEffect(() => {
+    if (!viewerAvailable || modelLoaded || modelFailed) return;
+    const loadTimeout = window.setTimeout(() => setModelFailed(true), 30000);
+    return () => window.clearTimeout(loadTimeout);
+  }, [modelFailed, modelLoaded, modelUrl, viewerAvailable]);
+
+  useEffect(() => {
+    const updateFullscreenState = () => {
+      setIsFullscreen(document.fullscreenElement === viewportRef.current);
+    };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setIsPhotoZoomOpen(false);
+    };
+
+    document.addEventListener('fullscreenchange', updateFullscreenState);
+    if (isPhotoZoomOpen) window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('fullscreenchange', updateFullscreenState);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isPhotoZoomOpen]);
+
+  const toggleFullscreen = async () => {
+    if (!viewportRef.current) return;
+    if (document.fullscreenElement === viewportRef.current) {
+      await document.exitFullscreen?.();
+      return;
+    }
+    await viewportRef.current.requestFullscreen?.();
+  };
+
+  const showTurntable = Boolean(turntableUrl && !reducedMotion && !previewFailed && !modelLoaded);
+  const isAutoRotating = autoRotate && !reducedMotion;
+  const stageLabel = modelLoaded
+    ? 'Mô hình 3D · kéo để xoay'
+    : modelFailed || !viewerAvailable
+      ? showTurntable ? 'Video xem trước' : 'Ảnh xem trước'
+      : 'Đang tải mô hình 3D';
 
   return (
-    <div className="bg-[#F3EBDD] border border-[#D8CCB8] relative rounded-[2px] shadow-xs overflow-hidden">
-      {/* Top Header: Tab Selector & Specs */}
-      <div className="p-3.5 sm:p-4 border-b border-[#D8CCB8] flex flex-wrap items-center justify-between gap-3 bg-[#F9F4E8]">
-        {/* View Mode Tabs */}
-        <div className="flex items-center gap-1.5">
+    <div className="architectural-viewer-shell relative overflow-hidden border border-[#D8CCB8] bg-[#F3EBDD] shadow-sm">
+      <header className="flex flex-wrap items-center justify-between gap-3 border-b border-[#D8CCB8] bg-[#F9F4E8] p-3.5 sm:p-4">
+        <div className="flex items-center gap-1.5" role="group" aria-label="Chế độ xem sản phẩm">
           <button
+            type="button"
+            aria-pressed={activeTab === '3d'}
             onClick={() => setActiveTab('3d')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono uppercase tracking-wider rounded-[2px] transition-all ${
-              activeTab === '3d'
-                ? 'bg-[#745C42] text-white font-semibold shadow-xs'
-                : 'bg-[#EDE4D2] text-[#554231] hover:text-[#745C42] hover:bg-[#E2D3BA]'
-            }`}
+            className={`inline-flex min-h-9 items-center gap-2 border px-3 text-[10px] font-mono uppercase tracking-[0.12em] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-brass sm:text-xs ${activeTab === '3d' ? 'border-forest bg-forest text-paper' : 'border-transparent bg-[#EDE4D2] text-[#554231] hover:border-[#C8B894]'}`}
           >
-            <Box className="w-3.5 h-3.5" />
-            <span>Mô Hình 3D Số Hóa</span>
+            <Box className="h-3.5 w-3.5" />
+            Mô hình 3D
           </button>
-
           <button
+            type="button"
+            aria-pressed={activeTab === 'photos'}
             onClick={() => setActiveTab('photos')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono uppercase tracking-wider rounded-[2px] transition-all ${
-              activeTab === 'photos'
-                ? 'bg-[#745C42] text-white font-semibold shadow-xs'
-                : 'bg-[#EDE4D2] text-[#554231] hover:text-[#745C42] hover:bg-[#E2D3BA]'
-            }`}
+            className={`inline-flex min-h-9 items-center gap-2 border px-3 text-[10px] font-mono uppercase tracking-[0.12em] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-brass sm:text-xs ${activeTab === 'photos' ? 'border-forest bg-forest text-paper' : 'border-transparent bg-[#EDE4D2] text-[#554231] hover:border-[#C8B894]'}`}
           >
-            <Eye className="w-3.5 h-3.5" />
-            <span>Tư Liệu Thực Địa</span>
+            <Eye className="h-3.5 w-3.5" />
+            Ảnh sản phẩm
           </button>
         </div>
 
-        {/* Technical specs indicators */}
-        <div className="flex items-center gap-3 sm:gap-4 text-xs font-mono text-[#796857]">
-          <span className="flex items-center gap-1.5">
-            <Ruler className="w-3.5 h-3.5 text-[#B88A38]" />
-            <span>Tỷ lệ {product.modelSpecs.scale}</span>
-          </span>
-          <span className="flex items-center gap-1.5">
-            <Layers className="w-3.5 h-3.5 text-[#B88A38]" />
-            <span>{product.modelSpecs.partsCount} Cấu Kiện</span>
-          </span>
+        <div className="flex items-center gap-3 font-mono text-[10px] text-[#796857] sm:gap-4 sm:text-xs">
+          <span className="inline-flex items-center gap-1.5"><Ruler className="h-3.5 w-3.5 text-[#B88A38]" />Tỷ lệ {product.modelSpecs.scale}</span>
+          <span className="inline-flex items-center gap-1.5"><Layers className="h-3.5 w-3.5 text-[#B88A38]" />{product.modelSpecs.partsCount} cấu kiện</span>
         </div>
-      </div>
+      </header>
 
-      {/* Main Viewport */}
       {activeTab === '3d' ? (
-        /* 3D WebGL Model Viewport */
-        <div className="relative aspect-[4/3] sm:aspect-[16/10] overflow-hidden bg-[#FAF7F0] flex items-center justify-center">
-          {/* @ts-expect-error Google model-viewer custom element */}
-          <model-viewer
-            src={model3dUrl}
-            poster={currentImage.src}
-            alt={`Mô hình 3D ${product.name}`}
-            camera-controls
-            auto-rotate
-            shadow-intensity="1.2"
-            exposure="1.05"
-            loading="lazy"
-            style={{ width: '100%', height: '100%', backgroundColor: '#FAF7F0' }}
-          >
-            {/* Progress Bar Slot when loading 3D model */}
-            <div slot="progress-bar" className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-paper/85 backdrop-blur-md">
-              <HeritageSpinner size="lg" />
-              <p className="mt-3 font-mono text-xs uppercase tracking-widest text-forest font-semibold">
-                Đang nạp mô hình 3D Draco...
-              </p>
-            </div>
-
-            {/* Fallback Slot inside model-viewer if WebGL is disabled */}
-            <div slot="poster" className="w-full h-full flex items-center justify-center bg-[#FAF7F0]">
-              <img
-                src={currentImage.src}
-                alt={product.name}
-                className="w-full h-full object-contain"
-                onError={(e) => handleImageFallback(e, VIETTORIA_IMAGES.productHighlight)}
-              />
-            </div>
-          {/* @ts-expect-error Google model-viewer custom element */}
-          </model-viewer>
-
-          {/* Top-Right Badge: Authenticity Guarantee */}
-          <div className="absolute top-4 right-4 bg-[#142820]/90 backdrop-blur-sm border border-[#B88A38]/50 px-3 py-1.5 text-white text-[10px] font-mono uppercase tracking-widest flex items-center gap-1.5 shadow-md pointer-events-none rounded-[2px]">
-            <ShieldCheck className="w-3.5 h-3.5 text-[#B88A38]" />
-            <span>Tệp 3D Draco Chuẩn PBR</span>
-          </div>
-
-          
-        </div>
-      ) : (
-        /* Photographic Inspection Viewport */
-        <div 
-          onClick={() => setIsZoomModalOpen(true)}
-          className="relative aspect-[4/3] sm:aspect-[16/10] overflow-hidden bg-[#FAF7F0] flex items-center justify-center group cursor-zoom-in"
-          title="Nhấp để phóng to chi tiết"
+        <div
+          ref={viewportRef}
+          className={`architectural-3d-stage group relative isolate aspect-[4/3] overflow-hidden sm:aspect-[16/10] ${isFullscreen ? 'architectural-3d-stage-fullscreen' : ''}`}
         >
           <img
-            src={currentImage.src}
-            alt={`${product.name} - ${currentImage.title}`}
-            onError={(e) => handleImageFallback(e, VIETTORIA_IMAGES.productHighlight)}
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-          />
-
-          {/* Blueprint Grid Lines Overlay Subtle */}
-          <div 
-            className="absolute inset-0 pointer-events-none opacity-15 bg-[linear-gradient(to_right,#B88A38_1px,transparent_1px),linear-gradient(to_bottom,#B88A38_1px,transparent_1px)] bg-[size:32px_32px]"
+            src={posterUrl}
+            alt=""
             aria-hidden="true"
+            onError={(event) => handleImageFallback(event, VIETTORIA_IMAGES.productHighlight)}
+            className={`pointer-events-none absolute inset-0 h-full w-full object-contain mix-blend-multiply transition-opacity duration-700 ease-out ${modelLoaded || showTurntable ? 'opacity-0' : 'opacity-100'}`}
           />
 
-          {/* Top-Right Badge */}
-          <div className="absolute top-4 right-4 bg-[#142820]/90 backdrop-blur-sm border border-[#B88A38]/50 px-3 py-1.5 text-white text-[10px] font-mono uppercase tracking-widest flex items-center gap-1.5 shadow-md pointer-events-none rounded-[2px]">
-            <ShieldCheck className="w-3.5 h-3.5 text-[#B88A38]" />
-            <span>Tư Liệu Thực Địa Chuẩn Xác</span>
+          {showTurntable && (
+            <video
+              key={`${product.id}-turntable`}
+              src={turntableUrl}
+              poster={posterUrl}
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="metadata"
+              aria-hidden="true"
+              onError={() => setPreviewFailed(true)}
+              className="pointer-events-none absolute inset-0 h-full w-full object-contain mix-blend-multiply transition-opacity duration-700 ease-out"
+            />
+          )}
+
+          {viewerAvailable && !modelFailed && (
+            // @ts-expect-error model-viewer is registered by the page-level module script.
+            <model-viewer
+              key={`${product.id}-${modelUrl}`}
+              src={modelUrl}
+              poster={posterUrl}
+              alt={`Mô hình 3D ${product.name}`}
+              camera-controls
+              auto-rotate={isAutoRotating ? '' : undefined}
+              rotation-per-second="8deg"
+              shadow-intensity="0.75"
+              exposure="1"
+              loading="eager"
+              reveal="auto"
+              interaction-prompt="none"
+              style={{ width: '100%', height: '100%', backgroundColor: 'transparent', touchAction: 'pan-y' }}
+              onLoad={() => setModelLoaded(true)}
+              onError={() => setModelFailed(true)}
+              className={`architectural-model-viewer absolute inset-0 h-full w-full transition-opacity duration-700 ease-out ${modelLoaded ? 'opacity-100' : 'opacity-0'}`}
+            />
+          )}
+
+          <div className="absolute left-3 top-3 z-10 flex items-center gap-2 border border-[#D8CCB8]/90 bg-[#FAF7F0]/90 px-3 py-2 text-[10px] font-mono uppercase tracking-[0.1em] text-[#554231] shadow-sm backdrop-blur-sm sm:left-4 sm:top-4">
+            <span className={`h-1.5 w-1.5 bg-[#8B6B3E] ${!modelLoaded && !modelFailed && viewerAvailable ? 'animate-pulse' : ''}`} />
+            <span role="status" aria-live="polite">{stageLabel}</span>
           </div>
 
-          {/* Center Hover Magnifier Hint */}
-          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-            <div className="bg-[#142820]/85 border border-[#B88A38]/60 px-4 py-2 text-white text-xs font-mono tracking-widest uppercase flex items-center gap-2 shadow-xl backdrop-blur-sm rounded-[2px]">
-              <ZoomIn className="w-4 h-4 text-[#B88A38]" />
-              <span>Soi Chi Tiết Cấu Kiện</span>
-            </div>
-          </div>
-
-          {/* Bottom Floating Bar */}
-          <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between pointer-events-none">
-            <div className="bg-[#142820]/85 backdrop-blur-sm border border-white/15 text-white px-3 py-1.5 text-xs font-mono tracking-wider max-w-[80%] pointer-events-auto rounded-[2px]">
-              <span className="text-[#B88A38] font-bold">{currentImage.title}:</span>{' '}
-              <span className="text-white/80 font-light hidden sm:inline">{currentImage.caption}</span>
-            </div>
-
+          <div className="absolute right-3 top-3 z-10 flex items-center gap-1.5 sm:right-4 sm:top-4">
             <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsZoomModalOpen(true);
-              }}
-              className="p-2.5 bg-[#142820]/85 hover:bg-[#745C42] text-white border border-[#B88A38]/40 pointer-events-auto transition-colors shadow-lg rounded-[2px]"
-              title="Phóng to chi tiết khảo cứu"
+              type="button"
+              onClick={() => setAutoRotate((current) => !current)}
+              disabled={!modelLoaded || reducedMotion}
+              aria-label={reducedMotion ? 'Tự xoay đang tắt theo cài đặt chuyển động' : isAutoRotating ? 'Tắt tự xoay mô hình' : 'Bật tự xoay mô hình'}
+              aria-pressed={isAutoRotating}
+              title={reducedMotion ? 'Tự xoay đang tắt theo cài đặt giảm chuyển động' : isAutoRotating ? 'Tắt tự xoay' : 'Bật tự xoay'}
+              className="flex h-9 w-9 items-center justify-center border border-[#D8CCB8] bg-[#FAF7F0]/90 text-[#554231] shadow-sm backdrop-blur-sm transition-colors hover:border-brass hover:text-forest focus-visible:outline focus-visible:outline-2 focus-visible:outline-brass disabled:cursor-wait disabled:opacity-45"
             >
-              <Maximize2 className="w-4 h-4" />
+              {isAutoRotating ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+            </button>
+            <button
+              type="button"
+              onClick={() => void toggleFullscreen()}
+              aria-label={isFullscreen ? 'Thoát toàn màn hình' : 'Xem mô hình toàn màn hình'}
+              title={isFullscreen ? 'Thoát toàn màn hình' : 'Toàn màn hình'}
+              className="flex h-9 w-9 items-center justify-center border border-[#D8CCB8] bg-[#FAF7F0]/90 text-[#554231] shadow-sm backdrop-blur-sm transition-colors hover:border-brass hover:text-forest focus-visible:outline focus-visible:outline-2 focus-visible:outline-brass"
+            >
+              {isFullscreen ? <X className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
             </button>
           </div>
+
+          {!modelLoaded && !modelFailed && viewerAvailable && (
+            <div className="pointer-events-none absolute inset-0 z-[5] flex items-center justify-center">
+              <div className="flex items-center gap-3 border border-[#D8CCB8]/80 bg-[#FAF7F0]/85 px-4 py-3 text-xs text-forest shadow-sm backdrop-blur-sm">
+                <HeritageSpinner size="sm" />
+                <span className="font-mono">Đang mở mô hình…</span>
+              </div>
+            </div>
+          )}
+
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex items-end justify-between gap-4 bg-gradient-to-t from-[#142820]/80 via-[#142820]/25 to-transparent px-4 pb-4 pt-16 text-paper sm:px-6 sm:pb-5">
+            <div>
+              <p className="font-display text-lg sm:text-xl">{product.name}</p>
+              <p className="mt-1 text-[10px] text-paper/75 sm:text-xs">{modelLoaded ? 'Kéo mô hình để xoay · cuộn để thu phóng' : stageLabel}</p>
+            </div>
+            {photos.length > 0 && (
+              <button
+                type="button"
+                onClick={() => setActiveTab('photos')}
+                className="pointer-events-auto inline-flex shrink-0 items-center gap-2 border border-paper/35 bg-[#142820]/65 px-3 py-2 text-[9px] font-mono uppercase tracking-[0.12em] text-paper backdrop-blur-sm transition-colors hover:border-brass hover:text-[#E4C77F] focus-visible:outline focus-visible:outline-2 focus-visible:outline-brass"
+              >
+                <ZoomIn className="h-3.5 w-3.5" />
+                Xem ảnh
+              </button>
+            )}
+          </div>
+        </div>
+      ) : (
+        <div className="relative aspect-[4/3] overflow-hidden bg-[#FAF7F0] sm:aspect-[16/10]">
+          {currentPhoto && (
+            <button
+              type="button"
+              onClick={() => setIsPhotoZoomOpen(true)}
+              className="group relative flex h-full w-full cursor-zoom-in items-center justify-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-inset focus-visible:outline-brass"
+              aria-label={`Phóng to ${currentPhoto.label} của ${product.name}`}
+            >
+              <img
+                src={currentPhoto.src}
+                alt={`${currentPhoto.label} · ${product.name}`}
+                onError={(event) => handleImageFallback(event, VIETTORIA_IMAGES.productHighlight)}
+                className="h-full w-full object-contain transition-transform duration-700 ease-out group-hover:scale-[1.025]"
+              />
+              <span className="pointer-events-none absolute bottom-4 left-4 inline-flex items-center gap-2 border border-paper/20 bg-[#142820]/80 px-3 py-2 text-[10px] font-mono uppercase tracking-[0.12em] text-paper opacity-0 shadow-sm backdrop-blur-sm transition-opacity duration-300 group-hover:opacity-100">
+                <ZoomIn className="h-3.5 w-3.5 text-[#E4C77F]" />
+                Phóng to ảnh
+              </span>
+            </button>
+          )}
         </div>
       )}
 
-      {/* Angle Selector Tabs (Visible in photo mode or for reference) */}
-      <div className="p-3 bg-[#F9F4E8] border-t border-[#D8CCB8] flex items-center gap-2 overflow-x-auto">
-        {angles.map((_, idx) => (
-          <button
-            key={idx}
-            onClick={() => {
-              setActiveTab('photos');
-              setSelectedAngle(idx);
-            }}
-            className={`flex items-center gap-2 px-3 py-1.5 text-xs font-mono tracking-wider whitespace-nowrap transition-all border rounded-[2px] ${
-              activeTab === 'photos' && selectedAngle === idx
-                ? 'bg-[#745C42] text-white border-[#745C42] font-semibold shadow-xs'
-                : 'bg-[#F3EBDD] border-[#D8CCB8] text-[#554231] hover:border-[#B88A38] hover:text-[#3B2B1D]'
-            }`}
-          >
-            <span>Góc 0{idx + 1}</span>
-          </button>
-        ))}
-      </div>
+      {photos.length > 1 && (
+        <nav className="flex items-center gap-2 overflow-x-auto border-t border-[#D8CCB8] bg-[#F9F4E8] p-3" aria-label="Chọn ảnh sản phẩm">
+          {photos.map((photo, index) => (
+            <button
+              key={`${photo.src}-${index}`}
+              type="button"
+              onClick={() => { setSelectedPhoto(index); setActiveTab('photos'); }}
+              aria-label={photo.label}
+              aria-pressed={activeTab === 'photos' && selectedPhoto === index}
+              className={`group relative h-14 w-20 shrink-0 overflow-hidden border bg-paper transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-brass sm:h-16 sm:w-24 ${activeTab === 'photos' && selectedPhoto === index ? 'border-[#735735]' : 'border-[#D8CCB8] hover:border-brass'}`}
+            >
+              <img
+                src={photo.src}
+                alt=""
+                aria-hidden="true"
+                onError={(event) => handleImageFallback(event, VIETTORIA_IMAGES.productHighlight)}
+                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              />
+              <span className="absolute inset-x-0 bottom-0 bg-[#142820]/75 px-1 py-0.5 text-center font-mono text-[8px] uppercase tracking-wider text-paper">{photo.label}</span>
+            </button>
+          ))}
+        </nav>
+      )}
 
-      {/* Fullscreen Zoom Modal */}
-      {isZoomModalOpen && (
-        <div 
-          className="fixed inset-0 z-50 bg-[#0D1C16]/95 flex flex-col items-center justify-center p-4 backdrop-blur-md"
-          onClick={() => setIsZoomModalOpen(false)}
+      {isPhotoZoomOpen && currentPhoto && (
+        <div
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#0D1C16]/95 p-4 backdrop-blur-sm sm:p-8"
+          onClick={() => setIsPhotoZoomOpen(false)}
+          role="dialog"
+          aria-modal="true"
+          aria-label={`Ảnh sản phẩm ${product.name}`}
         >
-          {/* Close button in top corner */}
-          <button 
-            onClick={() => setIsZoomModalOpen(false)}
-            className="absolute top-6 right-6 p-2 bg-[#142820] border border-[#B88A38]/50 text-white hover:bg-[#745C42] transition-colors shadow-xl rounded-[2px]"
-            title="Đóng (Phím Esc)"
+          <button
+            type="button"
+            onClick={() => setIsPhotoZoomOpen(false)}
+            className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center border border-brass/45 bg-forest text-paper transition-colors hover:bg-[#24483B] focus-visible:outline focus-visible:outline-2 focus-visible:outline-brass sm:right-7 sm:top-7"
+            aria-label="Đóng ảnh phóng to"
           >
-            <X className="w-5 h-5" />
+            <X className="h-5 w-5" />
           </button>
-
-          <div className="relative max-w-5xl max-h-[85vh] overflow-hidden" onClick={e => e.stopPropagation()}>
-            <img
-              src={currentImage.src}
-              alt={currentImage.title}
-              onError={(e) => handleImageFallback(e, VIETTORIA_IMAGES.productHighlight)}
-              className="max-w-full max-h-[80vh] object-contain border border-[#B88A38]/60 shadow-2xl rounded-[2px]"
-            />
-            <div className="mt-3 flex items-center justify-between text-xs font-mono text-white tracking-wider uppercase">
-              <span className="text-[#B88A38] font-bold">{product.name} — {currentImage.title}</span>
-              <span className="text-white/60 text-[11px]">Nhấp ra ngoài hoặc bấm ESC để đóng</span>
-            </div>
-          </div>
+          <img
+            src={currentPhoto.src}
+            alt={`${currentPhoto.label} · ${product.name}`}
+            onError={(event) => handleImageFallback(event, VIETTORIA_IMAGES.productHighlight)}
+            onClick={(event) => event.stopPropagation()}
+            className="max-h-[82vh] max-w-full border border-brass/50 object-contain shadow-2xl"
+          />
+          <p className="mt-3 text-center font-mono text-[10px] uppercase tracking-[0.14em] text-paper/65">{product.name} · {currentPhoto.label}</p>
         </div>
       )}
     </div>

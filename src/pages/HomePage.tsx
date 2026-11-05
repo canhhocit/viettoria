@@ -4,26 +4,10 @@ import { ArrowDown, ArrowRight } from 'lucide-react';
 import { publicApi } from '../services/api';
 import type { Product, Collection, BlogPost } from '../types';
 import { FALLBACK_BLOGS, FALLBACK_COLLECTIONS, FALLBACK_PRODUCTS } from '../data/fallbackData';
-import { resolve3DModelUrl, resolveImageUrl, handleImageFallback } from '../utils/mediaResolver';
-
-const productPoster: Record<string, string> = {
-  'chua-mot-cot': '/3D/chua-mot-cot-poster.webp',
-  'khue-van-cac': '/3D/khue-van-cac-poster.webp',
-  'cot-co-ha-noi': '/3D/cot-co-ha-noi-poster.webp',
-  'ngo-mon-hue': '/3D/ngo-mon-hue-poster.webp',
-  'ben-nha-rong': '/3D/ben-nha-rong-poster.webp',
-};
-
-const productTurntable: Record<string, string> = {
-  'chua-mot-cot': '/3D/chua-mot-cot-card.webm',
-  'khue-van-cac': '/3D/khue-van-cac-card.webm',
-  'cot-co-ha-noi': '/3D/cot-co-ha-noi-card.webm',
-  'ngo-mon-hue': '/3D/ngo-mon-hue-card.webm',
-  'ben-nha-rong': '/3D/ben-nha-rong-card.webm',
-};
+import { resolve3DModelUrl, resolve3DPreview, resolveImageUrl, handleImageFallback } from '../utils/mediaResolver';
 
 const imageFor = (path?: string | null, slug?: string) =>
-  resolveImageUrl(path || (slug ? productPoster[slug] : undefined));
+  resolveImageUrl(path || (slug ? resolve3DPreview(slug)?.poster : undefined));
 
 const useReducedMotionPreference = () => {
   const [reducedMotion, setReducedMotion] = useState(() =>
@@ -77,11 +61,15 @@ const InteractiveModelStage: React.FC<{ product: Product; reducedMotion: boolean
   const [viewerAvailable, setViewerAvailable] = useState(() =>
     typeof window !== 'undefined' && Boolean(window.customElements?.get('model-viewer')),
   );
-  const [modelLoaded, setModelLoaded] = useState(false);
-  const [modelFailed, setModelFailed] = useState(false);
-  const poster = productPoster[product.slug] || imageFor(product.heroImage);
+  const [loadedModelKey, setLoadedModelKey] = useState<string | null>(null);
+  const [failedModelKey, setFailedModelKey] = useState<string | null>(null);
+  const preview = resolve3DPreview(product.slug);
+  const poster = preview?.poster || imageFor(product.heroImage);
   const modelUrl = resolve3DModelUrl(product.model3dUrl || product.slug);
-  const turntable = productTurntable[product.slug];
+  const modelKey = `${product.id}:${modelUrl}`;
+  const modelLoaded = loadedModelKey === modelKey;
+  const modelFailed = failedModelKey === modelKey;
+  const turntable = preview?.turntable;
 
   useEffect(() => {
     if (window.customElements.get('model-viewer')) {
@@ -106,6 +94,12 @@ const InteractiveModelStage: React.FC<{ product: Product; reducedMotion: boolean
     };
   }, []);
 
+  useEffect(() => {
+    if (!viewerAvailable || modelLoaded || modelFailed) return;
+    const loadTimeout = window.setTimeout(() => setFailedModelKey(modelKey), 30000);
+    return () => window.clearTimeout(loadTimeout);
+  }, [modelFailed, modelKey, modelLoaded, viewerAvailable]);
+
   const useTurntableFallback = reducedMotion === false && Boolean(turntable) && (!viewerAvailable || modelFailed || !modelLoaded);
 
   return (
@@ -115,7 +109,7 @@ const InteractiveModelStage: React.FC<{ product: Product; reducedMotion: boolean
         alt=""
         aria-hidden="true"
         className={`absolute inset-0 h-full w-full object-contain mix-blend-multiply transition-opacity duration-700 ${modelLoaded ? 'opacity-0' : 'opacity-100'}`}
-        onError={(event) => handleImageFallback(event, '/3D/chua-mot-cot-poster.webp')}
+        onError={(event) => handleImageFallback(event, resolveImageUrl(product.heroImage))}
       />
       {useTurntableFallback && (
         <video
@@ -139,19 +133,24 @@ const InteractiveModelStage: React.FC<{ product: Product; reducedMotion: boolean
           alt={`Mô hình 3D có thể xoay của ${product.name}`}
           camera-controls
           auto-rotate={reducedMotion ? undefined : ''}
-          rotation-per-second="14deg"
-          shadow-intensity="0.8"
-          exposure="1.05"
+          rotation-per-second="8deg"
+          shadow-intensity="0.75"
+          exposure="1"
+          interaction-prompt="none"
           loading="eager"
           reveal="auto"
           style={{ width: '100%', height: '100%', backgroundColor: 'transparent', touchAction: 'pan-y' }}
-          onLoad={() => setModelLoaded(true)}
-          onError={() => setModelFailed(true)}
+          onLoad={() => setLoadedModelKey(modelKey)}
+          onError={() => setFailedModelKey(modelKey)}
           className={`home-model-viewer absolute inset-0 h-full w-full transition-opacity duration-700 ${modelLoaded ? 'opacity-100' : 'opacity-0'}`}
         />
       )}
       <div className="pointer-events-none absolute left-4 top-4 z-10 bg-[#F7F3EA]/90 px-3 py-1.5 text-[11px] text-[#5D4A31]">
-        {modelLoaded ? 'Mô hình 3D · Kéo để xoay' : modelFailed ? 'Bản xem trước 360°' : viewerAvailable ? 'Đang mở mô hình 3D…' : 'Bản xem trước 360°'}
+        {modelLoaded
+          ? 'Mô hình 3D · Kéo để xoay'
+          : modelFailed || !viewerAvailable
+            ? !reducedMotion && turntable ? 'Video xem trước' : 'Ảnh xem trước'
+            : 'Đang tải mô hình 3D…'}
       </div>
     </>
   );
@@ -207,7 +206,7 @@ const ScrollyHeritage: React.FC<{ products: Product[]; }> = ({ products }) => {
 
         <div className="grid items-start gap-7 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
           <div data-home-reveal className="home-story-stage sticky top-[76px] z-10 h-[min(62vw,390px)] min-h-[250px] overflow-hidden border border-[#D4C7B1] bg-[#EAE2D3] shadow-sm lg:top-24 lg:h-[min(68vh,650px)] lg:min-h-[480px]">
-            <InteractiveModelStage key={activeProduct.slug} product={activeProduct} reducedMotion={reducedMotion} />
+            <InteractiveModelStage product={activeProduct} reducedMotion={reducedMotion} />
             <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between bg-gradient-to-t from-[#2B241C]/85 via-[#2B241C]/35 to-transparent px-5 pb-5 pt-16 text-[#FFF9EE] sm:px-7 sm:pb-7">
               <div>
                 <p className="mt-1 font-display text-xl sm:text-2xl">{activeProduct.name}</p>

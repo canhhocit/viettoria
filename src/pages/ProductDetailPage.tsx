@@ -72,7 +72,7 @@ export const ProductDetailPage: React.FC = () => {
                     Xác Thực Thành Công Tem QR Di Sản Độc Bản
                   </span>
                 </div>
-                <p className="text-xs sm:text-sm text-paper/90 font-light mt-0.5">
+                <p className="text-xs sm:text-sm text-paper/90 font-normal mt-0.5">
                   Chào mừng bạn đến với mô hình <strong className="font-semibold text-brass-subtle">{product.name}</strong> trên tay bạn! Không gian số và Audio Guide độc quyền đã được mở khóa.
                 </p>
               </div>
@@ -104,7 +104,7 @@ export const ProductDetailPage: React.FC = () => {
             {product.subName}
           </p>
 
-          <p className="text-base sm:text-lg text-charcoal/85 font-light leading-relaxed max-w-3xl">
+          <p className="text-base sm:text-lg text-charcoal/85 font-normal leading-relaxed max-w-3xl">
             {product.shortDescription}
           </p>
         </div>
@@ -167,7 +167,7 @@ export const ProductDetailPage: React.FC = () => {
         </section>
 
         {/* Technical Specifications Sheet */}
-        <section className="py-12 bg-paper-warm border border-paper-border corner-frame p-6 sm:p-10 space-y-6">
+        <section className="bg-paper-warm border border-paper-border corner-frame p-5 sm:p-6 space-y-6">
           <div className="space-y-1">
             <div className="flex items-center gap-2 text-brass text-xs font-mono uppercase tracking-widest">
               <Ruler className="w-4 h-4" />
@@ -182,31 +182,25 @@ export const ProductDetailPage: React.FC = () => {
             <div className="space-y-1">
               <span className="text-xs font-mono text-charcoal-muted uppercase">Tỷ Lệ Điêu Khắc</span>
               <p className="font-serif text-xl font-bold text-forest">{product.modelSpecs.scale}</p>
-              <p className="text-[11px] text-charcoal/70 font-light">Chuẩn tỷ lệ kiến trúc truyền thống</p>
             </div>
 
             <div className="space-y-1">
-              <span className="text-xs font-mono text-charcoal-muted uppercase">Kích Thước Thực Tế</span>
+              <span className="text-xs font-mono text-charcoal-muted uppercase">Kích Thước / Khối Lượng</span>
               <p className="font-serif text-xl font-bold text-forest">
-                {product.modelSpecs.heightCm} × {product.modelSpecs.widthCm} cm
-              </p>
-              <p className="text-[11px] text-charcoal/70 font-light">
-                Khối lượng tịnh: {product.modelSpecs.weightGrams}g
+                {product.modelSpecs.heightCm} × {product.modelSpecs.widthCm} cm · {product.modelSpecs.weightGrams} g
               </p>
             </div>
 
             <div className="space-y-1">
               <span className="text-xs font-mono text-charcoal-muted uppercase">Vật Liệu Cốt Lõi</span>
               <p className="font-serif text-xl font-bold text-forest">{product.modelSpecs.material}</p>
-              <p className="text-[11px] text-charcoal/70 font-light">Thân thiện môi trường, chống ẩm mốc</p>
             </div>
 
             <div className="space-y-1">
-              <span className="text-xs font-mono text-charcoal-muted uppercase">Kỹ Nghệ Chế Tác</span>
+              <span className="text-xs font-mono text-charcoal-muted uppercase">Số Cấu Kiện</span>
               <p className="font-serif text-xl font-bold text-brass">
-                {product.modelSpecs.partsCount} Cấu Kiện Tinh Xảo
+                {product.modelSpecs.partsCount}
               </p>
-              <p className="text-[11px] text-charcoal/70 font-light">{product.modelSpecs.finishing}</p>
             </div>
           </div>
         </section>
@@ -238,7 +232,7 @@ export const ProductDetailPage: React.FC = () => {
                     <h3 className="font-serif text-lg font-bold text-forest group-hover:text-brass transition-colors">
                       {rel.name}
                     </h3>
-                    <p className="text-xs text-charcoal-muted font-light">{rel.location}</p>
+                    <p className="text-xs text-charcoal-muted font-normal">{rel.location}</p>
                   </div>
                 </Link>
               ))}

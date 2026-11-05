@@ -55,11 +55,11 @@ export const AdminLayout: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#F0EDE6] text-charcoal flex flex-col md:flex-row font-serif">
+    <div className="admin-layout min-h-screen bg-paper-warm text-charcoal flex flex-col md:flex-row font-serif">
       {/* Mobile Top Header */}
-      <div className="md:hidden bg-[#142820] text-paper px-4 py-3 flex items-center justify-between border-b border-[#B88A38]/30">
+      <div className="md:hidden bg-forest text-paper px-4 py-3 flex items-center justify-between border-b border-brass/30">
         <div className="flex items-center gap-2">
-          <Shield className="w-5 h-5 text-[#B88A38]" />
+          <Shield className="w-5 h-5 text-brass" />
           <span className="font-serif font-bold text-lg tracking-wider text-white">VIETTORIA CMS</span>
         </div>
         <button 
@@ -75,7 +75,7 @@ export const AdminLayout: React.FC = () => {
 
       {/* Sidebar Navigation */}
       <aside className={`
-        fixed inset-y-0 left-0 z-40 w-64 bg-[#142820] text-white flex flex-col justify-between border-r border-[#B88A38]/25 transform transition-transform duration-200 ease-in-out md:translate-x-0 md:static md:h-screen
+        fixed inset-y-0 left-0 z-40 w-64 bg-forest text-white flex flex-col justify-between border-r border-brass/25 transform transition-transform duration-200 ease-in-out md:translate-x-0 md:static md:h-screen
         ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         {/* Brand Header */}
@@ -87,7 +87,7 @@ export const AdminLayout: React.FC = () => {
                 alt="Viettoria"
                 className="h-8 w-auto object-contain brightness-0 invert"
               />
-              <p className="text-[10px] font-mono text-[#B88A38] uppercase tracking-widest mt-1">Heritage CMS Studio</p>
+              <p className="text-[10px] font-mono text-brass uppercase tracking-widest mt-1">Heritage CMS Studio</p>
             </Link>
           </div>
 
@@ -104,7 +104,7 @@ export const AdminLayout: React.FC = () => {
                   className={({ isActive }) =>
                     `flex items-center gap-3 px-3.5 py-3 rounded-[2px] transition-colors ${
                       isActive
-                        ? 'bg-[#B88A38] text-[#142820] font-bold shadow-sm'
+                        ? 'bg-brass text-forest font-bold shadow-sm'
                         : 'text-white/75 hover:text-white hover:bg-white/10'
                     }`
                   }
@@ -118,12 +118,12 @@ export const AdminLayout: React.FC = () => {
         </div>
 
         {/* User Info & Footer Actions */}
-        <div className="p-4 border-t border-white/10 bg-[#0D1C16] space-y-3 font-mono text-xs">
+        <div className="p-4 border-t border-white/10 bg-forest-dark space-y-3 font-mono text-xs">
           <div className="flex items-center gap-3 px-2 py-1.5">
             
             <div className="min-w-0">
               <p className="text-white font-medium text-xs truncate">{user?.fullName || 'Ban Quản Trị'}</p>
-              <p className="text-[10px] text-[#B88A38] uppercase tracking-widest">{user?.role === 'DEMO' ? 'Bản xem thử' : 'Administrator'}</p>
+              <p className="text-[10px] text-brass uppercase tracking-widest">{user?.role === 'DEMO' ? 'Bản xem thử' : 'Administrator'}</p>
             </div>
           </div>
 
@@ -132,7 +132,7 @@ export const AdminLayout: React.FC = () => {
               to="/"
               target="_blank"
               rel="noreferrer"
-              className="flex items-center gap-2 px-2 py-1.5 text-white/70 hover:text-[#B88A38] transition-colors"
+              className="flex items-center gap-2 px-2 py-1.5 text-white/85 hover:text-brass transition-colors"
             >
               <ExternalLink className="w-3.5 h-3.5" />
               <span>Xem Website Công Khai</span>
@@ -140,7 +140,7 @@ export const AdminLayout: React.FC = () => {
 
             <button
               onClick={handleLogout}
-              className="flex items-center gap-2 px-2 py-1.5 text-[#B94D35] hover:text-white hover:bg-[#B94D35]/20 transition-colors text-left rounded-[2px]"
+              className="flex items-center gap-2 px-2 py-1.5 text-terracotta hover:text-white hover:bg-terracotta/20 transition-colors text-left rounded-[2px]"
             >
               <LogOut className="w-3.5 h-3.5" />
               <span>Đăng Xuất</span>
@@ -151,8 +151,8 @@ export const AdminLayout: React.FC = () => {
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
-        <header className="hidden md:flex items-center justify-between h-16 px-8 bg-[#FAF7F0] border-b border-[#D8CCB8] shrink-0">
-          <div className="flex items-center gap-2 text-xs font-mono text-[#796857] uppercase tracking-wider">
+        <header className="hidden md:flex items-center justify-between h-16 px-8 bg-paper border-b border-paper-border shrink-0">
+          <div className="flex items-center gap-2 text-xs font-mono text-charcoal-muted uppercase tracking-wider">
             <span>Khu vực quản lý và điều hành di sản kiến trúc</span>
           </div>
         </header>

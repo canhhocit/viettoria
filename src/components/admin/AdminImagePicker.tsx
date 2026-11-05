@@ -2,6 +2,7 @@ import React, { useId, useRef, useState } from 'react';
 import {
   AlertCircle,
   Check,
+  Copy,
   ExternalLink,
   FolderOpen,
   Image as ImageIcon,
@@ -51,6 +52,7 @@ export const AdminImagePicker: React.FC<AdminImagePickerProps> = ({
   const [isLoadingMedia, setIsLoadingMedia] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [libraryError, setLibraryError] = useState<string | null>(null);
+  const [copiedMediaId, setCopiedMediaId] = useState<string | null>(null);
 
   // Drag and drop state
   const [isDragging, setIsDragging] = useState(false);
@@ -72,6 +74,17 @@ export const AdminImagePicker: React.FC<AdminImagePickerProps> = ({
   const handleOpenLibrary = () => {
     setIsLibraryOpen(true);
     void loadMediaLibrary();
+  };
+
+  const handleCopyMediaUrl = async (item: MediaItem) => {
+    try {
+      await navigator.clipboard.writeText(item.url);
+      setCopiedMediaId(item.id);
+      setLibraryError(null);
+      window.setTimeout(() => setCopiedMediaId(current => current === item.id ? null : current), 1500);
+    } catch {
+      setLibraryError('Không thể sao chép URL ảnh. Hãy chọn URL và sao chép thủ công.');
+    }
   };
 
   const handleUploadFile = async (file: File) => {
@@ -447,45 +460,45 @@ export const AdminImagePicker: React.FC<AdminImagePickerProps> = ({
                   {imageMediaItems.map((item) => {
                     const isSelected = value === item.url;
                     return (
-                      <button
-                        type="button"
+                      <article
                         key={item.id}
-                        onClick={() => handleSelectFromLibrary(item.url)}
                         className={`group relative flex flex-col overflow-hidden border text-left transition-all ${
                           isSelected
                             ? 'border-brass bg-paper ring-2 ring-brass/40 shadow-sm'
                             : 'border-paper-border bg-paper hover:border-brass/80 hover:shadow-sm'
                         }`}
                       >
-                        <div className="relative aspect-square w-full overflow-hidden bg-paper-warm">
-                          <img
-                            src={resolveImageUrl(item.url)}
-                            alt={item.altText || item.name}
-                            onError={(e) => handleImageFallback(e)}
-                            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                          />
-                          {isSelected && (
-                            <span className="absolute right-1.5 top-1.5 flex h-5 w-5 items-center justify-center bg-forest text-brass shadow">
-                              <Check className="h-3 w-3 stroke-[2.5]" />
-                            </span>
-                          )}
-                        </div>
-                        <div className="p-2">
-                          <p
-                            className="truncate font-serif text-xs font-bold text-forest"
-                            title={item.name}
-                          >
-                            {item.name}
-                          </p>
-                          <p
-                            className="truncate font-mono text-[10px] text-charcoal-muted"
-                            title={item.fileName}
-                          >
-                            {item.fileName || 'Ảnh di sản'}
-                            {item.fileSize ? ` · ${(item.fileSize / 1024).toFixed(0)} KB` : ''}
-                          </p>
-                        </div>
-                      </button>
+                        <button type="button" onClick={() => handleSelectFromLibrary(item.url)} className="flex h-full flex-col text-left" aria-label={`Chọn ảnh ${item.name}`}>
+                          <div className="relative aspect-square w-full overflow-hidden bg-paper-deep/30">
+                            <img
+                              src={resolveImageUrl(item.url)}
+                              alt={item.altText || item.name}
+                              onError={(e) => handleImageFallback(e)}
+                              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                            />
+                            {isSelected && (
+                              <span className="absolute left-1.5 top-1.5 flex h-5 w-5 items-center justify-center bg-forest text-brass shadow">
+                                <Check className="h-3 w-3 stroke-[2.5]" />
+                              </span>
+                            )}
+                          </div>
+                          <div className="w-full p-2">
+                            <p className="truncate font-serif text-xs font-bold text-forest" title={item.name}>{item.name}</p>
+                            <p className="truncate font-mono text-[10px] text-charcoal-muted" title={item.fileName}>
+                              {item.fileName || 'Ảnh di sản'}{item.fileSize ? ` · ${(item.fileSize / 1024).toFixed(0)} KB` : ''}
+                            </p>
+                          </div>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => void handleCopyMediaUrl(item)}
+                          className="absolute right-1.5 top-1.5 flex h-7 w-7 items-center justify-center border border-paper-border bg-paper/95 text-forest shadow-sm transition-colors hover:border-brass hover:text-brass"
+                          title={copiedMediaId === item.id ? 'Đã sao chép URL' : 'Sao chép URL'}
+                          aria-label={copiedMediaId === item.id ? `Đã sao chép URL ${item.name}` : `Sao chép URL ${item.name}`}
+                        >
+                          {copiedMediaId === item.id ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+                        </button>
+                      </article>
                     );
                   })}
                 </div>

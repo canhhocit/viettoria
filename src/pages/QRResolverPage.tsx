@@ -67,7 +67,7 @@ export const QRResolverPage: React.FC = () => {
           <h1 className="font-serif text-2xl sm:text-3xl font-bold text-forest">
             Xác Thực Tem QR Mô Hình
           </h1>
-          <p className="text-xs sm:text-sm text-charcoal/80 font-light leading-relaxed">
+          <p className="text-xs sm:text-sm text-charcoal/80 font-normal leading-relaxed">
             Nhập mã in dưới đế mô hình thu nhỏ của bạn để truy cập ngay bản thu âm thuyết minh và khảo cứu kiến trúc.
           </p>
         </div>
@@ -98,7 +98,7 @@ export const QRResolverPage: React.FC = () => {
           {/* Quick SKU presets */}
           <div>
             <span className="block text-[11px] text-charcoal-muted uppercase mb-1.5 font-medium">Tác phẩm di sản mẫu:</span>
-            <div className="flex flex-wrap gap-1.5">
+            <div className="flex flex-wrap gap-2">
               {[
                 { code: 'VT-HN-001', label: 'Chùa Một Cột' },
                 { code: 'VT-HN-002', label: 'Khuê Văn Các' },
@@ -110,7 +110,7 @@ export const QRResolverPage: React.FC = () => {
                   key={p.code}
                   type="button"
                   onClick={() => setInputCode(p.code)}
-                  className="px-2.5 py-1 text-xs border border-paper-border bg-paper hover:border-brass text-charcoal transition-colors"
+                  className="whitespace-nowrap px-3 py-1.5 text-xs border border-paper-border bg-paper hover:border-brass text-charcoal transition-colors"
                 >
                   {p.label}
                 </button>

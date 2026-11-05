@@ -156,14 +156,14 @@ export const ArchitecturalViewer: React.FC<ArchitecturalViewerProps> = ({ produc
         : 'Đang tải mô hình 3D';
 
   return (
-    <div className="architectural-viewer-shell relative overflow-hidden border border-[#D8CCB8] bg-[#F3EBDD] shadow-sm">
-      <header className="flex flex-wrap items-center justify-between gap-3 border-b border-[#D8CCB8] bg-[#F9F4E8] p-3.5 sm:p-4">
+    <div className="architectural-viewer-shell relative overflow-hidden border border-paper-border bg-paper-card shadow-sm">
+      <header className="flex flex-wrap items-center justify-between gap-3 border-b border-paper-border bg-header p-3.5 sm:p-4">
         <div className="flex items-center gap-1.5" role="group" aria-label="Chế độ xem sản phẩm">
           <button
             type="button"
             aria-pressed={activeTab === '3d'}
             onClick={() => setActiveTab('3d')}
-            className={`inline-flex min-h-9 items-center gap-2 border px-3 text-[10px] font-mono uppercase tracking-[0.12em] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-brass sm:text-xs ${activeTab === '3d' ? 'border-forest bg-forest text-paper' : 'border-transparent bg-[#EDE4D2] text-[#554231] hover:border-[#C8B894]'}`}
+            className={`inline-flex min-h-9 items-center gap-2 border px-3 text-[10px] font-mono uppercase tracking-[0.12em] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-brass sm:text-xs ${activeTab === '3d' ? 'border-forest bg-forest text-paper' : 'border-transparent bg-paper-warm text-brown-dark hover:border-paper-border'}`}
           >
             <Box className="h-3.5 w-3.5" />
             Mô hình 3D
@@ -172,16 +172,16 @@ export const ArchitecturalViewer: React.FC<ArchitecturalViewerProps> = ({ produc
             type="button"
             aria-pressed={activeTab === 'photos'}
             onClick={() => setActiveTab('photos')}
-            className={`inline-flex min-h-9 items-center gap-2 border px-3 text-[10px] font-mono uppercase tracking-[0.12em] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-brass sm:text-xs ${activeTab === 'photos' ? 'border-forest bg-forest text-paper' : 'border-transparent bg-[#EDE4D2] text-[#554231] hover:border-[#C8B894]'}`}
+            className={`inline-flex min-h-9 items-center gap-2 border px-3 text-[10px] font-mono uppercase tracking-[0.12em] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-brass sm:text-xs ${activeTab === 'photos' ? 'border-forest bg-forest text-paper' : 'border-transparent bg-paper-warm text-brown-dark hover:border-paper-border'}`}
           >
             <Eye className="h-3.5 w-3.5" />
             Ảnh sản phẩm
           </button>
         </div>
 
-        <div className="flex items-center gap-3 font-mono text-[10px] text-[#796857] sm:gap-4 sm:text-xs">
-          <span className="inline-flex items-center gap-1.5"><Ruler className="h-3.5 w-3.5 text-[#B88A38]" />Tỷ lệ {product.modelSpecs.scale}</span>
-          <span className="inline-flex items-center gap-1.5"><Layers className="h-3.5 w-3.5 text-[#B88A38]" />{product.modelSpecs.partsCount} cấu kiện</span>
+        <div className="flex items-center gap-3 font-mono text-[10px] text-charcoal-muted sm:gap-4 sm:text-xs">
+          <span className="inline-flex items-center gap-1.5"><Ruler className="h-3.5 w-3.5 text-brass" />Tỷ lệ {product.modelSpecs.scale}</span>
+          <span className="inline-flex items-center gap-1.5"><Layers className="h-3.5 w-3.5 text-brass" />{product.modelSpecs.partsCount} cấu kiện</span>
         </div>
       </header>
 
@@ -230,13 +230,13 @@ export const ArchitecturalViewer: React.FC<ArchitecturalViewerProps> = ({ produc
               reveal="auto"
               interaction-prompt="none"
               ref={modelViewerRef}
-              style={{ width: '100%', height: '100%', backgroundColor: '#EAE2D3', touchAction: 'pan-y' }}
+              style={{ width: '100%', height: '100%', backgroundColor: 'var(--heritage-paper-card)', touchAction: 'pan-y' }}
               className={`architectural-model-viewer absolute inset-0 h-full w-full transition-opacity duration-700 ease-out ${modelLoaded ? 'opacity-100' : 'opacity-0'}`}
             />
           )}
 
-          <div className="absolute left-3 top-3 z-10 flex items-center gap-2 border border-[#D8CCB8]/90 bg-[#FAF7F0]/90 px-3 py-2 text-[10px] font-mono uppercase tracking-[0.1em] text-[#554231] shadow-sm backdrop-blur-sm sm:left-4 sm:top-4">
-            <span className={`h-1.5 w-1.5 bg-[#8B6B3E] ${!modelLoaded && !modelFailed && viewerAvailable ? 'animate-pulse' : ''}`} />
+          <div className="absolute left-3 top-3 z-10 flex items-center gap-2 border border-brass/30 bg-paper-card/95 px-3 py-2 text-xs font-mono uppercase tracking-[0.1em] text-brown-dark shadow-sm backdrop-blur-sm sm:left-4 sm:top-4">
+            <span className={`h-1.5 w-1.5 bg-brown ${!modelLoaded && !modelFailed && viewerAvailable ? 'animate-pulse' : ''}`} />
             <span role="status" aria-live="polite">{stageLabel}</span>
           </div>
 
@@ -248,7 +248,7 @@ export const ArchitecturalViewer: React.FC<ArchitecturalViewerProps> = ({ produc
                 aria-label={previewPlaying ? 'Dừng video xem trước mô hình' : 'Phát video xem trước mô hình'}
                 aria-pressed={previewPlaying}
                 title={previewPlaying ? 'Dừng video xem trước' : 'Phát video xem trước'}
-                className="flex h-9 items-center gap-1.5 border border-[#D8CCB8] bg-[#FAF7F0]/90 px-2.5 text-[9px] font-mono uppercase tracking-[0.08em] text-[#554231] shadow-sm backdrop-blur-sm transition-colors hover:border-brass hover:text-forest focus-visible:outline focus-visible:outline-2 focus-visible:outline-brass"
+                className="flex h-9 items-center gap-1.5 border border-paper-border bg-paper/90 px-2.5 text-[9px] font-mono uppercase tracking-[0.08em] text-brown-dark shadow-sm backdrop-blur-sm transition-colors hover:border-brass hover:text-forest focus-visible:outline focus-visible:outline-2 focus-visible:outline-brass"
               >
                 {previewPlaying ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
                 {previewPlaying ? 'Dừng' : 'Video mẫu'}
@@ -261,7 +261,7 @@ export const ArchitecturalViewer: React.FC<ArchitecturalViewerProps> = ({ produc
               aria-label={reducedMotion ? 'Tự xoay đang tắt theo cài đặt chuyển động' : isAutoRotating ? 'Tắt tự xoay mô hình' : 'Bật tự xoay mô hình'}
               aria-pressed={isAutoRotating}
               title={reducedMotion ? 'Tự xoay đang tắt theo cài đặt giảm chuyển động' : isAutoRotating ? 'Tắt tự xoay' : 'Bật tự xoay'}
-              className="flex h-9 w-9 items-center justify-center border border-[#D8CCB8] bg-[#FAF7F0]/90 text-[#554231] shadow-sm backdrop-blur-sm transition-colors hover:border-brass hover:text-forest focus-visible:outline focus-visible:outline-2 focus-visible:outline-brass disabled:cursor-wait disabled:opacity-45"
+              className="flex h-9 w-9 items-center justify-center border border-paper-border bg-paper/90 text-brown-dark shadow-sm backdrop-blur-sm transition-colors hover:border-brass hover:text-forest focus-visible:outline focus-visible:outline-2 focus-visible:outline-brass disabled:cursor-wait disabled:opacity-45"
             >
               {isAutoRotating ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
             </button>
@@ -270,7 +270,7 @@ export const ArchitecturalViewer: React.FC<ArchitecturalViewerProps> = ({ produc
               onClick={() => void toggleFullscreen()}
               aria-label={isFullscreen ? 'Thoát toàn màn hình' : 'Xem mô hình toàn màn hình'}
               title={isFullscreen ? 'Thoát toàn màn hình' : 'Toàn màn hình'}
-              className="flex h-9 w-9 items-center justify-center border border-[#D8CCB8] bg-[#FAF7F0]/90 text-[#554231] shadow-sm backdrop-blur-sm transition-colors hover:border-brass hover:text-forest focus-visible:outline focus-visible:outline-2 focus-visible:outline-brass"
+              className="flex h-9 w-9 items-center justify-center border border-paper-border bg-paper/90 text-brown-dark shadow-sm backdrop-blur-sm transition-colors hover:border-brass hover:text-forest focus-visible:outline focus-visible:outline-2 focus-visible:outline-brass"
             >
               {isFullscreen ? <X className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
             </button>
@@ -278,14 +278,14 @@ export const ArchitecturalViewer: React.FC<ArchitecturalViewerProps> = ({ produc
 
           {!modelLoaded && !modelFailed && viewerAvailable && !previewPlaying && (
             <div className="pointer-events-none absolute inset-x-0 top-[4.2rem] z-[5] flex justify-center px-4">
-              <div className="flex items-center gap-2 border border-[#D8CCB8]/80 bg-[#FAF7F0]/85 px-3 py-2 text-[11px] text-forest shadow-sm backdrop-blur-sm">
-                <span className="h-1.5 w-1.5 bg-[#B88A44]" aria-hidden="true" />
+              <div className="flex items-center gap-2 border border-brass/30 bg-paper-card/95 px-3 py-2 text-xs text-forest shadow-sm backdrop-blur-sm">
+                <span className="h-1.5 w-1.5 bg-brass" aria-hidden="true" />
                 <span className="font-mono">Đang mở mô hình 3D…</span>
               </div>
             </div>
           )}
 
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex items-end justify-between gap-4 bg-gradient-to-t from-[#142820]/80 via-[#142820]/25 to-transparent px-4 pb-4 pt-16 text-paper sm:px-6 sm:pb-5">
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex items-end justify-between gap-4 bg-gradient-to-t from-forest/80 via-forest/25 to-transparent px-4 pb-4 pt-16 text-paper sm:px-6 sm:pb-5">
             <div>
               <p className="font-display text-lg sm:text-xl">{product.name}</p>
               <p className="mt-1 text-[10px] text-paper/75 sm:text-xs">{modelLoaded ? 'Kéo mô hình để xoay · cuộn để thu phóng' : stageLabel}</p>
@@ -294,7 +294,7 @@ export const ArchitecturalViewer: React.FC<ArchitecturalViewerProps> = ({ produc
               <button
                 type="button"
                 onClick={() => setActiveTab('photos')}
-                className="pointer-events-auto inline-flex shrink-0 items-center gap-2 border border-paper/35 bg-[#142820]/65 px-3 py-2 text-[9px] font-mono uppercase tracking-[0.12em] text-paper backdrop-blur-sm transition-colors hover:border-brass hover:text-[#E4C77F] focus-visible:outline focus-visible:outline-2 focus-visible:outline-brass"
+                className="pointer-events-auto inline-flex shrink-0 items-center gap-2 border border-paper/35 bg-forest/65 px-3 py-2 text-[9px] font-mono uppercase tracking-[0.12em] text-paper backdrop-blur-sm transition-colors hover:border-brass hover:text-brass-light focus-visible:outline focus-visible:outline-2 focus-visible:outline-brass"
               >
                 <ZoomIn className="h-3.5 w-3.5" />
                 Xem ảnh
@@ -303,7 +303,7 @@ export const ArchitecturalViewer: React.FC<ArchitecturalViewerProps> = ({ produc
           </div>
         </div>
       ) : (
-        <div className="relative aspect-[4/3] overflow-hidden bg-[#FAF7F0] sm:aspect-[16/10]">
+        <div className="relative aspect-[4/3] overflow-hidden bg-paper sm:aspect-[16/10]">
           {currentPhoto && (
             <button
               type="button"
@@ -317,8 +317,8 @@ export const ArchitecturalViewer: React.FC<ArchitecturalViewerProps> = ({ produc
                 onError={(event) => handleImageFallback(event, VIETTORIA_IMAGES.productHighlight)}
                 className="h-full w-full object-contain transition-transform duration-700 ease-out group-hover:scale-[1.025]"
               />
-              <span className="pointer-events-none absolute bottom-4 left-4 inline-flex items-center gap-2 border border-paper/20 bg-[#142820]/80 px-3 py-2 text-[10px] font-mono uppercase tracking-[0.12em] text-paper opacity-0 shadow-sm backdrop-blur-sm transition-opacity duration-300 group-hover:opacity-100">
-                <ZoomIn className="h-3.5 w-3.5 text-[#E4C77F]" />
+              <span className="pointer-events-none absolute bottom-4 left-4 inline-flex items-center gap-2 border border-paper/20 bg-forest/80 px-3 py-2 text-[10px] font-mono uppercase tracking-[0.12em] text-paper opacity-0 shadow-sm backdrop-blur-sm transition-opacity duration-300 group-hover:opacity-100">
+                <ZoomIn className="h-3.5 w-3.5 text-brass-light" />
                 Phóng to ảnh
               </span>
             </button>
@@ -327,7 +327,7 @@ export const ArchitecturalViewer: React.FC<ArchitecturalViewerProps> = ({ produc
       )}
 
       {photos.length > 1 && (
-        <nav className="flex items-center gap-2 overflow-x-auto border-t border-[#D8CCB8] bg-[#F9F4E8] p-3" aria-label="Chọn ảnh sản phẩm">
+        <nav className="flex items-center gap-2 overflow-x-auto border-t border-paper-border bg-header p-3" aria-label="Chọn ảnh sản phẩm">
           {photos.map((photo, index) => (
             <button
               key={`${photo.src}-${index}`}
@@ -335,7 +335,7 @@ export const ArchitecturalViewer: React.FC<ArchitecturalViewerProps> = ({ produc
               onClick={() => { setSelectedPhoto(index); setActiveTab('photos'); }}
               aria-label={photo.label}
               aria-pressed={activeTab === 'photos' && selectedPhoto === index}
-              className={`group relative h-14 w-20 shrink-0 overflow-hidden border bg-paper transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-brass sm:h-16 sm:w-24 ${activeTab === 'photos' && selectedPhoto === index ? 'border-[#735735]' : 'border-[#D8CCB8] hover:border-brass'}`}
+              className={`group relative h-14 w-20 shrink-0 overflow-hidden border bg-paper transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-brass sm:h-16 sm:w-24 ${activeTab === 'photos' && selectedPhoto === index ? 'border-brown' : 'border-paper-border hover:border-brass'}`}
             >
               <img
                 src={photo.src}
@@ -344,7 +344,7 @@ export const ArchitecturalViewer: React.FC<ArchitecturalViewerProps> = ({ produc
                 onError={(event) => handleImageFallback(event, VIETTORIA_IMAGES.productHighlight)}
                 className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
-              <span className="absolute inset-x-0 bottom-0 bg-[#142820]/75 px-1 py-0.5 text-center font-mono text-[8px] uppercase tracking-wider text-paper">{photo.label}</span>
+              <span className="absolute inset-x-0 bottom-0 bg-forest/75 px-1 py-0.5 text-center font-mono text-[8px] uppercase tracking-wider text-paper">{photo.label}</span>
             </button>
           ))}
         </nav>
@@ -352,7 +352,7 @@ export const ArchitecturalViewer: React.FC<ArchitecturalViewerProps> = ({ produc
 
       {isPhotoZoomOpen && currentPhoto && (
         <div
-          className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#0D1C16]/95 p-4 backdrop-blur-sm sm:p-8"
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-forest-dark/95 p-4 backdrop-blur-sm sm:p-8"
           onClick={() => setIsPhotoZoomOpen(false)}
           role="dialog"
           aria-modal="true"
@@ -361,7 +361,7 @@ export const ArchitecturalViewer: React.FC<ArchitecturalViewerProps> = ({ produc
           <button
             type="button"
             onClick={() => setIsPhotoZoomOpen(false)}
-            className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center border border-brass/45 bg-forest text-paper transition-colors hover:bg-[#24483B] focus-visible:outline focus-visible:outline-2 focus-visible:outline-brass sm:right-7 sm:top-7"
+            className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center border border-brass/45 bg-forest text-paper transition-colors hover:bg-forest-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-brass sm:right-7 sm:top-7"
             aria-label="Đóng ảnh phóng to"
           >
             <X className="h-5 w-5" />

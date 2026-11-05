@@ -64,7 +64,7 @@ export const CollectionDetailPage: React.FC = () => {
               {collection.name}
             </h1>
 
-            <p className="text-sm sm:text-base text-paper/85 font-light leading-relaxed">
+            <p className="text-sm sm:text-base text-paper/85 font-normal leading-relaxed">
               {collection.description}
             </p>
           </div>
@@ -76,16 +76,13 @@ export const CollectionDetailPage: React.FC = () => {
             <h2 className="font-serif text-2xl font-bold text-forest">
               Các Tác Phẩm Trong Bộ Sưu Tập ({collection.products?.length || 0})
             </h2>
-            <span className="text-xs font-mono text-charcoal-muted uppercase">
-              Tỷ lệ khảo cứu 1:120 & 1:200
-            </span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {collection.products?.map((product) => (
               <div
                 key={product.id}
-                className="bg-paper-warm border border-paper-border hover:border-brass transition-all corner-frame overflow-hidden flex flex-col justify-between group shadow-sm"
+                className="bg-paper-card border border-brass/25 hover:border-brass transition-all corner-frame overflow-hidden flex flex-col justify-between group shadow-sm hover:shadow-md duration-300"
               >
                 <div>
                   <div className="aspect-[4/3] overflow-hidden bg-forest relative">
@@ -113,14 +110,14 @@ export const CollectionDetailPage: React.FC = () => {
                       <span>{product.epoch}</span>
                     </div>
 
-                    <h3 className="font-serif text-xl font-bold text-forest group-hover:text-brass transition-colors">
+                    <h3 className="mt-2.5 font-serif text-xl font-bold text-forest group-hover:text-brass transition-colors">
                       {product.name}
                     </h3>
                     <p className="text-xs font-serif italic text-brass-dark">
                       {product.subName}
                     </p>
 
-                    <p className="text-xs text-charcoal/80 font-light line-clamp-3 leading-relaxed">
+                    <p className="text-xs text-charcoal/80 font-normal line-clamp-3 leading-relaxed">
                       {product.shortDescription}
                     </p>
                   </div>

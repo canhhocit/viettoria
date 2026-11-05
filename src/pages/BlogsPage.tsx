@@ -35,7 +35,7 @@ export const BlogsPage: React.FC = () => {
           <h1 className="font-serif text-3xl sm:text-5xl font-bold text-forest leading-tight">
             Góc Nhìn Di Sản
           </h1>
-          <p className="text-base text-charcoal/80 font-light leading-relaxed">
+          <p className="text-base text-charcoal/80 font-normal leading-relaxed">
             Các khảo cứu chuyên sâu về kiến trúc cổ, kỹ nghệ chế tác mộng gỗ truyền thống và hành trình đưa di sản nghìn năm hòa nhịp vào đời sống đương đại.
           </p>
         </div>
@@ -103,14 +103,13 @@ export const BlogsPage: React.FC = () => {
                       </Link>
                     </h2>
 
-                    <p className="text-sm text-charcoal/80 font-light line-clamp-3 leading-6">
+                    <p className="text-sm text-charcoal/80 font-normal line-clamp-3 leading-6">
                       {blog.excerpt}
                     </p>
                   </div>
                 </div>
 
-                <div className="p-6 pt-0 border-t border-paper-border mt-4">
-                  <div className="pt-4 flex items-center justify-between text-xs font-mono text-charcoal-muted">
+                <div className="px-6 py-4 mt-auto border-t border-brass/20 flex items-center justify-between text-xs font-mono text-charcoal-muted">
                     <span className="flex items-center gap-1">
                       <User className="w-3.5 h-3.5 text-brass" />
                       <span>{blog.author}</span>
@@ -123,7 +122,6 @@ export const BlogsPage: React.FC = () => {
                       <span>Đọc tiếp</span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </Link>
-                  </div>
                 </div>
               </article>
             ))}

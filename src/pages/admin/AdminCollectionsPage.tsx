@@ -13,6 +13,7 @@ export const AdminCollectionsPage: React.FC = () => {
   const [collections, setCollections] = useState<Collection[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCol, setEditingCol] = useState<Partial<Collection> | null>(null);
@@ -57,13 +58,14 @@ export const AdminCollectionsPage: React.FC = () => {
 
   const handleDelete = async (collection: Collection) => {
     if (!window.confirm(`Xóa bộ sưu tập “${collection.name}”?`)) return;
+    setDeletingId(collection.id);
     setError(null);
     try {
       await adminApi.deleteCollection(collection.id);
       await loadData();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Không xóa được bộ sưu tập.');
-    }
+    } finally { setDeletingId(null); }
   };
 
   return (
@@ -82,7 +84,7 @@ export const AdminCollectionsPage: React.FC = () => {
               <div className="flex items-start justify-between gap-3"><h2 className="font-serif text-lg font-bold text-forest">{col.name}</h2><span className={`shrink-0 border px-2 py-1 text-[10px] uppercase ${col.status === 'published' ? 'border-forest/30 bg-forest/10 text-forest' : 'border-charcoal/20 bg-charcoal/5 text-charcoal-muted'}`}>{col.status === 'published' ? 'Đã xuất bản' : col.status === 'hidden' ? 'Đang ẩn' : 'Bản nháp'}</span></div>
               <p className="line-clamp-3 text-xs leading-relaxed text-charcoal/80">{col.description}</p>
             </div>
-            <div className="flex items-center justify-between border-t border-paper-border pt-3 font-mono text-xs"><span className="text-charcoal-muted">Thứ tự: {col.displayOrder}</span>{!isDemo && <div className="flex gap-2"><button onClick={() => { setEditingCol({ ...col }); setError(null); setIsModalOpen(true); }} className="flex items-center gap-1 border border-paper-border px-2.5 py-1.5 text-charcoal hover:border-brass" aria-label={`Sửa ${col.name}`}><Edit className="h-3 w-3 text-brass"/>Sửa</button><button onClick={() => void handleDelete(col)} className="border border-paper-border p-1.5 text-terracotta hover:border-terracotta" aria-label={`Xóa ${col.name}`}><Trash2 className="h-3.5 w-3.5"/></button></div>}</div>
+            <div className="flex items-center justify-between border-t border-paper-border pt-3 font-mono text-xs"><span className="text-charcoal-muted">Thứ tự: {col.displayOrder}</span>{!isDemo && <div className="flex gap-2"><button onClick={() => { setEditingCol({ ...col }); setError(null); setIsModalOpen(true); }} className="flex items-center gap-1 border border-paper-border px-2.5 py-1.5 text-charcoal hover:border-brass" aria-label={`Sửa ${col.name}`}><Edit className="h-3 w-3 text-brass"/>Sửa</button><button onClick={() => void handleDelete(col)} disabled={deletingId !== null} className="border border-paper-border p-2 text-terracotta transition-colors hover:border-terracotta hover:bg-terracotta/10 disabled:cursor-not-allowed disabled:opacity-50" aria-label={`Xóa ${col.name}`}><Trash2 className="h-3.5 w-3.5"/></button></div>}</div>
           </article>)}
         </div>
       )}
@@ -105,7 +107,7 @@ export const AdminCollectionsPage: React.FC = () => {
             />
             <div className="grid grid-cols-2 gap-3"><label className="block text-charcoal-muted">Thứ tự<input type="number" min="1" value={editingCol.displayOrder || 1} onChange={e => setEditingCol({ ...editingCol, displayOrder: Number(e.target.value) })} className="mt-1 w-full border border-paper-border bg-paper-warm px-3 py-2 text-charcoal"/></label><label className="block text-charcoal-muted">Trạng thái<select value={editingCol.status || 'published'} onChange={e => setEditingCol({ ...editingCol, status: e.target.value as Collection['status'] })} className="mt-1 w-full border border-paper-border bg-paper-warm px-3 py-2 text-charcoal"><option value="published">Xuất bản</option><option value="draft">Bản nháp</option><option value="hidden">Ẩn</option></select></label></div>
             {error && <div role="alert" className="text-terracotta">{error}</div>}
-            <div className="flex justify-end gap-3 border-t border-paper-border pt-4"><button type="button" onClick={() => setIsModalOpen(false)} className="border border-paper-border px-4 py-2 uppercase text-charcoal hover:bg-paper-warm">Hủy</button><button type="submit" disabled={saving} className="bg-forest px-6 py-2 font-bold uppercase text-paper hover:bg-brass disabled:opacity-50">{saving ? 'Đang lưu…' : 'Lưu bộ sưu tập'}</button></div>
+            <div className="flex justify-end gap-3 border-t border-paper-border pt-4"><button type="button" onClick={() => setIsModalOpen(false)} className="border border-paper-border px-4 py-2 uppercase text-charcoal hover:bg-paper-warm">Hủy</button><button type="submit" disabled={saving} className="bg-forest px-6 py-2 font-bold uppercase text-paper hover:bg-brass disabled:cursor-not-allowed disabled:opacity-50">{saving ? 'Đang lưu…' : 'Lưu bộ sưu tập'}</button></div>
           </form>
         </div>
       </div>}

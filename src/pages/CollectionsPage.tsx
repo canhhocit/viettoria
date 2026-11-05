@@ -34,7 +34,7 @@ export const CollectionsPage: React.FC = () => {
           <h1 className="font-serif text-3xl sm:text-5xl font-bold text-forest leading-tight">
             Các Tuyển Tập Di Sản
           </h1>
-          <p className="text-base text-charcoal/80 font-light leading-relaxed">
+          <p className="text-base text-charcoal/80 font-normal leading-relaxed">
             Mỗi bộ sưu tập đại diện cho một thời kỳ hoàng kim của kiến trúc Việt Nam. Chúng tôi tái hiện từng cấu kiện với lòng thành kính và tiêu chuẩn kỹ thuật số bảo tàng học.
           </p>
         </div>
@@ -59,7 +59,7 @@ export const CollectionsPage: React.FC = () => {
             {collections.map((col) => (
               <div
                 key={col.id}
-                className="bg-paper-warm border border-paper-border hover:border-brass transition-all corner-frame overflow-hidden flex flex-col justify-between group shadow-sm"
+                className="h-full bg-paper-card border border-brass/25 hover:border-brass transition-all corner-frame overflow-hidden flex flex-col justify-between group shadow-sm hover:shadow-md duration-300"
               >
                 <div>
                   <div className="aspect-[16/10] overflow-hidden bg-forest relative">
@@ -78,7 +78,7 @@ export const CollectionsPage: React.FC = () => {
                     <h3 className="font-serif text-2xl font-bold text-forest group-hover:text-brass transition-colors">
                       {col.name}
                     </h3>
-                    <p className="text-sm text-charcoal/80 font-light leading-6">
+                    <p className="line-clamp-2 text-sm text-charcoal/85 font-normal leading-6">
                       {col.description}
                     </p>
                   </div>

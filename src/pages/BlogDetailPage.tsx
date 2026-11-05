@@ -91,7 +91,7 @@ export const BlogDetailPage: React.FC = () => {
         </div>
 
         {/* Article Body Content */}
-        <div className="prose prose-lg max-w-none text-charcoal/85 leading-relaxed font-light space-y-6 first-letter:text-5xl first-letter:font-serif first-letter:font-bold first-letter:text-forest first-letter:float-left first-letter:mr-3 first-letter:leading-none">
+        <div className="prose prose-lg mx-auto max-w-3xl text-ink leading-relaxed font-normal space-y-5 first-letter:text-5xl first-letter:font-serif first-letter:font-bold first-letter:text-forest first-letter:float-left first-letter:mr-3 first-letter:leading-none">
           {blog.content.split('\n\n').map((paragraph, idx) => (
             <p key={idx} className="text-base sm:text-lg leading-relaxed">
               {paragraph}

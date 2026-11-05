@@ -29,14 +29,14 @@ export const Header: React.FC<HeaderProps> = ({ onOpenQRModal }) => {
 
   return (
     <header 
-      className={`customer-header sticky top-0 z-50 border-b border-[#D8CCB8] transition-all duration-300 ${
+      className={`customer-header sticky top-0 z-50 border-b border-brass/30 bg-header/95 text-ink backdrop-blur-md transition-all duration-300 ${
         isScrolled ? 'py-1 shadow-sm' : 'py-0'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div 
           className={`flex items-center justify-between transition-all duration-300 ${
-            isScrolled ? 'h-14 sm:h-16' : 'h-20'
+            isScrolled ? 'h-14 sm:h-16' : 'h-16 sm:h-20'
           }`}
         >
           {/* Brand Logo - Pure SVG Identity from Reference */}
@@ -59,8 +59,8 @@ export const Header: React.FC<HeaderProps> = ({ onOpenQRModal }) => {
                 className={({ isActive }) =>
                   `whitespace-nowrap border-b-2 px-2.5 py-2 transition-colors duration-200 ${
                     isActive
-                      ? 'border-[#B88A44] text-[#735735]'
-                      : 'border-transparent text-[#3B4038] hover:border-[#D8CCB8] hover:text-[#735735]'
+                      ? 'border-brass text-brown'
+                      : 'border-transparent text-ink hover:border-paper-border hover:text-brown'
                   }`
                 }
               >
@@ -72,18 +72,18 @@ export const Header: React.FC<HeaderProps> = ({ onOpenQRModal }) => {
           <div className="flex items-center gap-2.5">
             <button
               onClick={onOpenQRModal}
-              className={`inline-flex items-center gap-2 border border-[#B88A38] bg-white/75 text-[#5B432A] hover:bg-[#735735] hover:text-white transition-colors font-medium ${
+              className={`inline-flex items-center gap-2 border border-brass bg-white/75 text-brown-dark hover:bg-brown hover:text-white transition-colors font-medium ${
                 isScrolled ? 'px-3 py-1.5 text-xs' : 'px-3.5 py-2 text-[13px]'
               }`}
               title="Mở trình quét tem QR trên đế mô hình"
             >
-              <QrCode className="w-3.5 h-3.5 text-[#B88A38]" />
+              <QrCode className="w-3.5 h-3.5 text-brass" />
               <span className="hidden sm:inline">Quét Tem QR</span>
             </button>
 
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 border border-[#D8CCB8] text-[#3B2B1D] hover:border-[#745C42] hover:text-[#745C42] lg:hidden transition-colors rounded-[2px]"
+              className="p-2 border border-paper-border text-ink hover:border-brown-dark hover:text-brown-dark lg:hidden transition-colors rounded-[2px]"
               aria-label="Mở danh mục điều hướng"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -95,7 +95,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenQRModal }) => {
 
       {/* Mobile Drawer Navigation */}
       {mobileMenuOpen && (
-        <div className="lg:hidden border-t border-[#D8CCB8] bg-[#F9F4E8] px-4 pt-4 pb-6 space-y-3">
+        <div className="lg:hidden border-t border-paper-border bg-header px-4 pt-4 pb-6 space-y-3">
           <nav className="flex flex-col space-y-1 text-sm font-medium">
             {navLinks.map((link) => (
               <NavLink
@@ -105,8 +105,8 @@ export const Header: React.FC<HeaderProps> = ({ onOpenQRModal }) => {
                 className={({ isActive }) =>
                   `border-l-2 px-3 py-2.5 transition-colors ${
                     isActive
-                      ? 'border-[#B88A44] bg-[#F1E9DC] text-[#735735]'
-                      : 'border-transparent text-[#554231] hover:text-[#745C42] hover:bg-[#ede4d2]/60'
+                      ? 'border-brass bg-paper-warm text-brown'
+                      : 'border-transparent text-brown-dark hover:text-brown hover:bg-paper-deep/40'
                   }`
                 }
               >
@@ -115,13 +115,13 @@ export const Header: React.FC<HeaderProps> = ({ onOpenQRModal }) => {
             ))}
           </nav>
 
-          <div className="pt-4 border-t border-[#D8CCB8] flex flex-col gap-2">
+          <div className="pt-4 border-t border-paper-border flex flex-col gap-2">
             <button
               onClick={() => {
                 setMobileMenuOpen(false);
                 onOpenQRModal();
               }}
-              className="w-full py-2.5 px-4 bg-[#745C42] text-white text-sm font-semibold flex items-center justify-center gap-2"
+              className="w-full py-2.5 px-4 bg-brown-dark text-white text-sm font-semibold flex items-center justify-center gap-2"
             >
               <QrCode className="w-4 h-4" />
               <span>Quét Tem QR Mô Hình</span>
@@ -129,7 +129,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenQRModal }) => {
             <Link
               to="/admin/dashboard"
               onClick={() => setMobileMenuOpen(false)}
-              className="w-full py-2 px-4 border border-[#D8CCB8] text-[#554231] hover:text-[#3B2B1D] text-sm font-medium text-center"
+              className="w-full py-2 px-4 border border-paper-border text-brown-dark hover:text-ink text-sm font-medium text-center"
             >
               Truy Cập Quản Trị CMS
             </Link>

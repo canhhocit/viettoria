@@ -129,9 +129,9 @@ const InteractiveModelStage: React.FC<{ product: Product; reducedMotion: boolean
     <>
       <img
         src={poster}
-        alt=""
-        aria-hidden="true"
-        className={`absolute inset-0 h-full w-full object-contain mix-blend-multiply transition-opacity duration-700 ${modelLoaded ? 'opacity-0' : 'opacity-100'}`}
+        alt={`Hình ảnh mô hình ${product.name}`}
+        loading="lazy"
+        className={`absolute inset-0 h-full w-full object-contain transition-opacity duration-700 ${modelLoaded ? 'opacity-0' : 'opacity-100'}`}
         onError={(event) => handleImageFallback(event, resolveImageUrl(product.heroImage))}
       />
       {useTurntableFallback && (
@@ -146,7 +146,7 @@ const InteractiveModelStage: React.FC<{ product: Product; reducedMotion: boolean
           aria-hidden="true"
           onEnded={() => setPreviewPlaying(false)}
           onError={() => setPreviewPlaying(false)}
-          className={`absolute inset-0 h-full w-full object-contain mix-blend-multiply transition-opacity duration-700 ${modelLoaded ? 'opacity-0' : 'opacity-100'}`}
+          className={`absolute inset-0 h-full w-full object-contain transition-opacity duration-700 ${modelLoaded ? 'opacity-0' : 'opacity-100'}`}
         />
       )}
       {viewerAvailable && !modelFailed && (
@@ -162,11 +162,11 @@ const InteractiveModelStage: React.FC<{ product: Product; reducedMotion: boolean
           loading="eager"
           reveal="auto"
           ref={modelViewerRef}
-          style={{ width: '100%', height: '100%', backgroundColor: '#EAE2D3', touchAction: 'pan-y' }}
+          style={{ width: '100%', height: '100%', backgroundColor: 'var(--heritage-paper-card)', touchAction: 'pan-y' }}
           className={`home-model-viewer absolute inset-0 h-full w-full transition-opacity duration-700 ${modelLoaded ? 'opacity-100' : 'opacity-0'}`}
         />
       )}
-      <div className="pointer-events-none absolute left-4 top-4 z-10 bg-[#F7F3EA]/90 px-3 py-1.5 text-[11px] text-[#5D4A31]">
+      <div className="pointer-events-none absolute left-4 top-4 z-10 bg-header/90 px-3 py-1.5 text-[11px] text-brown-dark">
         {modelLoaded
           ? 'Mô hình 3D · Kéo để xoay'
           : previewPlaying
@@ -181,7 +181,7 @@ const InteractiveModelStage: React.FC<{ product: Product; reducedMotion: boolean
           onClick={() => setPreviewPlaying((playing) => !playing)}
           aria-label={previewPlaying ? 'Dừng video xem trước mô hình' : 'Phát video xem trước mô hình'}
           aria-pressed={previewPlaying}
-          className="absolute right-4 top-4 z-10 inline-flex min-h-8 items-center gap-2 border border-[#D8CCB8] bg-[#F7F3EA]/95 px-3 text-[10px] font-mono uppercase tracking-[0.08em] text-[#554A39] transition-colors hover:border-[#B88A44] hover:text-[#142820] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B88A44]"
+          className="absolute right-4 top-4 z-10 inline-flex min-h-8 items-center gap-2 border border-paper-border bg-header/95 px-3 text-[10px] font-mono uppercase tracking-[0.08em] text-brown-dark transition-colors hover:border-brass hover:text-forest focus-visible:outline focus-visible:outline-2 focus-visible:outline-brass"
         >
           {previewPlaying ? <Pause size={13} /> : <Play size={13} />}
           {previewPlaying ? 'Dừng video' : 'Xem chuyển động'}
@@ -229,27 +229,27 @@ const ScrollyHeritage: React.FC<{ products: Product[]; }> = ({ products }) => {
   };
 
   return (
-    <section id="hanh-trinh-di-san" className="home-story-section border-y border-[#D8CCB8] bg-[#F7F3EA]">
+    <section id="hanh-trinh-di-san" className="home-story-section border-y border-paper-border bg-header">
       <div className="mx-auto max-w-[1440px] px-5 py-16 sm:px-8 sm:py-20 lg:px-16 lg:py-24">
         <header data-home-reveal className="mb-9 max-w-2xl sm:mb-12">
-          <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#8D6A39]">Một vòng qua di sản Việt</p>
-          <h2 className="font-display text-3xl leading-tight text-[#29241D] sm:text-4xl lg:text-5xl">Mỗi công trình, một câu chuyện</h2>
-          <p className="mt-4 max-w-xl text-sm leading-7 text-[#665C4D] sm:text-base">
+          <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-brass-dark">Một vòng qua di sản Việt</p>
+          <h2 className="font-display text-3xl leading-tight text-ink sm:text-4xl lg:text-5xl">Mỗi công trình, một câu chuyện</h2>
+          <p className="mt-4 max-w-xl text-sm leading-7 text-charcoal-muted sm:text-base">
             Cuộn trang để lần lượt ngắm các mô hình 3D và khám phá câu chuyện phía sau từng dấu ấn kiến trúc.
           </p>
         </header>
 
         <div className="grid items-start gap-7 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
-          <div data-home-reveal className="home-story-stage sticky top-[76px] z-10 h-[min(62vw,390px)] min-h-[250px] overflow-hidden border border-[#D4C7B1] bg-[#EAE2D3] shadow-sm lg:top-24 lg:h-[min(68vh,650px)] lg:min-h-[480px]">
+          <div data-home-reveal className="home-story-stage sticky top-[76px] z-10 h-[min(62vw,390px)] min-h-[250px] overflow-hidden border border-paper-border bg-paper-card shadow-sm lg:top-24 lg:h-[min(68vh,650px)] lg:min-h-[480px]">
             <InteractiveModelStage product={activeProduct} reducedMotion={reducedMotion} />
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between bg-gradient-to-t from-[#2B241C]/85 via-[#2B241C]/35 to-transparent px-5 pb-5 pt-16 text-[#FFF9EE] sm:px-7 sm:pb-7">
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between bg-gradient-to-t from-forest-dark/85 via-forest-dark/35 to-transparent px-5 pb-5 pt-16 text-paper-light sm:px-7 sm:pb-7">
               <div>
                 <p className="mt-1 font-display text-xl sm:text-2xl">{activeProduct.name}</p>
               </div>
               <span className="font-mono text-xs tracking-[0.14em] text-white/80">0{activeIndex + 1} / 0{products.length}</span>
             </div>
             <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-[2px] bg-white/25" aria-hidden="true">
-              <div className="h-full bg-[#D4AF67] transition-[width] duration-700" style={{ width: `${((activeIndex + 1) / products.length) * 100}%` }} />
+              <div className="h-full bg-brass-light transition-[width] duration-700" style={{ width: `${((activeIndex + 1) / products.length) * 100}%` }} />
             </div>
           </div>
 
@@ -260,19 +260,19 @@ const ScrollyHeritage: React.FC<{ products: Product[]; }> = ({ products }) => {
                 id={`di-san-${product.slug}`}
                 data-chapter-index={index}
                 ref={(element) => { chapterRefs.current[index] = element; }}
-                className={`home-story-chapter flex min-h-[58vh] flex-col justify-center border-b border-[#D8CCB8] py-10 transition-all duration-700 last:border-0 lg:min-h-[68vh] ${activeIndex === index ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-60'}`}
+                className={`home-story-chapter flex min-h-[58vh] flex-col justify-center border-b border-paper-border py-10 transition-all duration-700 last:border-0 lg:min-h-[68vh] ${activeIndex === index ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-60'}`}
               >
-                <div className="mb-5 flex items-center gap-3 text-[11px] uppercase tracking-[0.16em] text-[#846741]">
+                <div className="mb-5 flex items-center gap-3 text-[11px] uppercase tracking-[0.16em] text-brown">
                   <span className="font-mono">0{index + 1}</span>
-                  <span className="h-px w-8 bg-[#BBA784]" />
+                  <span className="h-px w-8 bg-paper-deep" />
                   <span>{product.location}</span>
                 </div>
-                <h3 className="font-display text-3xl leading-tight text-[#29241D] sm:text-4xl">{product.name}</h3>
-                <p className="mt-2 font-display text-base italic text-[#826846]">{product.subName}</p>
-                <p className="mt-5 max-w-lg text-sm leading-7 text-[#665C4D] sm:text-base">{product.shortDescription}</p>
-                <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-[#D8CCB8] pt-4 text-xs text-[#786A55]">
+                <h3 className="font-display text-3xl leading-tight text-ink sm:text-4xl">{product.name}</h3>
+                <p className="mt-2 font-display text-base italic text-brown">{product.subName}</p>
+                <p className="mt-5 max-w-lg text-sm leading-7 text-charcoal-muted sm:text-base">{product.shortDescription}</p>
+                <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-paper-border pt-4 text-xs text-charcoal-muted">
                   <span>{product.epoch}</span>
-                  <Link to={`/products/${product.slug}`} className="inline-flex items-center gap-2 font-semibold text-[#735735] transition-colors hover:text-[#9C3D28]">
+                  <Link to={`/products/${product.slug}`} className="inline-flex items-center gap-2 font-semibold text-brown transition-colors hover:text-terracotta">
                     Tìm hiểu công trình <ArrowRight size={14} strokeWidth={1.6} />
                   </Link>
                 </div>
@@ -288,7 +288,7 @@ const ScrollyHeritage: React.FC<{ products: Product[]; }> = ({ products }) => {
               type="button"
               onClick={() => jumpToChapter(index)}
               aria-pressed={activeIndex === index}
-              className={`border px-3 py-2 text-xs transition-colors ${activeIndex === index ? 'border-[#735735] bg-[#735735] text-[#FFF9EE]' : 'border-[#D4C7B1] text-[#695B47] hover:border-[#735735]'}`}
+              className={`border px-3 py-2 text-xs transition-colors ${activeIndex === index ? 'border-brown bg-brown text-paper-light' : 'border-paper-border text-brown-dark hover:border-brown'}`}
             >
               0{index + 1} · {product.name}
             </button>
@@ -355,8 +355,8 @@ export const HomePage: React.FC = () => {
   }, [prefersReducedMotion]);
 
   return (
-    <main ref={mainRef} className="bg-[#F5F0E5] text-[#29241D]">
-      <section id="hero" className="home-hero relative isolate flex min-h-[620px] overflow-hidden bg-[#0D1C16] text-[#FAF7F0] md:min-h-[calc(100svh-80px)]">
+    <main ref={mainRef} className="bg-paper text-ink">
+      <section id="hero" className="home-hero relative isolate flex min-h-[620px] overflow-hidden bg-forest-dark text-paper md:min-h-[calc(100svh-80px)]">
         <img
           src="/videos/hero-background-poster.webp"
           alt=""
@@ -390,23 +390,23 @@ export const HomePage: React.FC = () => {
         <div className="relative z-10 mx-auto flex w-full max-w-[1440px] items-center px-5 pb-24 pt-16 sm:px-8 lg:px-16">
           <div className="max-w-[760px] animate-fade-up py-10">
             
-            <h1 className="font-display text-[clamp(3.25rem,8vw,7rem)] font-normal leading-[0.94] tracking-[-0.045em] text-[#FAF7F0]">
+            <h1 className="font-display text-[clamp(3.25rem,8vw,7rem)] font-normal leading-[0.94] tracking-[-0.045em] text-paper">
               Văn Minh<br />
-              <em className="font-normal text-[#E2C681]">Di Sản Việt</em>
+              <em className="font-normal text-brass-subtle">Di Sản Việt</em>
             </h1>
             <p className="mt-6 max-w-[700px] text-lg leading-8 text-white/90 sm:text-xl sm:leading-9">
               Hành trình số hóa bảo tàng, di tích và ký ức văn hóa Việt Nam qua các câu chuyện lịch sử
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
-              <Link to="/collections" className="inline-flex min-h-12 items-center gap-3 bg-[#B88A44] px-6 py-3 text-sm font-semibold text-[#142820] transition-colors hover:bg-[#D4AF67]">
+              <Link to="/collections" className="inline-flex min-h-12 items-center gap-3 bg-brass px-6 py-3 text-sm font-semibold text-forest transition-colors hover:bg-brass-light">
                 Khám phá bộ sưu tập <ArrowRight size={16} strokeWidth={1.7} />
               </Link>
-              <Link to="/about" className="inline-flex min-h-12 items-center gap-2 border border-white/45 px-5 py-3 text-sm text-[#FAF7F0] transition-colors hover:border-[#E2C681] hover:text-[#E2C681]">
+              <Link to="/about" className="inline-flex min-h-12 items-center gap-2 border border-white/45 px-5 py-3 text-sm text-paper transition-colors hover:border-brass-subtle hover:text-brass-subtle">
                 Câu chuyện Viettoria
               </Link>
             </div>
             <div className="mt-11 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-white/25 pt-4 text-xs tracking-wide text-white/75">
-              <span>Mô hình kiến trúc</span><span className="h-1 w-1 bg-[#C49A45]" /><span>Câu chuyện di sản</span><span className="h-1 w-1 bg-[#C49A45]" /><span>Trải nghiệm 3D</span>
+              <span>Mô hình kiến trúc</span><span className="h-1 w-1 bg-brass" /><span>Câu chuyện di sản</span><span className="h-1 w-1 bg-brass" /><span>Trải nghiệm 3D</span>
             </div>
           </div>
         </div>
@@ -418,12 +418,12 @@ export const HomePage: React.FC = () => {
       <ScrollyHeritage products={storyProducts} />
 
       <section id="bo-suu-tap" className="mx-auto max-w-[1440px] px-5 py-16 sm:px-8 sm:py-20 lg:px-16 lg:py-24">
-        <div data-home-reveal className="mb-8 flex flex-wrap items-end justify-between gap-4 border-b border-[#D2C7B5] pb-5 sm:mb-10">
+        <div data-home-reveal className="mb-8 flex flex-wrap items-end justify-between gap-4 border-b border-paper-border pb-5 sm:mb-10">
           <div>
-            <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#8D6A39]">Chọn theo câu chuyện bạn yêu thích</p>
-            <h2 className="font-display text-3xl text-[#29241D] sm:text-4xl">Bộ sưu tập di sản</h2>
+            <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-brass-dark">Chọn theo câu chuyện bạn yêu thích</p>
+            <h2 className="font-display text-3xl text-ink sm:text-4xl">Bộ sưu tập di sản</h2>
           </div>
-          <Link to="/collections" className="inline-flex items-center gap-2 pb-1 text-sm font-semibold text-[#735735] hover:text-[#9C3D28]">
+          <Link to="/collections" className="inline-flex items-center gap-2 pb-1 text-sm font-semibold text-brown hover:text-terracotta">
             Xem tất cả <ArrowRight size={15} strokeWidth={1.6} />
           </Link>
         </div>
@@ -433,22 +433,23 @@ export const HomePage: React.FC = () => {
             const representative = storyProducts.find((product) => product.collectionId === collection.id);
             const poster = imageFor(representative?.heroImage || collection.heroImage, representative?.slug);
             return (
-              <Link key={collection.id} to={`/collections/${collection.slug}`} data-home-reveal className="group block border-b border-[#D2C7B5] pb-5">
-                <div className="relative mb-4 flex aspect-[1.32/0.9] items-center justify-center overflow-hidden bg-[#EAE2D3]">
+              <Link key={collection.id} to={`/collections/${collection.slug}`} data-home-reveal className="group block border-b border-paper-border pb-5">
+                <div className="relative mb-4 flex aspect-[1.32/0.9] items-center justify-center overflow-hidden border border-brass/25 bg-paper-card shadow-sm transition-all duration-300 group-hover:shadow-md">
                   <img
                     src={poster}
                     alt={collection.name}
+                    loading="lazy"
                     onError={(event) => handleImageFallback(event, '/3D/chua-mot-cot-poster.webp')}
-                    className="h-full w-full object-contain mix-blend-multiply transition-transform duration-700 group-hover:scale-[1.035]"
+                    className="h-full w-full object-contain transition-transform duration-700 group-hover:scale-[1.035]"
                   />
-                  <span className="absolute left-3 top-3 bg-[#F7F3EA]/90 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.13em] text-[#735735]">{collection.productsCount || 1} tác phẩm</span>
+                  <span className="absolute left-3 top-3 bg-header/90 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.13em] text-brown">{collection.productsCount || 1} tác phẩm</span>
                 </div>
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <h3 className="font-display text-2xl text-[#332B20] transition-colors group-hover:text-[#80633D]">{collection.name}</h3>
-                    <p className="mt-1.5 line-clamp-2 text-sm leading-6 text-[#746A5A]">{collection.description}</p>
+                    <h3 className="font-display text-2xl text-ink transition-colors group-hover:text-brown">{collection.name}</h3>
+                    <p className="mt-1.5 line-clamp-2 text-sm leading-6 text-charcoal-muted">{collection.description}</p>
                   </div>
-                  <ArrowRight size={17} strokeWidth={1.4} className="mt-1 shrink-0 text-[#9A7846] transition-transform group-hover:translate-x-1" />
+                  <ArrowRight size={17} strokeWidth={1.4} className="mt-1 shrink-0 text-brass-dark transition-transform group-hover:translate-x-1" />
                 </div>
               </Link>
             );
@@ -456,20 +457,20 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      <section className="border-y border-[#D5CBB9] bg-[#E9E1D2]">
+      <section className="border-y border-paper-border bg-paper-muted">
         <div className="mx-auto grid max-w-[1440px] gap-8 px-5 py-14 sm:px-8 md:grid-cols-[0.8fr_1.2fr] lg:px-16">
           <div data-home-reveal>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#8D6A39]">Ghi chép về di sản</p>
-            <h2 className="mt-3 font-display text-3xl text-[#30281E] sm:text-4xl">Câu chuyện phía sau công trình</h2>
-            <p className="mt-3 max-w-sm text-sm leading-6 text-[#6C6253]">Đọc thêm về kiến trúc, con người và những dấu mốc làm nên từng di sản.</p>
-            <Link to="/blogs" className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-[#735735] hover:text-[#9C3D28]">Đọc bài viết <ArrowRight size={14} /></Link>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-brass-dark">Ghi chép về di sản</p>
+            <h2 className="mt-3 font-display text-3xl text-ink sm:text-4xl">Câu chuyện phía sau công trình</h2>
+            <p className="mt-3 max-w-sm text-sm leading-6 text-charcoal-muted">Đọc thêm về kiến trúc, con người và những dấu mốc làm nên từng di sản.</p>
+            <Link to="/blogs" className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-brown hover:text-terracotta">Đọc bài viết <ArrowRight size={14} /></Link>
           </div>
           <div className="grid gap-5 sm:grid-cols-2">
             {blogs.slice(0, 2).map((blog, index) => (
-              <article key={blog.id} data-home-reveal className="border-t border-[#BDAE96] pt-4">
-                <p className="text-[11px] uppercase tracking-[0.14em] text-[#806847]">{blog.category} · 0{index + 1}</p>
-                <h3 className="mt-3 font-display text-2xl leading-snug text-[#352D22]"><Link to={`/blogs/${blog.slug}`} className="transition-colors hover:text-[#80633D]">{blog.title}</Link></h3>
-                <p className="mt-2 line-clamp-2 text-sm leading-6 text-[#706656]">{blog.excerpt}</p>
+              <article key={blog.id} data-home-reveal className="border-t border-paper-border pt-4">
+                <p className="text-[11px] uppercase tracking-[0.14em] text-brown">{blog.category} · 0{index + 1}</p>
+                <h3 className="mt-3 font-display text-2xl leading-snug text-ink"><Link to={`/blogs/${blog.slug}`} className="transition-colors hover:text-brown">{blog.title}</Link></h3>
+                <p className="mt-2 line-clamp-2 text-sm leading-6 text-charcoal-muted">{blog.excerpt}</p>
               </article>
             ))}
           </div>

@@ -23,6 +23,7 @@ export const AdminProductsPage: React.FC = () => {
   const [collections, setCollections] = useState<Collection[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Partial<Product> | null>(null);
@@ -98,9 +99,11 @@ export const AdminProductsPage: React.FC = () => {
 
   const handleDelete = async (id: string) => {
     if (window.confirm('Bạn có chắc chắn muốn xóa tác phẩm này?')) {
+      setDeletingId(id);
       setError(null);
       try { await adminApi.deleteProduct(id); await loadData(); }
       catch (err) { setError(err instanceof Error ? err.message : 'Không xóa được tác phẩm.'); }
+      finally { setDeletingId(null); }
     }
   };
 
@@ -137,16 +140,16 @@ export const AdminProductsPage: React.FC = () => {
       {error && <div role="alert" className="border border-terracotta/40 bg-terracotta/10 p-3 text-sm text-terracotta">{error}</div>}
 
       {/* Table Card */}
-      <div className="bg-paper border border-paper-border corner-frame overflow-hidden shadow-sm">
+      <div className="overflow-hidden border border-brass/30 bg-paper-card shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
               <tr className="bg-paper-warm border-b border-paper-border text-charcoal-muted font-mono uppercase tracking-wider">
                 <th className="p-4">Tác Phẩm</th>
-                <th className="p-4">Mã SKU</th>
+                <th className="whitespace-nowrap p-4">Mã SKU</th>
                 <th className="p-4">Địa Điểm & Niên Đại</th>
                 <th className="p-4">Tỷ Lệ / Mộng</th>
-                <th className="p-4">Trạng Thái</th>
+                <th className="whitespace-nowrap p-4">Trạng Thái</th>
                 <th className="p-4 text-right">Thao Tác</th>
               </tr>
             </thead>
@@ -165,7 +168,7 @@ export const AdminProductsPage: React.FC = () => {
                         src={resolveImageUrl(product.heroImage)}
                         alt={product.name}
                         onError={(e) => handleImageFallback(e)}
-                        className="w-12 h-10 object-cover border border-paper-border bg-forest shrink-0"
+                        className="h-12 w-12 shrink-0 border border-brass/20 object-cover"
                       />
                       <div>
                         <div className="font-serif font-bold text-forest text-sm">{product.name}</div>
@@ -173,7 +176,7 @@ export const AdminProductsPage: React.FC = () => {
                       </div>
                     </div>
                   </td>
-                  <td className="p-4">
+                  <td className="whitespace-nowrap p-4">
                     <span className="bg-paper-warm px-2 py-1 border border-paper-border text-forest font-bold">
                       {product.code}
                     </span>
@@ -215,7 +218,7 @@ export const AdminProductsPage: React.FC = () => {
                       )}
                     </button>}
                   </td>
-                  <td className="p-4 text-right">
+                  <td className="whitespace-nowrap p-4 text-right">
                     <div className="flex items-center justify-end gap-2">
                       <Link
                         to={`/admin/products/${product.id}/stories`}
@@ -228,7 +231,7 @@ export const AdminProductsPage: React.FC = () => {
 
                       {!isDemo && <button
                         onClick={() => handleOpenEdit(product)}
-                        className="p-1.5 border border-paper-border hover:border-brass text-charcoal transition-colors"
+                        className="p-2 border border-paper-border text-charcoal transition-colors hover:border-brass hover:bg-forest/10"
                         title="Chỉnh sửa thông số mô hình"
                       >
                         <Edit className="w-3.5 h-3.5" />
@@ -237,7 +240,7 @@ export const AdminProductsPage: React.FC = () => {
                       <Link
                         to={`/products/${product.slug}`}
                         target="_blank"
-                        className="p-1.5 border border-paper-border hover:border-forest text-charcoal transition-colors"
+                        className="p-2 border border-paper-border text-charcoal transition-colors hover:border-forest hover:bg-forest/10"
                         title="Xem trang công khai"
                       >
                         <ExternalLink className="w-3.5 h-3.5" />
@@ -245,7 +248,8 @@ export const AdminProductsPage: React.FC = () => {
 
                       {!isDemo && <button
                         onClick={() => handleDelete(product.id)}
-                        className="p-1.5 border border-paper-border hover:border-terracotta text-terracotta transition-colors"
+                        disabled={deletingId !== null}
+                        className="p-2 border border-paper-border text-terracotta transition-colors hover:border-terracotta hover:bg-terracotta/10 disabled:cursor-not-allowed disabled:opacity-50"
                         title="Xóa mô hình"
                       >
                         <Trash2 className="w-3.5 h-3.5" />

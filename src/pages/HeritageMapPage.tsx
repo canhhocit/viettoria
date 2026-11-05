@@ -15,7 +15,7 @@ export const HeritageMapPage: React.FC = () => {
           <h1 className="font-serif text-3xl sm:text-5xl font-bold text-forest leading-tight">
             Bản Đồ Di Sản Kiến Trúc Việt Nam
           </h1>
-          <p className="text-sm text-charcoal/80 font-light leading-relaxed">
+          <p className="text-sm text-charcoal/80 font-normal leading-relaxed">
             Chọn một điểm để xem vị trí và tọa độ.
           </p>
         </div>

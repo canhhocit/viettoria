@@ -440,6 +440,7 @@ export const AdminStoryBuilderPage: React.FC = () => {
             const meta = getBlockMeta(block.type);
             const Icon = meta.icon;
             const isHidden = block.status === 'hidden';
+            const isSelected = editingBlock?.id === block.id;
             const hasMedia = Boolean(block.mediaUrl && block.mediaUrl.trim());
 
             return (
@@ -448,7 +449,9 @@ export const AdminStoryBuilderPage: React.FC = () => {
                 className={`relative flex flex-col sm:flex-row items-stretch border transition-all ${
                   isHidden
                     ? 'border-paper-border/70 bg-paper-warm/40 opacity-60'
-                    : 'border-paper-border bg-paper hover:border-brass/80 shadow-xs'
+                    : isSelected
+                      ? 'border-brass bg-paper-card ring-1 ring-brass shadow-xs'
+                      : 'border-paper-border bg-paper hover:border-brass/80 shadow-xs'
                 }`}
               >
                 {/* Step / Index Spine Indicator */}
@@ -522,7 +525,7 @@ export const AdminStoryBuilderPage: React.FC = () => {
                         </h3>
 
                         {block.content && (
-                          <p className="font-sans text-xs text-charcoal/80 font-light leading-relaxed line-clamp-2">
+                          <p className="font-sans text-xs text-charcoal/80 font-normal leading-relaxed line-clamp-2">
                             {block.content}
                           </p>
                         )}
@@ -671,7 +674,7 @@ export const AdminStoryBuilderPage: React.FC = () => {
                 <label className="block text-charcoal-muted uppercase mb-1.5">
                   Định Dạng Khối
                 </label>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                <div className="flex flex-wrap gap-2">
                   {BLOCK_TYPES.map((item) => {
                     const isSelected = editingBlock.type === item.type;
                     const Icon = item.icon;
@@ -680,9 +683,9 @@ export const AdminStoryBuilderPage: React.FC = () => {
                         type="button"
                         key={item.type}
                         onClick={() => setEditingBlock({ ...editingBlock, type: item.type })}
-                        className={`flex items-center gap-2 border p-2 text-left transition-colors ${
+                        className={`inline-flex items-center gap-2 border px-2.5 py-1.5 text-left transition-colors ${
                           isSelected
-                            ? 'border-brass bg-forest text-paper ring-1 ring-brass'
+                            ? 'border-brass bg-paper-card text-forest ring-1 ring-brass'
                             : 'border-paper-border bg-paper-warm text-charcoal hover:border-brass/70'
                         }`}
                       >

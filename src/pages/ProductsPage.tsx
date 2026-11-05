@@ -62,7 +62,7 @@ export const ProductsPage: React.FC = () => {
           <h1 className="font-serif text-3xl sm:text-5xl font-bold text-forest leading-tight">
             Tác Phẩm Di Sản Việt Nam
           </h1>
-          <p className="text-base text-charcoal/80 font-light leading-relaxed">
+          <p className="text-base text-charcoal/80 font-normal leading-relaxed">
             Tuyển tập 5 công trình kiến trúc tiêu biểu của đất Việt được số hóa và phục chế dưới dạng mô hình 3D tinh xảo. Mỗi tác phẩm đi kèm tài liệu lịch sử và bản thuyết minh âm thanh độc quyền.
           </p>
         </div>
@@ -178,7 +178,7 @@ export const ProductsPage: React.FC = () => {
                         {product.subName}
                       </p>
 
-                      <p className="text-sm text-charcoal/80 font-light line-clamp-3 leading-6">
+                      <p className="text-sm text-charcoal/80 font-normal line-clamp-3 leading-6">
                         {product.shortDescription}
                       </p>
 

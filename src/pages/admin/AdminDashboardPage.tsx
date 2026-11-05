@@ -44,7 +44,7 @@ export const AdminDashboardPage: React.FC = () => {
     <div className="space-y-8">
       {error && <div role="alert" className="border border-terracotta/40 bg-terracotta/10 p-3 text-sm text-terracotta">{error}</div>}
       {/* Top Banner */}
-      <div className="bg-forest text-paper p-6 sm:p-8 border border-brass corner-frame flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-md">
+      <div className="bg-forest text-paper px-6 py-4 border border-brass corner-frame flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-md">
         <div className="space-y-2">
           
           <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-wide">
@@ -155,7 +155,7 @@ export const AdminDashboardPage: React.FC = () => {
                         {p.code}
                       </span>
                     </div>
-                    <span className="text-[11px] text-charcoal-muted font-light">{p.location} • Tỷ lệ {p.modelSpecs.scale}</span>
+                    <span className="text-[11px] text-charcoal-muted font-normal">{p.location} • Tỷ lệ {p.modelSpecs.scale}</span>
                   </div>
                 </div>
 

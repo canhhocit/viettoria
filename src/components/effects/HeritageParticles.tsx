@@ -38,8 +38,11 @@ export const HeritageParticles: React.FC<{ className?: string }> = ({ className 
 
     window.addEventListener('resize', handleResize);
 
-    // Color palette: Antique brass, soft gold leaf, warm paper
-    const goldPalette = ['#B88A44', '#C89C54', '#E2CFA8', '#FAF7F0'];
+    // Use the same brass and paper tokens as the rest of the interface.
+    const rootStyles = getComputedStyle(document.documentElement);
+    const brass = rootStyles.getPropertyValue('--heritage-brass').trim();
+    const paper = rootStyles.getPropertyValue('--color-paper').trim();
+    const goldPalette = [brass, '#C89C54', '#E2CFA8', paper];
 
     // Generate 40 subtle particles
     const particleCount = Math.min(45, Math.floor((width * height) / 25000));
@@ -83,7 +86,7 @@ export const HeritageParticles: React.FC<{ className?: string }> = ({ className 
         ctx.fillStyle = p.color;
         ctx.globalAlpha = Math.max(0, Math.min(1, p.alpha));
         ctx.shadowBlur = 6;
-        ctx.shadowColor = '#B88A44';
+        ctx.shadowColor = brass;
         ctx.fill();
         ctx.shadowBlur = 0;
       });

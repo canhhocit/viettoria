@@ -173,9 +173,9 @@ export const HeritageMap: React.FC<HeritageMapProps> = ({
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: ${isHero ? '#B88A44' : '#142820'};
-            color: ${isHero ? '#142820' : '#FAF7F0'};
-            border: 2px solid #FAF7F0;
+            background-color: ${isHero ? 'var(--heritage-brass)' : 'var(--heritage-forest)'};
+            color: ${isHero ? 'var(--heritage-forest)' : 'var(--heritage-paper-light)'};
+            border: 2px solid var(--heritage-paper-light);
             box-shadow: 0 4px 12px rgba(13, 28, 22, 0.45);
             cursor: pointer;
             transition: all 0.2s ease;
@@ -192,7 +192,7 @@ export const HeritageMap: React.FC<HeritageMapProps> = ({
               height: 0;
               border-left: 5px solid transparent;
               border-right: 5px solid transparent;
-              border-top: 6px solid ${isHero ? '#B88A44' : '#142820'};
+              border-top: 6px solid ${isHero ? 'var(--heritage-brass)' : 'var(--heritage-forest)'};
             "></div>
           </div>
         `,
@@ -222,19 +222,19 @@ export const HeritageMap: React.FC<HeritageMapProps> = ({
           font-family: 'Be Vietnam Pro', sans-serif;
           min-width: 220px;
           padding: 8px 4px;
-          background: #FAF7F0;
-          color: #1B1E1B;
+          background: var(--color-paper);
+          color: var(--heritage-ink);
         ">
-          <div style="font-family: 'Playfair Display', serif; font-size: 11px; color: #B88A44; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">
+          <div style="font-family: 'Playfair Display', serif; font-size: 11px; color: var(--heritage-brass); letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">
             ${site.mapLabel} · ${site.epoch}
           </div>
-          <h4 style="font-family: 'Playfair Display', 'Cormorant Garamond', serif; font-size: 16px; font-weight: bold; color: #142820; margin: 0 0 4px 0;">
+          <h4 style="font-family: 'Playfair Display', serif; font-size: 16px; font-weight: bold; color: var(--heritage-forest); margin: 0 0 4px 0;">
             ${site.name}
           </h4>
           <p style="font-size: 11px; color: #525952; margin: 0 0 8px 0; line-height: 1.4;">
             ${site.location}
           </p>
-          <div style="font-size: 10px; color: #142820; border-top: 1px solid #DCD4C4; padding-top: 6px; font-family: 'Roboto Mono', monospace;">
+          <div style="font-size: 10px; color: var(--heritage-forest); border-top: 1px solid var(--heritage-line); padding-top: 6px; font-family: 'Roboto Mono', monospace;">
             Tọa độ: ${formatCoordinates(site)}
           </div>
         </div>
@@ -312,7 +312,7 @@ export const HeritageMap: React.FC<HeritageMapProps> = ({
             <h3 className="font-serif text-2xl font-bold text-forest">
               Tọa độ di sản
             </h3>
-            <p className="text-xs text-charcoal/80 font-light leading-relaxed">
+            <p className="text-xs text-charcoal/80 font-normal leading-relaxed">
               Chọn một điểm để xem trên bản đồ.
             </p>
           </div>

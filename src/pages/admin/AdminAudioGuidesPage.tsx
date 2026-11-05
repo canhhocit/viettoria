@@ -213,9 +213,9 @@ export const AdminAudioGuidesPage: React.FC = () => {
                 <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-brass">{selectedProduct.code} · {selectedProduct.location}</p>
                 <h2 className="mt-1 font-serif text-xl font-bold text-forest">{selectedProduct.name}</h2>
               </div>
-              <span className={`inline-flex w-fit items-center gap-2 border px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider ${guide.audioUrl.trim() ? 'border-forest/25 bg-forest/5 text-forest' : 'border-paper-border text-charcoal-muted'}`}>
-                <span className={`h-1.5 w-1.5 ${guide.audioUrl.trim() ? 'bg-brass' : 'bg-paper-border'}`} />
-                {guide.audioUrl.trim() ? 'Bản thu riêng sẵn sàng' : 'Đang dùng audio mẫu'}
+              <span className={`inline-flex w-fit items-center gap-2 border px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider ${guide.audioUrl?.trim() ? 'border-forest/25 bg-forest/5 text-forest' : 'border-paper-border text-charcoal-muted'}`}>
+                <span className={`h-1.5 w-1.5 ${guide.audioUrl?.trim() ? 'bg-brass' : 'bg-paper-border'}`} />
+                {guide.audioUrl?.trim() ? 'Bản thu riêng sẵn sàng' : 'Đang dùng audio mẫu'}
               </span>
             </div>
 
@@ -255,13 +255,13 @@ export const AdminAudioGuidesPage: React.FC = () => {
                 {selectedFile && <p className="mt-2 font-mono text-[10px] text-charcoal-muted">{selectedFile.name} · {(selectedFile.size / 1024 / 1024).toFixed(1)} MB</p>}
                 <label className="mt-4 block font-mono text-[10px] uppercase tracking-wider text-charcoal-muted">
                   Hoặc nhập URL bản thu
-                  <input value={guide.audioUrl} onChange={(event) => updateGuide('audioUrl', event.target.value)} disabled={isDemo} className="mt-1.5 w-full border border-paper-border bg-paper px-3 py-2.5 font-sans text-xs normal-case text-charcoal focus:border-brass focus:outline-none disabled:opacity-60" placeholder="URL Cloudinary hoặc /uploads/..." />
+                  <input value={guide.audioUrl || ''} onChange={(event) => updateGuide('audioUrl', event.target.value)} disabled={isDemo} className="mt-1.5 w-full border border-paper-border bg-paper px-3 py-2.5 font-sans text-xs normal-case text-charcoal focus:border-brass focus:outline-none disabled:opacity-60" placeholder="URL Cloudinary hoặc /uploads/..." />
                 </label>
                 <audio
                   key={guide.audioUrl || 'sample-audio'}
                   controls
                   preload="metadata"
-                  src={resolveAudioUrl(guide.audioUrl) || '/audio/heritage-guide-sample.wav'}
+                  src={resolveAudioUrl(guide.audioUrl || '') || '/audio/heritage-guide-sample.wav'}
                   className="mt-3 h-10 w-full"
                   aria-label={`Nghe thử thuyết minh ${selectedProduct.name}`}
                   onError={() => setError('Không mở được audio. Kiểm tra URL bản thu hoặc file audio mẫu.')}
@@ -282,7 +282,7 @@ export const AdminAudioGuidesPage: React.FC = () => {
             </label>
 
             <div className="flex flex-col-reverse justify-between gap-3 border-t border-paper-border pt-4 sm:flex-row sm:items-center">
-              <button type="button" onClick={() => void removeGuide()} disabled={isDemo || saving || (!selectedProduct.audioGuide && !guide.audioUrl.trim() && !guide.transcript.trim())} className="inline-flex items-center justify-center gap-2 px-3 py-2 font-mono text-[10px] uppercase tracking-wider text-terracotta transition-colors hover:bg-terracotta/5 disabled:cursor-not-allowed disabled:opacity-40">
+              <button type="button" onClick={() => void removeGuide()} disabled={isDemo || saving || (!selectedProduct.audioGuide && !guide.audioUrl?.trim() && !guide.transcript.trim())} className="inline-flex items-center justify-center gap-2 px-3 py-2 font-mono text-[10px] uppercase tracking-wider text-terracotta transition-colors hover:bg-terracotta/5 disabled:cursor-not-allowed disabled:opacity-40">
                 <Trash2 className="h-3.5 w-3.5" />Gỡ audio guide
               </button>
               <button type="submit" disabled={isDemo || saving || uploading} className="inline-flex items-center justify-center gap-2 border border-forest bg-forest px-5 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-paper transition-colors hover:bg-brass hover:text-forest disabled:cursor-not-allowed disabled:opacity-50">

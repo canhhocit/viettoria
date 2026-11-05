@@ -103,7 +103,7 @@ export const AssemblyGuide: React.FC<AssemblyGuideProps> = ({ steps = DEFAULT_ST
             {currentStep.nameVi}
           </h4>
 
-          <p className="text-sm text-charcoal/85 leading-relaxed font-light">
+          <p className="text-sm text-charcoal/85 leading-relaxed font-normal">
             {currentStep.description}
           </p>
 
@@ -138,7 +138,7 @@ export const AssemblyGuide: React.FC<AssemblyGuideProps> = ({ steps = DEFAULT_ST
         {/* Right Blueprint Graphic Diagram */}
         <div className="lg:col-span-5 bg-forest-dark border border-brass/30 p-6 text-paper text-center relative overflow-hidden group">
           <div 
-            className="absolute inset-0 pointer-events-none opacity-25 bg-[radial-gradient(#B88A44_1px,transparent_1px)] bg-[size:16px_16px]"
+            className="absolute inset-0 pointer-events-none opacity-25 bg-[radial-gradient(var(--heritage-brass)_1px,transparent_1px)] bg-[size:16px_16px]"
             aria-hidden="true"
           />
 

@@ -83,7 +83,7 @@ export const AdminMediaPage: React.FC = () => {
       await navigator.clipboard.writeText(url);
       setCopiedId(id);
       setError(null);
-      setTimeout(() => setCopiedId(null), 2000);
+      setTimeout(() => setCopiedId(null), 1500);
     } catch {
       setError('Trình duyệt không cho phép sao chép. Hãy chọn và sao chép URL thủ công.');
     }
@@ -186,7 +186,7 @@ export const AdminMediaPage: React.FC = () => {
             return (
               <article key={item.id} className="flex flex-col justify-between overflow-hidden border border-paper-border bg-paper shadow-sm group">
                 <div>
-                  <div className={`relative aspect-[4/3] overflow-hidden ${isModel ? 'flex flex-col items-center justify-center gap-2 bg-forest text-paper' : 'bg-paper-warm'}`}>
+                  <div className={`relative aspect-square overflow-hidden ${isModel ? 'flex flex-col items-center justify-center gap-2 bg-forest text-paper' : 'bg-paper-deep/30'}`}>
                     {isModel ? <><Box className="h-9 w-9 text-brass" /><span className="font-mono text-[10px] uppercase tracking-[0.18em]">Mô hình 3D · GLB</span></> : isAudio ? (
                       <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-forest px-3 text-paper">
                         <Headphones className="h-7 w-7 text-brass" />

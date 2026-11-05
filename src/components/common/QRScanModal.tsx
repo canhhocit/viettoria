@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { QrCode, X, ArrowRight, ShieldCheck, Sparkles } from 'lucide-react';
 
@@ -10,6 +10,13 @@ interface QRScanModalProps {
 export const QRScanModal: React.FC<QRScanModalProps> = ({ isOpen, onClose }) => {
   const [code, setCode] = useState<string>('VT-HN-001');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = previousOverflow; };
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -23,7 +30,7 @@ export const QRScanModal: React.FC<QRScanModalProps> = ({ isOpen, onClose }) => 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-forest-dark/80 backdrop-blur-sm animate-fadeIn">
       <div 
-        className="relative w-full max-w-md bg-[#FAF7F0] border border-[#B88A38] corner-frame p-6 sm:p-8 shadow-2xl rounded-[2px]"
+        className="relative w-full max-w-md bg-paper-card border border-brass corner-frame p-6 sm:p-8 shadow-2xl rounded-[2px]"
         role="dialog"
         aria-modal="true"
         aria-labelledby="qr-modal-title"
@@ -44,7 +51,7 @@ export const QRScanModal: React.FC<QRScanModalProps> = ({ isOpen, onClose }) => 
         <h3 id="qr-modal-title" className="font-serif text-2xl font-bold text-forest mb-2">
           Mở Khóa Không Gian Số
         </h3>
-        <p className="text-xs text-charcoal/80 font-light leading-relaxed mb-6">
+        <p className="text-xs text-charcoal/80 font-normal leading-relaxed mb-6">
           Nhập mã sản phẩm in trên tem QR dưới đế mô hình của bạn để mở trực tiếp trang chi tiết và thuyết minh âm thanh.
         </p>
 
@@ -93,7 +100,7 @@ export const QRScanModal: React.FC<QRScanModalProps> = ({ isOpen, onClose }) => 
 
           <button
             type="submit"
-            className="w-full py-3 px-4 bg-[#745C42] text-white hover:bg-[#5F4A38] transition-colors font-mono text-xs uppercase tracking-widest font-semibold flex items-center justify-center gap-2 shadow-sm rounded-[2px] mt-6"
+            className="w-full py-3 px-4 bg-brown-dark text-white hover:bg-brown-dark transition-colors font-mono text-xs uppercase tracking-widest font-semibold flex items-center justify-center gap-2 shadow-sm rounded-[2px] mt-6"
           >
             <span>Kích Hoạt Trải Nghiệm Số</span>
             <ArrowRight className="w-4 h-4" />

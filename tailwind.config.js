@@ -32,6 +32,7 @@ export default {
           DEFAULT: '#FAF7F0',
           light: '#FFFFFF',
           card: '#F3EBDD',
+          deep: '#D8C7A5',
           warm: '#F3EFE6',
           muted: '#E8E1D3',
           border: '#D8CCB8',
@@ -65,6 +66,10 @@ export default {
           dark: '#7A1D12',
           light: '#B94D35',
         },
+        header: '#F9F4E8',
+        brown: '#735735',
+        'brown-dark': '#5B432A',
+        cinnabar: '#98281A',
       },
       fontFamily: {
         display: ['"Playfair Display"', 'Georgia', 'serif'],

@@ -71,7 +71,7 @@ export const AdminLoginPage: React.FC = () => {
 
   return (
     <main className="admin-login-backdrop flex min-h-screen items-center justify-center p-3 text-charcoal sm:p-6 lg:p-8">
-      <div className="admin-login-shell grid w-full max-w-[1240px] overflow-hidden border border-[#D8CCB8] bg-paper shadow-[0_28px_90px_rgba(31,39,32,0.16)] lg:min-h-[700px] lg:grid-cols-[1.03fr_.97fr]">
+      <div className="admin-login-shell grid w-full max-w-[1240px] overflow-hidden border border-paper-border bg-paper shadow-[0_28px_90px_rgba(31,39,32,0.16)] lg:min-h-[700px] lg:grid-cols-[1.03fr_.97fr]">
         <section className="admin-login-heritage relative flex min-h-[260px] flex-col overflow-hidden px-6 py-6 text-paper sm:min-h-[320px] sm:px-10 sm:py-8 lg:min-h-[700px] lg:px-14 lg:py-10">
           <div
             aria-hidden="true"
@@ -94,7 +94,7 @@ export const AdminLoginPage: React.FC = () => {
               className="group inline-flex items-center gap-3"
               aria-label="Viettoria, về trang chủ"
             >
-              <span className="flex h-11 w-11 items-center justify-center border border-brass/70 bg-paper/5 font-display text-xl text-[#E6C878] transition-colors group-hover:bg-brass/15">
+              <span className="flex h-11 w-11 items-center justify-center border border-brass/70 bg-paper/5 font-display text-xl text-brass-light transition-colors group-hover:bg-brass/15">
                 V
               </span>
               <span>
@@ -106,7 +106,7 @@ export const AdminLoginPage: React.FC = () => {
           </div>
 
           <div className="relative z-10 mt-auto max-w-[500px] pb-2 pt-10 sm:pt-14 lg:pb-8 lg:pt-24">
-            <p className="mb-4 flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.22em] text-[#D5B765]">
+            <p className="mb-4 flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.22em] text-brass-light">
               <span className="h-px w-8 bg-brass" />
               Không gian dành cho quản trị
               <span className="h-px w-8 bg-brass" />
@@ -114,18 +114,18 @@ export const AdminLoginPage: React.FC = () => {
             <h1 className="max-w-[470px] font-display text-[clamp(2.15rem,4vw,3.75rem)] font-medium leading-[1.08] tracking-[-0.025em] text-paper">
               Gìn giữ ký ức,
               <br />
-              <em className="font-normal text-[#E1C47F]">
+              <em className="font-normal text-brass-light">
                 kể tiếp câu chuyện.
               </em>
             </h1>
-            <p className="mt-5 max-w-[390px] text-sm leading-7 text-paper/70 sm:text-[15px]">
+            <p className="mt-5 max-w-[390px] text-sm leading-7 text-paper/85 sm:text-[15px]">
               Không gian dành cho đội ngũ biên tập, quản lý tư liệu và những câu
               chuyện di sản Việt Nam.
             </p>
           </div>
         </section>
 
-        <section className="relative flex items-center justify-center bg-[#FAF7F0] px-6 py-9 sm:px-12 sm:py-12 lg:px-14 lg:py-14">
+        <section className="relative flex items-center justify-center bg-paper px-6 py-9 sm:px-12 sm:py-12 lg:px-14 lg:py-14">
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-0 opacity-40 [background-image:linear-gradient(90deg,rgba(59,43,29,.035)_1px,transparent_1px),linear-gradient(rgba(59,43,29,.035)_1px,transparent_1px)] [background-size:28px_28px]"
@@ -172,7 +172,7 @@ export const AdminLoginPage: React.FC = () => {
                     onChange={(event) => setUsername(event.target.value)}
                     placeholder="Tên đăng nhập"
                     autoComplete="username"
-                    className="h-12 w-full border border-[#D8CCB8] bg-white/65 pl-10 pr-3.5 text-sm text-charcoal outline-none transition-[border-color,box-shadow,background-color] placeholder:text-charcoal-muted/65 hover:border-brass/60 focus:border-brass focus:bg-white focus:shadow-[0_0_0_3px_rgba(184,138,56,.12)]"
+                    className="h-12 w-full border border-paper-border bg-white/65 pl-10 pr-3.5 text-sm text-charcoal outline-none transition-[border-color,box-shadow,background-color] placeholder:text-charcoal-muted/65 hover:border-brass/60 focus:border-brass focus:bg-white focus:shadow-[0_0_0_3px_rgba(184,138,56,.12)]"
                     required
                   />
                 </div>
@@ -194,7 +194,7 @@ export const AdminLoginPage: React.FC = () => {
                     onChange={(event) => setPassword(event.target.value)}
                     placeholder="Mật khẩu"
                     autoComplete="current-password"
-                    className="h-12 w-full border border-[#D8CCB8] bg-white/65 pl-10 pr-11 text-sm text-charcoal outline-none transition-[border-color,box-shadow,background-color] placeholder:text-charcoal-muted/65 hover:border-brass/60 focus:border-brass focus:bg-white focus:shadow-[0_0_0_3px_rgba(184,138,56,.12)]"
+                    className="h-12 w-full border border-paper-border bg-white/65 pl-10 pr-11 text-sm text-charcoal outline-none transition-[border-color,box-shadow,background-color] placeholder:text-charcoal-muted/65 hover:border-brass/60 focus:border-brass focus:bg-white focus:shadow-[0_0_0_3px_rgba(184,138,56,.12)]"
                     required
                   />
                   <button
@@ -216,7 +216,7 @@ export const AdminLoginPage: React.FC = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="group flex h-12 w-full items-center justify-center gap-2 bg-forest px-5 text-xs font-semibold uppercase tracking-[0.13em] text-paper transition-[background-color,transform] hover:bg-[#1D3A2E] active:translate-y-px disabled:cursor-wait disabled:opacity-65"
+                className="group flex h-12 w-full items-center justify-center gap-2 bg-forest px-5 text-xs font-semibold uppercase tracking-[0.13em] text-paper transition-[background-color,transform] hover:bg-forest-light active:translate-y-px disabled:cursor-wait disabled:opacity-65"
               >
                 <span>
                   {loadingMode === "admin"
@@ -228,18 +228,18 @@ export const AdminLoginPage: React.FC = () => {
             </form>
 
             <div className="my-7 flex items-center gap-3" aria-hidden="true">
-              <span className="h-px flex-1 bg-[#D8CCB8]" />
-              <span className="font-mono text-[9px] uppercase tracking-[0.16em] text-charcoal-muted/70">
+              <span className="h-px flex-1 bg-paper-border" />
+              <span className="font-mono text-[9px] uppercase tracking-[0.16em] text-charcoal-muted/85">
                 đăng nhập nhanh
               </span>
-              <span className="h-px flex-1 bg-[#D8CCB8]" />
+              <span className="h-px flex-1 bg-paper-border" />
             </div>
 
             <button
               type="button"
               onClick={() => void handleQuickLogin()}
               disabled={loading}
-              className="group flex min-h-[82px] w-full items-center justify-between gap-4 border border-[#D8CCB8] bg-white/45 px-4 py-3 text-left transition-colors hover:border-brass/70 hover:bg-white/80 disabled:cursor-wait disabled:opacity-60"
+              className="group flex min-h-[82px] w-full items-center justify-between gap-4 border border-paper-border bg-white/45 px-4 py-3 text-left transition-colors hover:border-brass/70 hover:bg-white/80 disabled:cursor-wait disabled:opacity-60"
             >
               <span className="flex min-w-0 items-center gap-3.5">
                 <span className="flex h-9 w-9 shrink-0 items-center justify-center border border-forest/15 bg-forest/5 text-forest transition-colors group-hover:border-brass/45 group-hover:bg-brass/10">

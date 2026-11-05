@@ -61,7 +61,7 @@ export const ScaleRuler: React.FC<ScaleRulerProps> = ({ modelSpecs, heritageName
       {activeTab === 'ruler' ? (
         /* Ruler View */
         <div className="space-y-4">
-          <p className="text-xs text-charcoal/80 font-light">
+          <p className="text-xs text-charcoal/80 font-normal">
             Mô hình được thu phóng chuẩn xác theo tỷ lệ <strong className="text-forest font-semibold">{modelSpecs.scale}</strong>. Chiều cao đo được là <strong className="text-brass-dark font-semibold">{height} cm</strong> và chiều rộng cơ sở là <strong className="text-brass-dark font-semibold">{width} cm</strong>.
           </p>
 
@@ -83,7 +83,7 @@ export const ScaleRuler: React.FC<ScaleRulerProps> = ({ modelSpecs, heritageName
               {/* The Metric Ruler SVG */}
               <svg className="w-full h-12" viewBox={`0 0 ${maxRulerCm * 20} 48`}>
                 {/* Main Axis Line */}
-                <line x1="0" y1="24" x2={maxRulerCm * 20} y2="24" stroke="#B88A44" strokeWidth="1.5" />
+                <line x1="0" y1="24" x2={maxRulerCm * 20} y2="24" stroke="var(--heritage-brass)" strokeWidth="1.5" />
 
                 {/* Ticks and centimeter numbers */}
                 {rulerTicks.map((cm) => {
@@ -98,7 +98,7 @@ export const ScaleRuler: React.FC<ScaleRulerProps> = ({ modelSpecs, heritageName
                         y1={isMajor ? 8 : 16}
                         x2={x}
                         y2={isMajor ? 40 : 32}
-                        stroke={isTarget ? '#9C3D28' : isMajor ? '#142820' : '#B88A44'}
+                        stroke={isTarget ? 'var(--heritage-cinnabar)' : isMajor ? 'var(--heritage-forest)' : 'var(--heritage-brass)'}
                         strokeWidth={isTarget ? 2 : isMajor ? 1.5 : 1}
                       />
                       {isMajor && (
@@ -108,7 +108,7 @@ export const ScaleRuler: React.FC<ScaleRulerProps> = ({ modelSpecs, heritageName
                           textAnchor="middle"
                           fontSize="9"
                           fontFamily="monospace"
-                          fill="#142820"
+                          fill="var(--heritage-forest)"
                           fontWeight="bold"
                         >
                           {cm}
@@ -153,7 +153,7 @@ export const ScaleRuler: React.FC<ScaleRulerProps> = ({ modelSpecs, heritageName
             </div>
 
             {/* Tactile Highlights */}
-            <div className="max-w-xs space-y-2 text-xs font-light text-charcoal/85">
+            <div className="max-w-xs space-y-2 text-xs font-normal text-charcoal/85">
               <div className="flex items-start gap-2">
                 <Info className="w-4 h-4 text-brass shrink-0 mt-0.5" />
                 <span>

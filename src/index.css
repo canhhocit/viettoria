@@ -11,17 +11,17 @@
 
 .customer-header {
   background-color: rgba(250, 247, 240, 0.97);
-  color: #3B2B1D;
+  color: var(--heritage-ink);
 }
 
 .customer-header nav a {
-  color: #3B4038;
+  color: var(--heritage-ink);
   text-decoration: none;
 }
 
 .customer-header nav a[aria-current="page"] {
-  color: #735735;
-  border-bottom-color: #B88A44;
+  color: var(--heritage-brown);
+  border-bottom-color: var(--heritage-brass);
 }
 
 .home-dong-son {
@@ -39,7 +39,7 @@
 }
 
 .home-model-viewer::part(default-progress-bar) {
-  background-color: #B88A44;
+  background-color: var(--heritage-brass);
 }
 
 .architectural-3d-stage {
@@ -77,7 +77,7 @@
 }
 
 .architectural-model-viewer::part(default-progress-bar) {
-  background-color: #B88A44;
+  background-color: var(--heritage-brass);
 }
 
 .architectural-3d-stage:fullscreen,
@@ -86,7 +86,7 @@
   height: 100vh;
   max-height: 100vh;
   aspect-ratio: auto;
-  background-color: #F3EBDD;
+  background-color: var(--heritage-paper-card);
 }
 
 .audio-guide-emblem.is-speaking {
@@ -174,7 +174,8 @@
     --heritage-header: #F9F4E8;       /* Nền Header - Warm Cream */
     --heritage-outer: #15171C;        /* Nền ngoài - Dark Slate */
     --heritage-ink: #3B2B1D;          /* Chữ chính - Deep Espresso */
-    --heritage-brown: #745C42;        /* Nút bấm chính - Earthy Brown */
+    --heritage-brown: #735735;        /* Earthy brown */
+    --heritage-brown-dark: #5B432A;
     --heritage-button-text: #FFFFFF;  /* Chữ trên nút */
     --heritage-paper-deep: #D8C7A5;
     --heritage-bronze: #8F6E4A;
@@ -285,7 +286,7 @@
 /* Museum Passe-partout Frame Effect */
 .passe-partout {
   padding: 12px;
-  background-color: #FAF7F0;
+  background-color: var(--color-paper);
   border: 1px solid #DCD4C4;
   box-shadow: inset 0 0 0 1px rgba(184, 138, 68, 0.15);
 }
@@ -301,8 +302,8 @@
   left: -1px;
   width: 12px;
   height: 12px;
-  border-top: 2px solid #B88A44;
-  border-left: 2px solid #B88A44;
+  border-top: 2px solid var(--heritage-brass);
+  border-left: 2px solid var(--heritage-brass);
   pointer-events: none;
 }
 .corner-frame::after {
@@ -312,8 +313,8 @@
   right: -1px;
   width: 12px;
   height: 12px;
-  border-bottom: 2px solid #B88A44;
-  border-right: 2px solid #B88A44;
+  border-bottom: 2px solid var(--heritage-brass);
+  border-right: 2px solid var(--heritage-brass);
   pointer-events: none;
 }
 
@@ -340,7 +341,7 @@
   background: #F3EFE6;
 }
 ::-webkit-scrollbar-thumb {
-  background: #B88A44;
+  background: var(--heritage-brass);
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #966E2F;
@@ -476,18 +477,18 @@
 
 /* Leaflet Custom Heritage Atelier Styling */
 .heritage-atelier-popup .leaflet-popup-content-wrapper {
-  background: #FAF7F0 !important;
+  background: var(--color-paper) !important;
   color: #1B1E1B !important;
   border-radius: 0px !important;
-  border: 1px solid #B88A44 !important;
+  border: 1px solid var(--heritage-brass) !important;
   box-shadow: 0 10px 25px rgba(13, 28, 22, 0.25) !important;
   padding: 4px !important;
 }
 
 .heritage-atelier-popup .leaflet-popup-tip {
-  background: #FAF7F0 !important;
+  background: var(--color-paper) !important;
   box-shadow: none !important;
-  border: 1px solid #B88A44 !important;
+  border: 1px solid var(--heritage-brass) !important;
 }
 
 .heritage-atelier-popup a.leaflet-popup-close-button {
@@ -502,8 +503,8 @@
 /* Leaflet Map Tooltip */
 .heritage-map-tooltip {
   background: #142820 !important;
-  color: #FAF7F0 !important;
-  border: 1px solid #B88A44 !important;
+  color: var(--color-paper) !important;
+  border: 1px solid var(--heritage-brass) !important;
   border-radius: 0px !important;
   font-family: "Be Vietnam Pro", sans-serif !important;
   font-size: 11px !important;
@@ -512,7 +513,7 @@
 }
 
 .heritage-map-tooltip::before {
-  border-top-color: #142820 !important;
+  border-top-color: var(--heritage-forest) !important;
 }
 
 /* Warm sepia vintage filter for map tiles */
@@ -531,4 +532,31 @@
     scroll-behavior: auto !important;
   .atelier-artifact-float { animation: none !important; }
   }
+}
+
+.admin-layout input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+.admin-layout select,
+.admin-layout textarea {
+  padding: 0.625rem 0.875rem;
+  border: 1px solid color-mix(in srgb, var(--heritage-brass) 30%, transparent);
+  background-color: var(--heritage-paper-light);
+  color: var(--heritage-ink);
+  font-size: 0.875rem;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.admin-layout input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):focus,
+.admin-layout select:focus,
+.admin-layout textarea:focus {
+  border-color: var(--heritage-forest);
+  outline: none;
+  box-shadow: 0 0 0 1px var(--heritage-forest);
+}
+
+.admin-layout button:disabled,
+.admin-layout input:disabled,
+.admin-layout select:disabled,
+.admin-layout textarea:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
 }

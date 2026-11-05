@@ -24,7 +24,7 @@ export const StoryBlockRenderer: React.FC<StoryBlockRendererProps> = ({ block })
             <h3 className="font-serif text-2xl sm:text-3xl font-bold text-forest leading-tight">
               {block.title}
             </h3>
-            <div className="text-base sm:text-lg text-charcoal/85 leading-relaxed font-light whitespace-pre-line first-letter:text-4xl first-letter:font-serif first-letter:font-bold first-letter:text-forest first-letter:float-left first-letter:mr-2.5 first-letter:leading-none">
+            <div className="text-base sm:text-lg text-charcoal/85 leading-relaxed font-normal whitespace-pre-line first-letter:text-4xl first-letter:font-serif first-letter:font-bold first-letter:text-forest first-letter:float-left first-letter:mr-2.5 first-letter:leading-none">
               {block.content}
             </div>
           </div>
@@ -66,7 +66,7 @@ export const StoryBlockRenderer: React.FC<StoryBlockRendererProps> = ({ block })
               <h3 className="font-serif text-2xl sm:text-3xl font-bold text-forest leading-tight">
                 {block.title}
               </h3>
-              <p className="text-sm sm:text-base text-charcoal/85 leading-relaxed font-light whitespace-pre-line">
+              <p className="text-sm sm:text-base text-charcoal/85 leading-relaxed font-normal whitespace-pre-line">
                 {block.content}
               </p>
             </div>
@@ -104,7 +104,7 @@ export const StoryBlockRenderer: React.FC<StoryBlockRendererProps> = ({ block })
                 {block.title}
               </h3>
               {block.content && (
-                <p className="text-sm text-charcoal-muted font-light max-w-xl mx-auto">
+                <p className="text-sm text-charcoal-muted font-normal max-w-xl mx-auto">
                   {block.content}
                 </p>
               )}
@@ -126,7 +126,7 @@ export const StoryBlockRenderer: React.FC<StoryBlockRendererProps> = ({ block })
                     <h4 className="font-serif text-base font-semibold text-forest mb-1.5">
                       {item.event}
                     </h4>
-                    <p className="text-xs sm:text-sm text-charcoal/80 font-light leading-relaxed">
+                    <p className="text-xs sm:text-sm text-charcoal/80 font-normal leading-relaxed">
                       {item.detail}
                     </p>
                   </div>
@@ -142,7 +142,7 @@ export const StoryBlockRenderer: React.FC<StoryBlockRendererProps> = ({ block })
         <section className="py-10 sm:py-14 border-b border-paper-border last:border-b-0">
           <div className="p-8 sm:p-10 bg-forest text-paper border border-brass corner-frame relative overflow-hidden">
             <div 
-              className="absolute inset-0 pointer-events-none opacity-10 bg-[radial-gradient(circle,#B88A44_1px,transparent_1px)] bg-[size:24px_24px]"
+              className="absolute inset-0 pointer-events-none opacity-10 bg-[radial-gradient(circle,var(--heritage-brass)_1px,transparent_1px)] bg-[size:24px_24px]"
               aria-hidden="true"
             />
 

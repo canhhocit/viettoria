@@ -125,7 +125,7 @@ export const HeritageTimeline: React.FC = () => {
 
                   {/* Title Preview */}
                   <span className={`text-xs font-serif mt-0.5 max-w-[100px] text-center leading-tight transition-colors ${
-                    isSelected ? 'text-paper font-bold' : 'text-paper/70 group-hover:text-paper'
+                    isSelected ? 'text-paper font-bold' : 'text-paper/85 group-hover:text-paper'
                   }`}>
                     {item.title}
                   </span>
@@ -151,7 +151,7 @@ export const HeritageTimeline: React.FC = () => {
             {selectedEvent.title}
           </h4>
 
-          <p className="text-sm text-paper/80 font-light leading-relaxed">
+          <p className="text-sm text-paper/80 font-normal leading-relaxed">
             {selectedEvent.significance}
           </p>
         </div>

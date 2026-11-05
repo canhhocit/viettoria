@@ -12,8 +12,7 @@ import {
   Menu, 
   X,
   Eye,
-  Headphones,
-  BookOpen
+  Headphones
 } from 'lucide-react';
 import { adminApi } from '../services/api';
 import { resolveAvatarUrl } from '../utils/mediaResolver';
@@ -53,7 +52,6 @@ export const AdminLayout: React.FC = () => {
     { to: '/admin/collections', icon: Layers, label: 'Bộ Sưu Tập' },
     { to: '/admin/blogs', icon: FileText, label: 'Góc Văn Hóa' },
     { to: '/admin/media', icon: Image, label: 'Thư Viện Media' },
-    { to: '/admin/guide', icon: BookOpen, label: 'Hướng Dẫn Sử Dụng' },
   ];
 
   return (

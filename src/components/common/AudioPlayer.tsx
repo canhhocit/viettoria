@@ -72,6 +72,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioGuide, heritageNa
     setDismissSticky(false);
     if (audio.paused) {
       try {
+        if (audio.ended) audio.currentTime = 0;
         await audio.play();
       } catch {
         if (audioUrl !== SAMPLE_AUDIO_URL) {
@@ -125,7 +126,6 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioGuide, heritageNa
             ref={audioRef}
             src={audioUrl}
             preload="metadata"
-            loop
             onPlay={() => setIsPlaying(true)}
             onPause={() => setIsPlaying(false)}
             onTimeUpdate={(event) => setCurrentTime(event.currentTarget.currentTime)}
@@ -199,13 +199,22 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioGuide, heritageNa
             </div>
           </div>
 
-          <aside className="pointer-events-none absolute bottom-0 right-0 z-10 flex h-[250px] w-[150px] items-end justify-center sm:right-6 sm:h-[405px] sm:w-[228px]" aria-label="Hướng dẫn viên Viettoria">
-            <img
-              src={isPlaying ? '/images/guide/guide-speaking.webp' : '/images/guide/guide-idle.png'}
-              alt="Hướng dẫn viên Viettoria trong tà áo dài đỏ"
-              className="h-full w-full object-contain object-bottom"
-              loading="lazy"
-            />
+          <aside className="absolute bottom-0 right-0 z-10 flex h-[250px] w-[150px] items-end justify-center sm:right-6 sm:h-[405px] sm:w-[228px]">
+            <button
+              type="button"
+              onClick={() => void togglePlay()}
+              disabled={!hasAudio || audioError}
+              className="h-full w-full cursor-pointer border-0 bg-transparent p-0 disabled:cursor-not-allowed"
+              aria-label={isPlaying ? 'Tạm dừng thuyết minh' : 'Bắt đầu thuyết minh'}
+              title={isPlaying ? 'Tạm dừng thuyết minh' : 'Bắt đầu thuyết minh'}
+            >
+              <img
+                src={isPlaying ? '/images/guide/guide-speaking.webp' : '/images/guide/guide-idle.png'}
+                alt="Hướng dẫn viên Viettoria trong tà áo dài đỏ"
+                className="h-full w-full object-contain object-bottom"
+                loading="lazy"
+              />
+            </button>
           </aside>
         </div>
 

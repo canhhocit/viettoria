@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Box, Check, Copy, FileImage, Headphones, Image, Loader2, Upload } from 'lucide-react';
+import { Box, Check, Copy, FileImage, Headphones, Image, Loader2, Trash2, Upload } from 'lucide-react';
 import { adminApi } from '../../services/api';
 import type { MediaItem } from '../../types';
 import { resolveAudioUrl, resolveImageUrl, handleImageFallback } from '../../utils/mediaResolver';
@@ -22,6 +22,7 @@ export const AdminMediaPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
@@ -85,6 +86,26 @@ export const AdminMediaPage: React.FC = () => {
       setTimeout(() => setCopiedId(null), 2000);
     } catch {
       setError('Trình duyệt không cho phép sao chép. Hãy chọn và sao chép URL thủ công.');
+    }
+  };
+
+  const handleDelete = async (item: MediaItem) => {
+    const storedAsset = item.url.startsWith('/uploads/') || item.url.startsWith('https://res.cloudinary.com/');
+    const confirmation = storedAsset
+      ? `Xóa “${item.name}” khỏi thư viện và kho lưu trữ?`
+      : `Gỡ “${item.name}” khỏi thư viện? Tệp tĩnh trong mã nguồn vẫn được giữ nguyên.`;
+    if (!window.confirm(confirmation)) return;
+    setDeletingId(item.id);
+    setError(null);
+    setNotice(null);
+    try {
+      await adminApi.deleteMedia(item.id);
+      setMediaList(current => current.filter(media => media.id !== item.id));
+      setNotice('Đã xóa tệp khỏi thư viện.');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Không thể xóa tệp khỏi thư viện.');
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -181,10 +202,13 @@ export const AdminMediaPage: React.FC = () => {
                     <p className="truncate text-[10px] text-charcoal-muted" title={item.fileName}>{item.fileName || 'Tệp di sản'} · {(item.fileSize / 1024).toFixed(0)} KB</p>
                   </div>
                 </div>
-                <div className="mt-2 border-t border-paper-border p-3.5 pt-3">
-                  <button onClick={() => void handleCopy(item.url, item.id)} className="flex w-full items-center justify-center gap-1.5 border border-paper-border bg-paper-warm px-2 py-1.5 font-mono text-[11px] uppercase tracking-wider text-charcoal transition-colors hover:bg-forest hover:text-paper">
+                <div className="mt-2 flex gap-2 border-t border-paper-border p-3.5 pt-3">
+                  <button onClick={() => void handleCopy(item.url, item.id)} className="flex min-w-0 flex-1 items-center justify-center gap-1.5 border border-paper-border bg-paper-warm px-2 py-1.5 font-mono text-[10px] uppercase tracking-wider text-charcoal transition-colors hover:bg-forest hover:text-paper">
                     {copiedId === item.id ? <><Check className="h-3 w-3 text-brass" /><span className="font-bold text-brass">Đã sao chép URL</span></> : <><Copy className="h-3 w-3 text-brass" /><span>Sao chép URL</span></>}
                   </button>
+                  {!isDemo && <button type="button" onClick={() => void handleDelete(item)} disabled={deletingId === item.id} className="flex h-8 w-9 shrink-0 items-center justify-center border border-paper-border text-terracotta transition-colors hover:border-terracotta hover:bg-terracotta/5 disabled:cursor-wait disabled:opacity-50" title="Xóa tệp" aria-label={`Xóa ${item.name}`}>
+                    {deletingId === item.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
+                  </button>}
                 </div>
               </article>
             );

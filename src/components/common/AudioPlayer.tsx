@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ArrowUp, ChevronDown, ChevronUp, FileText, Headphones, Pause, Play, RotateCcw, Volume2, VolumeX, X } from 'lucide-react';
+import { ArrowUp, ChevronDown, ChevronUp, FileText, Pause, Play, RotateCcw, Volume2, VolumeX, X } from 'lucide-react';
 import type { AudioGuideData } from '../../types';
 import { resolveAudioUrl } from '../../utils/mediaResolver';
 
@@ -35,9 +35,8 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioGuide, heritageNa
   const [audioFallbackActive, setAudioFallbackActive] = useState(false);
   const configuredAudioUrl = resolveAudioUrl(audioGuide.audioUrl);
   const audioUrl = configuredAudioUrl && !audioFallbackActive ? configuredAudioUrl : SAMPLE_AUDIO_URL;
-  const isSampleAudio = audioUrl === SAMPLE_AUDIO_URL;
-  const narratorLabel = isSampleAudio ? 'Hướng dẫn viên Viettoria' : audioGuide.narrator || 'Hướng dẫn viên Viettoria';
-  const titleLabel = isSampleAudio ? 'Lời dẫn trải nghiệm Viettoria' : audioGuide.title || `Lời kể về ${heritageName}`;
+  const titleLabel = audioGuide.title || `Lời kể về ${heritageName}`;
+  const transcriptLabel = audioGuide.transcript?.trim() || SAMPLE_TRANSCRIPT;
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -149,40 +148,22 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioGuide, heritageNa
           />
         )}
 
-        <div className="grid lg:grid-cols-[220px_minmax(0,1fr)]">
-          <aside className="flex flex-row items-center gap-4 border-b border-[#FAF7F0]/10 bg-[#0D1C16] px-5 py-5 lg:flex-col lg:items-start lg:justify-between lg:border-b-0 lg:border-r lg:border-[#FAF7F0]/10 lg:px-6 lg:py-7">
-            <div className={`audio-guide-emblem relative flex h-[62px] w-[62px] shrink-0 items-center justify-center border border-[#B88A44]/55 bg-[#142820] text-[#D4AF67] ${isPlaying ? 'is-speaking' : ''}`} aria-hidden="true">
-              <Headphones className="h-6 w-6" strokeWidth={1.5} />
-              <div className="audio-guide-wave absolute -bottom-2 -right-2 flex h-7 items-center gap-[3px] border border-[#142820] bg-[#B88A44] px-1.5">
-                {[0, 1, 2, 3, 4].map((bar) => <span key={bar} />)}
-              </div>
-            </div>
-            <div className="min-w-0 lg:mt-auto">
-              <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#D4AF67]">Hướng dẫn viên di sản</p>
-              <p className="mt-1 truncate font-serif text-base font-semibold text-[#FAF7F0]">{narratorLabel}</p>
-              <p className="mt-2 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-wider text-[#FAF7F0]/55" role="status">
-                <span className={`h-1.5 w-1.5 ${isPlaying ? 'bg-[#D4AF67]' : hasAudio && !audioError ? 'bg-[#7E9A75]' : 'bg-[#9C3D28]'}`} />
-                {isPlaying ? 'Đang kể chuyện' : audioError ? 'Bản thu lỗi' : hasAudio ? 'Sẵn sàng dẫn chuyện' : 'Đang chờ bản thu'}
-              </p>
-            </div>
-          </aside>
-
-          <div className="min-w-0 p-5 sm:p-7 lg:p-8">
-            <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-start">
+        <div className="grid grid-cols-[minmax(0,1fr)_104px] sm:grid-cols-[minmax(0,1fr)_190px]">
+          <div className="min-w-0 p-4 sm:p-7 lg:p-8">
+            <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
               <div className="min-w-0 max-w-2xl">
-                <p className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-[#D4AF67] sm:text-[11px]">
-                  <span className="h-px w-5 bg-[#B88A44]" />
-                  Chuyện kể tại {heritageName}
+                <p className="flex items-center gap-2 font-mono text-[9px] uppercase tracking-[0.16em] text-[#D4AF67] sm:text-[10px]">
+                  <span className="h-px w-4 bg-[#B88A44]" />
+                  Hướng dẫn viên di sản
                 </p>
-                <h3 className="mt-3 font-display text-2xl leading-tight text-[#FAF7F0] sm:text-3xl">{audioGuide.title || `Lời kể về ${heritageName}`}</h3>
-                <p className="mt-2 text-xs leading-5 text-[#FAF7F0]/65">
-                  Giọng đọc <span className="text-[#E3C989]">{narratorLabel}</span>
-                  <span className="mx-2 text-[#B88A44]">·</span>
-                  Thời lượng <span className="font-mono text-[#FAF7F0]/80">{durationLabel}</span>
+                <h3 className="mt-2 font-display text-xl leading-tight text-[#FAF7F0] sm:text-3xl">{titleLabel}</h3>
+                <p className="mt-2 text-[11px] text-[#FAF7F0]/65 sm:text-xs">
+                  Thuyết minh <span className="mx-1 text-[#B88A44]">·</span>
+                  <span className="font-mono text-[#FAF7F0]/80">{durationLabel}</span>
                 </p>
               </div>
 
-              <div className="flex shrink-0 items-center gap-3 sm:pt-2">
+              <div className="flex shrink-0 items-center gap-2 sm:pt-1.5 sm:gap-3">
                 <button type="button" onClick={handleReset} disabled={!hasAudio || audioError} className="flex h-10 w-10 items-center justify-center border border-[#FAF7F0]/20 text-[#FAF7F0]/75 transition-colors hover:border-[#B88A44] hover:text-[#D4AF67] disabled:cursor-not-allowed disabled:opacity-35" title="Phát lại từ đầu" aria-label="Phát lại từ đầu">
                   <RotateCcw className="h-4 w-4" strokeWidth={1.5} />
                 </button>
@@ -212,23 +193,30 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioGuide, heritageNa
             <div className="mt-5 flex flex-col justify-between gap-3 border-t border-[#FAF7F0]/10 pt-4 sm:flex-row sm:items-center">
               <button type="button" onClick={() => setShowTranscript((shown) => !shown)} aria-expanded={showTranscript} className="inline-flex items-center gap-2 text-left font-mono text-[10px] uppercase tracking-[0.12em] text-[#D4AF67] transition-colors hover:text-[#FAF7F0] sm:text-[11px]">
                 <FileText className="h-4 w-4" strokeWidth={1.5} />
-                {showTranscript ? 'Thu gọn lời dẫn' : 'Đọc toàn bộ lời dẫn'}
+                {showTranscript ? 'Ẩn lời dẫn' : 'Lời dẫn'}
                 {showTranscript ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
               </button>
-              <span className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#FAF7F0]/40">Tư liệu thuyết minh · Viettoria</span>
             </div>
           </div>
+
+          <aside className="relative row-span-1 flex min-h-[218px] flex-col items-center justify-end overflow-hidden border-l border-[#FAF7F0]/10 bg-[#0D1C16] px-1 pt-4 sm:min-h-[340px] sm:px-3" aria-label="Hướng dẫn viên Viettoria">
+            <img
+              src={isPlaying ? '/images/guide/guide-speaking.webp' : '/images/guide/guide-idle.png'}
+              alt="Hướng dẫn viên Viettoria trong tà áo dài đỏ"
+              className="h-[218px] max-h-[230px] w-full object-contain object-bottom sm:h-[330px] sm:max-h-[330px]"
+              loading="lazy"
+            />
+            <span className="absolute bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap border border-[#B88A44]/45 bg-[#0D1C16]/90 px-1.5 py-1 font-mono text-[8px] uppercase tracking-wider text-[#D4AF67] sm:bottom-3 sm:px-2 sm:text-[9px]" role="status">
+              {isPlaying ? 'Đang thuyết minh' : 'Sẵn sàng'}
+            </span>
+          </aside>
         </div>
 
         {showTranscript && (
           <div className="border-t border-[#B88A44]/35 bg-[#0D1C16] px-5 py-5 sm:px-8 sm:py-7 animate-fade-up">
             <div className="mx-auto max-w-4xl">
               <h4 className="font-mono text-[10px] uppercase tracking-[0.17em] text-[#D4AF67]">Lời dẫn · {heritageName}</h4>
-              {audioGuide.transcript?.trim() ? (
-                <p className="mt-4 whitespace-pre-line font-serif text-sm leading-7 text-[#FAF7F0]/85 sm:text-base sm:leading-8">{isSampleAudio ? SAMPLE_TRANSCRIPT : audioGuide.transcript}</p>
-              ) : (
-                <p className="mt-4 text-sm text-[#FAF7F0]/55">Bản chép lời đang được cập nhật.</p>
-              )}
+              <p className="mt-4 whitespace-pre-line font-serif text-sm leading-7 text-[#FAF7F0]/85 sm:text-base sm:leading-8">{transcriptLabel}</p>
             </div>
           </div>
         )}
@@ -237,7 +225,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioGuide, heritageNa
       {stickyPlayerVisible && (
         <div className="fixed inset-x-0 bottom-0 z-40 border-t border-[#B88A44]/55 bg-[#0D1C16] px-4 py-3 text-[#FAF7F0] shadow-2xl animate-fade-up" role="region" aria-label="Hướng dẫn viên audio đang phát">
           <div className="mx-auto flex max-w-7xl items-center gap-3 sm:gap-5">
-            <div className="hidden h-9 w-9 shrink-0 items-center justify-center border border-[#B88A44]/50 text-[#D4AF67] sm:flex"><Headphones className="h-4 w-4" /></div>
+            <img src="/images/guide/guide-idle.png" alt="" className="hidden h-10 w-8 shrink-0 border border-[#B88A44]/50 object-cover object-top sm:block" />
             <div className="min-w-0 flex-1">
               <p className="truncate font-serif text-sm font-semibold">{titleLabel}</p>
               <p className="mt-0.5 truncate font-mono text-[9px] uppercase tracking-wider text-[#D4AF67]">Đang dẫn chuyện · {heritageName}</p>

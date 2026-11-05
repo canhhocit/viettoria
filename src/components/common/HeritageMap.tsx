@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { MapPin, ArrowRight, Compass } from 'lucide-react';
+import { ArrowRight, Compass } from 'lucide-react';
 
 export interface HeritageSiteLocation {
   id: string;
@@ -141,10 +141,9 @@ export const HeritageMap: React.FC<HeritageMapProps> = ({
     // Custom Zoom control at bottom right
     L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-    const tileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-      subdomains: 'abcd',
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
-      maxZoom: 20,
+    const tileLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>',
+      maxZoom: 19,
     });
     tileLayer.addTo(map);
 
@@ -308,13 +307,13 @@ export const HeritageMap: React.FC<HeritageMapProps> = ({
           <div className="space-y-1">
             <div className="flex items-center gap-2 text-brass text-xs font-mono uppercase tracking-widest">
               <Compass className="w-4 h-4" />
-              <span>Bản Đồ Số Thực Địa (Leaflet Engine)</span>
+            <span>Bản đồ di sản</span>
             </div>
             <h3 className="font-serif text-2xl font-bold text-forest">
-              Tọa Độ Di Sản Kiến Trúc
+              Tọa độ di sản
             </h3>
             <p className="text-xs text-charcoal/80 font-light leading-relaxed">
-              Mã ghim là chữ viết tắt của công trình; chọn một điểm để xem địa chỉ và tọa độ.
+              Chọn một điểm để xem trên bản đồ.
             </p>
           </div>
 
@@ -388,9 +387,6 @@ export const HeritageMap: React.FC<HeritageMapProps> = ({
                     <div className="font-serif text-sm font-bold">
                       {site.name}
                     </div>
-                    <div className={`font-mono text-[9px] tracking-tight ${isSelected ? 'text-paper/70' : 'text-charcoal-muted'}`}>
-                      {formatCoordinates(site)}
-                    </div>
                   </div>
 
                   <span className={`text-[10px] font-mono px-1.5 py-0.5 border ${
@@ -407,42 +403,23 @@ export const HeritageMap: React.FC<HeritageMapProps> = ({
         </div>
 
         {/* Selected Heritage Spotlight Card */}
-        <div className="p-4 bg-forest text-paper border border-brass/50 space-y-3">
-          <div className="flex items-center justify-between text-xs">
-            <span className="text-brass font-serif font-bold tracking-wider uppercase">{activeSite.cityName}</span>
-            <span className="text-paper/60 text-[11px]">{activeSite.epoch}</span>
-          </div>
-
-          <div className="space-y-1">
-            <h4 className="font-serif text-lg font-bold text-paper">
-              {activeSite.name}
-            </h4>
-            <p className="text-[11px] text-brass-subtle italic">
-              {activeSite.subName}
-            </p>
-          </div>
-
-          <p className="text-xs text-paper/80 font-light line-clamp-2 leading-relaxed">
-            {activeSite.description}
-          </p>
-
-          <div className="pt-2 border-t border-paper/15 text-xs font-mono">
-            <div className="flex items-center justify-between gap-3">
-              <span className="flex min-w-0 items-center gap-1 text-brass text-[11px]">
-                <MapPin className="w-3.5 h-3.5 shrink-0" />
-                <span className="truncate">{activeSite.location}</span>
-              </span>
-
-              <Link
-                to={`/products/${activeSite.slug}`}
-                className="shrink-0 text-brass hover:text-brass-light flex items-center gap-1 font-bold group"
-              >
-                <span>Khảo cứu</span>
-                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-              </Link>
+        <div className="border-t border-paper-border pt-4 text-forest">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <h4 className="truncate font-serif text-lg font-bold">{activeSite.name}</h4>
+              <p className="mt-1 truncate text-xs text-charcoal-muted">{activeSite.location}</p>
             </div>
-            <p className="mt-2 pl-5 text-[10px] text-paper/70">{formatCoordinates(activeSite)}</p>
+            <Link
+              to={`/products/${activeSite.slug}`}
+              className="shrink-0 inline-flex items-center gap-1 pt-1 text-xs font-semibold text-brass-dark hover:text-forest group"
+            >
+              <span>Mở di sản</span>
+              <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
+            </Link>
           </div>
+          <p className="mt-2 border-t border-paper-border pt-2 font-mono text-[10px] text-charcoal-muted">
+            {formatCoordinates(activeSite)}
+          </p>
         </div>
       </div>
 

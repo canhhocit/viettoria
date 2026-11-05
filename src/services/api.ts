@@ -409,6 +409,10 @@ export const adminApi = {
     return adminRequest('/admin/media');
   },
 
+  async deleteMedia(id: string): Promise<void> {
+    await adminRequest(`/admin/media/${encodeURIComponent(id)}`, { method: 'DELETE' });
+  },
+
   async createMediaUploadSignature(resourceType: MediaResourceType, fileExtension: string): Promise<CloudinaryUploadSignature> {
     return adminRequest('/admin/media/upload-signature', {
       method: 'POST',

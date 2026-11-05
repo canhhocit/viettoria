@@ -24,6 +24,7 @@ import AdminCollectionsPage from '../pages/admin/AdminCollectionsPage';
 import AdminBlogsPage from '../pages/admin/AdminBlogsPage';
 import AdminMediaPage from '../pages/admin/AdminMediaPage';
 import AdminAudioGuidesPage from '../pages/admin/AdminAudioGuidesPage';
+import AdminGuidePage from '../pages/admin/AdminGuidePage';
 
 export const AppRoutes: React.FC = () => {
   return (
@@ -61,6 +62,7 @@ export const AppRoutes: React.FC = () => {
         <Route path="collections" element={<AdminCollectionsPage />} />
         <Route path="blogs" element={<AdminBlogsPage />} />
         <Route path="media" element={<AdminMediaPage />} />
+        <Route path="guide" element={<AdminGuidePage />} />
       </Route>
 
       {/* Catch-all fallback */}

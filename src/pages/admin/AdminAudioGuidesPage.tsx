@@ -215,7 +215,7 @@ export const AdminAudioGuidesPage: React.FC = () => {
               </div>
               <span className={`inline-flex w-fit items-center gap-2 border px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider ${guide.audioUrl.trim() ? 'border-forest/25 bg-forest/5 text-forest' : 'border-paper-border text-charcoal-muted'}`}>
                 <span className={`h-1.5 w-1.5 ${guide.audioUrl.trim() ? 'bg-brass' : 'bg-paper-border'}`} />
-                {guide.audioUrl.trim() ? 'Bản thu sẵn sàng' : 'Chưa có bản thu'}
+                {guide.audioUrl.trim() ? 'Bản thu riêng sẵn sàng' : 'Đang dùng audio mẫu'}
               </span>
             </div>
 
@@ -257,9 +257,15 @@ export const AdminAudioGuidesPage: React.FC = () => {
                   Hoặc nhập URL bản thu
                   <input value={guide.audioUrl} onChange={(event) => updateGuide('audioUrl', event.target.value)} disabled={isDemo} className="mt-1.5 w-full border border-paper-border bg-paper px-3 py-2.5 font-sans text-xs normal-case text-charcoal focus:border-brass focus:outline-none disabled:opacity-60" placeholder="URL Cloudinary hoặc /uploads/..." />
                 </label>
-                {guide.audioUrl.trim() && (
-                  <audio key={guide.audioUrl} controls preload="metadata" src={resolveAudioUrl(guide.audioUrl)} className="mt-3 h-10 w-full" aria-label={`Nghe thử bản thu ${selectedProduct.name}`} onError={() => setError('Không mở được URL audio. Kiểm tra đường dẫn hoặc định dạng bản thu.')} />
-                )}
+                <audio
+                  key={guide.audioUrl || 'sample-audio'}
+                  controls
+                  preload="metadata"
+                  src={resolveAudioUrl(guide.audioUrl) || '/audio/heritage-guide-sample.wav'}
+                  className="mt-3 h-10 w-full"
+                  aria-label={`Nghe thử thuyết minh ${selectedProduct.name}`}
+                  onError={() => setError('Không mở được audio. Kiểm tra URL bản thu hoặc file audio mẫu.')}
+                />
               </div>
 
               <label className="block font-mono text-[11px] uppercase tracking-wider text-charcoal-muted">

@@ -65,11 +65,11 @@ export const FALLBACK_PRODUCTS: Product[] = [
       '/viettoria_img/IMG_6368.PNG'
     ],
     audioGuide: {
-      title: 'Hào Khí Thăng Long & Giấc Mơ Đài Sen',
-      duration: '03:15',
-      audioUrl: '',
-      narrator: 'Nghệ nhân Thuyết minh Viettoria (Giọng Hà Nội truyền cảm)',
-      transcript: 'Mùa đông năm 1049, kinh thành Thăng Long sương sớm bảng lảng. Vua Lý Thái Tông mộng thấy Phật Bà Quan Âm ngự trên tòa sen dắt vua bước lên. Khi tỉnh giấc, triều thần bàn việc lập chùa Diên Hựu giữa lòng hồ Linh Chiểu với trụ đá vươn cao như đóa hoa sen thanh tịnh, cầu chúc cho xã tắc trường thọ thái bình nghìn thu.'
+      title: 'Lời dẫn trải nghiệm Viettoria',
+      duration: '00:17',
+      audioUrl: '/audio/heritage-guide-sample.wav',
+      narrator: 'Hướng dẫn viên Viettoria',
+      transcript: 'Xin kính chào quý khách. Chúng ta đang cùng khám phá những dấu ấn kiến trúc Việt Nam qua các câu chuyện được lưu giữ trong từng công trình. Xin mời quý khách lắng nghe, quan sát và cảm nhận vẻ đẹp của di sản. Cảm ơn quý khách đã cùng Viettoria bắt đầu hành trình này.'
     },
     displayOrder: 1,
     status: 'published',
@@ -103,11 +103,11 @@ export const FALLBACK_PRODUCTS: Product[] = [
       '/viettoria_img/IMG_6370.PNG'
     ],
     audioGuide: {
-      title: 'Sao Khuê Tỏa Sáng Đất Tràng An',
-      duration: '02:45',
-      audioUrl: '',
-      narrator: 'Thuyết minh Viettoria Atelier',
-      transcript: 'Khuê Văn Các soi bóng xuống giếng Thiên Quang phẳng lặng như gương soi lòng kẻ sĩ. Công trình được Tổng trấn Nguyễn Văn Thành cho dựng năm 1805, tượng trưng cho nền học vấn thanh cao và truyền thống tôn sư trọng đạo của dân tộc.'
+      title: 'Lời dẫn trải nghiệm Viettoria',
+      duration: '00:17',
+      audioUrl: '/audio/heritage-guide-sample.wav',
+      narrator: 'Hướng dẫn viên Viettoria',
+      transcript: 'Xin kính chào quý khách. Chúng ta đang cùng khám phá những dấu ấn kiến trúc Việt Nam qua các câu chuyện được lưu giữ trong từng công trình. Xin mời quý khách lắng nghe, quan sát và cảm nhận vẻ đẹp của di sản. Cảm ơn quý khách đã cùng Viettoria bắt đầu hành trình này.'
     },
     displayOrder: 2,
     status: 'published',
@@ -140,11 +140,11 @@ export const FALLBACK_PRODUCTS: Product[] = [
       '/viettoria_img/IMG_6371.PNG'
     ],
     audioGuide: {
-      title: 'Hào Khí Kỳ Đài Thăng Long',
-      duration: '02:30',
-      audioUrl: '',
-      narrator: 'Thuyết minh Viettoria Atelier',
-      transcript: 'Kỳ đài Hà Nội xây dựng năm 1812, là một trong số ít công trình còn nguyên vẹn trong khuôn viên Hoàng thành Thăng Long, ghi dấu thời khắc thiêng liêng ngày giải phóng Thủ đô 10/10/1954.'
+      title: 'Lời dẫn trải nghiệm Viettoria',
+      duration: '00:17',
+      audioUrl: '/audio/heritage-guide-sample.wav',
+      narrator: 'Hướng dẫn viên Viettoria',
+      transcript: 'Xin kính chào quý khách. Chúng ta đang cùng khám phá những dấu ấn kiến trúc Việt Nam qua các câu chuyện được lưu giữ trong từng công trình. Xin mời quý khách lắng nghe, quan sát và cảm nhận vẻ đẹp của di sản. Cảm ơn quý khách đã cùng Viettoria bắt đầu hành trình này.'
     },
     displayOrder: 3,
     status: 'published',
@@ -178,11 +178,11 @@ export const FALLBACK_PRODUCTS: Product[] = [
       '/viettoria_img/IMG_6372.PNG'
     ],
     audioGuide: {
-      title: 'Âm Sắc Cung Đình Bên Dòng Hương Giang',
-      duration: '03:10',
-      audioUrl: '',
-      narrator: 'Thuyết minh Cố Đô Viettoria',
-      transcript: 'Ngọ Môn nhìn về hướng nam theo dịch lý, nơi hội tụ ánh sáng và quyền uy vương triều. Phía trên là Lầu Ngũ Phụng, nơi tổ chức các đại lễ truyền lô, ban sóc và là nơi chứng kiến sự kiện thoái vị năm 1945.'
+      title: 'Lời dẫn trải nghiệm Viettoria',
+      duration: '00:17',
+      audioUrl: '/audio/heritage-guide-sample.wav',
+      narrator: 'Hướng dẫn viên Viettoria',
+      transcript: 'Xin kính chào quý khách. Chúng ta đang cùng khám phá những dấu ấn kiến trúc Việt Nam qua các câu chuyện được lưu giữ trong từng công trình. Xin mời quý khách lắng nghe, quan sát và cảm nhận vẻ đẹp của di sản. Cảm ơn quý khách đã cùng Viettoria bắt đầu hành trình này.'
     },
     displayOrder: 4,
     status: 'published',
@@ -216,11 +216,11 @@ export const FALLBACK_PRODUCTS: Product[] = [
       '/viettoria_img/IMG_5826.PNG'
     ],
     audioGuide: {
-      title: 'Khúc Tráng Ca Trên Bến Cảng Sài Gòn',
-      duration: '02:50',
-      audioUrl: '',
-      narrator: 'Thuyết minh Viettoria Atelier',
-      transcript: 'Ngày 5 tháng 6 năm 1911, con tàu Đô đốc Latouche-Tréville rời bến cảng Sài Gòn chở theo khát vọng độc lập tự do cháy bỏng của người thanh niên 21 tuổi Nguyễn Tất Thành.'
+      title: 'Lời dẫn trải nghiệm Viettoria',
+      duration: '00:17',
+      audioUrl: '/audio/heritage-guide-sample.wav',
+      narrator: 'Hướng dẫn viên Viettoria',
+      transcript: 'Xin kính chào quý khách. Chúng ta đang cùng khám phá những dấu ấn kiến trúc Việt Nam qua các câu chuyện được lưu giữ trong từng công trình. Xin mời quý khách lắng nghe, quan sát và cảm nhận vẻ đẹp của di sản. Cảm ơn quý khách đã cùng Viettoria bắt đầu hành trình này.'
     },
     displayOrder: 5,
     status: 'published',

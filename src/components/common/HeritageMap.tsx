@@ -7,6 +7,7 @@ import { MapPin, ArrowRight, Compass } from 'lucide-react';
 export interface HeritageSiteLocation {
   id: string;
   code: string;
+  mapLabel: string;
   name: string;
   subName: string;
   slug: string;
@@ -17,15 +18,17 @@ export interface HeritageSiteLocation {
   lat: number;
   lng: number;
   heroImage: string;
-  scale: string;
-  heightCm: number;
   description: string;
 }
+
+const formatCoordinates = (site: HeritageSiteLocation) =>
+  `${site.lat.toFixed(5)}° N · ${site.lng.toFixed(5)}° E`;
 
 export const HERITAGE_SITES: HeritageSiteLocation[] = [
   {
     id: '1',
     code: 'VT-HN-001',
+    mapLabel: 'MC',
     name: 'Chùa Một Cột',
     subName: 'Diên Hựu Tự — Liên Hoa Đài',
     slug: 'chua-mot-cot',
@@ -33,16 +36,15 @@ export const HERITAGE_SITES: HeritageSiteLocation[] = [
     city: 'hanoi',
     cityName: 'Thăng Long — Hà Nội',
     location: 'Đội Cấn, Ba Đình, Hà Nội',
-    lat: 21.0358,
-    lng: 105.8335,
+    lat: 21.03583,
+    lng: 105.83362,
     heroImage: '/images/chua-mot-cot-hero.webp',
-    scale: '1:120',
-    heightCm: 12.0,
     description: 'Đài hoa sen nghìn năm tuổi, biểu tượng kiến trúc Phật giáo kinh thành Thăng Long thời Lý thịnh trị.',
   },
   {
     id: '2',
     code: 'VT-HN-002',
+    mapLabel: 'KV',
     name: 'Khuê Văn Các',
     subName: 'Gác Vẻ Đẹp Sao Khuê',
     slug: 'khue-van-cac',
@@ -50,16 +52,15 @@ export const HERITAGE_SITES: HeritageSiteLocation[] = [
     city: 'hanoi',
     cityName: 'Thăng Long — Hà Nội',
     location: 'Văn Miếu - Quốc Tử Giám, Đống Đa, Hà Nội',
-    lat: 21.0286,
-    lng: 105.8355,
+    lat: 21.02861,
+    lng: 105.83556,
     heroImage: '/images/khue-van-cac.webp',
-    scale: '1:120',
-    heightCm: 14.5,
     description: 'Biểu tượng tinh hoa hiếu học của đất kinh kỳ, kiến trúc gỗ lầu vuông giao hòa trời đất.',
   },
   {
     id: '3',
     code: 'VT-HN-003',
+    mapLabel: 'CC',
     name: 'Cột Cờ Hà Nội',
     subName: 'Kỳ Đài Thăng Long',
     slug: 'cot-co-ha-noi',
@@ -67,45 +68,41 @@ export const HERITAGE_SITES: HeritageSiteLocation[] = [
     city: 'hanoi',
     cityName: 'Thăng Long — Hà Nội',
     location: '28A Điện Biên Phủ, Ba Đình, Hà Nội',
-    lat: 21.0324,
-    lng: 105.8398,
+    lat: 21.0325,
+    lng: 105.83972,
     heroImage: '/images/cot-co-ha-noi.webp',
-    scale: '1:200',
-    heightCm: 16.5,
     description: 'Kỳ đài kiên cố xây dựng bằng gạch vồ nung, chứng nhân lịch sử thăng trầm của kinh đô nghìn năm.',
   },
   {
     id: '4',
     code: 'VT-HUE-004',
+    mapLabel: 'NM',
     name: 'Ngọ Môn Huế',
     subName: 'Cửa Chính Hoàng Thành Huế',
     slug: 'ngo-mon-hue',
     epoch: 'Triều Nguyễn (Năm 1833)',
     city: 'hue',
     cityName: 'Cố Đô Huế',
-    location: 'Hoàng Thành Huế, TP. Huế, Thừa Thiên Huế',
-    lat: 16.4697,
-    lng: 107.5786,
+    location: 'Hoàng Thành Huế, TP. Huế',
+    lat: 16.46768,
+    lng: 107.57918,
     heroImage: '/images/ngo-mon-hue.webp',
-    scale: '1:200',
-    heightCm: 10.5,
     description: 'Đỉnh cao kiến trúc cung đình triều Nguyễn với kết cấu lầu Ngũ Phụng chín tầng đao cong lộng lẫy.',
   },
   {
     id: '5',
     code: 'VT-SG-005',
+    mapLabel: 'NR',
     name: 'Bến Nhà Rồng',
     subName: 'Thương Cảng Sài Gòn 1863',
     slug: 'ben-nha-rong',
     epoch: 'Cận Đại (Năm 1863)',
     city: 'saigon',
     cityName: 'Sài Gòn — Gia Định',
-    location: '01 Nguyễn Tất Thành, Quận 4, TP. Hồ Chí Minh',
-    lat: 10.7681,
-    lng: 106.7067,
+    location: '01 Nguyễn Tất Thành, TP. Hồ Chí Minh',
+    lat: 10.76824,
+    lng: 106.70686,
     heroImage: '/images/ben-nha-rong.webp',
-    scale: '1:150',
-    heightCm: 12.5,
     description: 'Giao thoa giữa kiến trúc Pháp thuộc và hoa văn rồng Á Đông bên dòng sông Sài Gòn phồn hoa.',
   },
 ];
@@ -144,10 +141,9 @@ export const HeritageMap: React.FC<HeritageMapProps> = ({
     // Custom Zoom control at bottom right
     L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-    // Reliable High-Speed TileLayer (100% Accessible in Vietnam & Globally, No API Key Required)
-    const tileLayer = L.tileLayer('https://mt{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
-      subdomains: ['0', '1', '2', '3'],
-      attribution: '&copy; VIETTORIA',
+    const tileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      subdomains: 'abcd',
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
       maxZoom: 20,
     });
     tileLayer.addTo(map);
@@ -185,8 +181,8 @@ export const HeritageMap: React.FC<HeritageMapProps> = ({
             cursor: pointer;
             transition: all 0.2s ease;
           ">
-            <span style="font-family: 'Playfair Display', serif; font-size: 14px; font-weight: bold;">
-              ${site.id}
+            <span style="font-family: 'Be Vietnam Pro', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.02em;">
+              ${site.mapLabel}
             </span>
             <div style="
               position: absolute;
@@ -208,11 +204,14 @@ export const HeritageMap: React.FC<HeritageMapProps> = ({
 
       const marker = L.marker([site.lat, site.lng], { 
         icon,
+        title: `${site.mapLabel} · ${site.name}`,
+        alt: `${site.mapLabel} · ${site.name}`,
+        keyboard: true,
         zIndexOffset: isHero ? 1000 : 100 - parseInt(site.id),
       }).addTo(map);
 
       // Tooltip on hover
-      marker.bindTooltip(`<b>${site.name}</b> (${site.epoch})`, {
+      marker.bindTooltip(`<b>${site.mapLabel} · ${site.name}</b> (${site.epoch})`, {
         direction: 'top',
         offset: [0, -44],
         className: 'heritage-map-tooltip',
@@ -228,7 +227,7 @@ export const HeritageMap: React.FC<HeritageMapProps> = ({
           color: #1B1E1B;
         ">
           <div style="font-family: 'Playfair Display', serif; font-size: 11px; color: #B88A44; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">
-            ${site.epoch}
+            ${site.mapLabel} · ${site.epoch}
           </div>
           <h4 style="font-family: 'Playfair Display', 'Cormorant Garamond', serif; font-size: 16px; font-weight: bold; color: #142820; margin: 0 0 4px 0;">
             ${site.name}
@@ -236,8 +235,8 @@ export const HeritageMap: React.FC<HeritageMapProps> = ({
           <p style="font-size: 11px; color: #525952; margin: 0 0 8px 0; line-height: 1.4;">
             ${site.location}
           </p>
-          <div style="font-size: 10px; color: #142820; border-top: 1px solid #DCD4C4; padding-top: 6px;">
-            Tỷ lệ ${site.scale} • Cao ${site.heightCm}cm
+          <div style="font-size: 10px; color: #142820; border-top: 1px solid #DCD4C4; padding-top: 6px; font-family: 'Roboto Mono', monospace;">
+            Tọa độ: ${formatCoordinates(site)}
           </div>
         </div>
       `;
@@ -274,13 +273,17 @@ export const HeritageMap: React.FC<HeritageMapProps> = ({
       const hanoiSite = HERITAGE_SITES.find(s => s.city === 'hanoi');
       if (hanoiSite) setActiveSite(hanoiSite);
     } else if (region === 'hue') {
-      map.flyTo([16.4697, 107.5786], 15, { duration: 1.2 });
       const hueSite = HERITAGE_SITES.find(s => s.city === 'hue');
-      if (hueSite) setActiveSite(hueSite);
+      if (hueSite) {
+        map.flyTo([hueSite.lat, hueSite.lng], 15, { duration: 1.2 });
+        setActiveSite(hueSite);
+      }
     } else if (region === 'saigon') {
-      map.flyTo([10.7681, 106.7067], 15, { duration: 1.2 });
       const sgSite = HERITAGE_SITES.find(s => s.city === 'saigon');
-      if (sgSite) setActiveSite(sgSite);
+      if (sgSite) {
+        map.flyTo([sgSite.lat, sgSite.lng], 15, { duration: 1.2 });
+        setActiveSite(sgSite);
+      }
     }
   };
 
@@ -311,7 +314,7 @@ export const HeritageMap: React.FC<HeritageMapProps> = ({
               Tọa Độ Di Sản Kiến Trúc
             </h3>
             <p className="text-xs text-charcoal/80 font-light leading-relaxed">
-              Khám phá vị trí địa lý nguyên bản của 5 tuyệt tác kiến trúc trải dài khắp ba miền đất nước.
+              Mã ghim là chữ viết tắt của công trình; chọn một điểm để xem địa chỉ và tọa độ.
             </p>
           </div>
 
@@ -373,7 +376,7 @@ export const HeritageMap: React.FC<HeritageMapProps> = ({
                       : 'bg-paper border-paper-border text-charcoal hover:border-brass/70'
                   }`}
                 >
-                  <div className="space-y-0.5">
+                  <div className="min-w-0 space-y-1">
                     <div className="flex items-center gap-1.5 text-[11px]">
                       <span className={`font-serif uppercase tracking-wider ${isSelected ? 'text-brass font-bold' : 'text-brass'}`}>
                         {site.cityName.split('—')[0].trim()}
@@ -385,6 +388,9 @@ export const HeritageMap: React.FC<HeritageMapProps> = ({
                     <div className="font-serif text-sm font-bold">
                       {site.name}
                     </div>
+                    <div className={`font-mono text-[9px] tracking-tight ${isSelected ? 'text-paper/70' : 'text-charcoal-muted'}`}>
+                      {formatCoordinates(site)}
+                    </div>
                   </div>
 
                   <span className={`text-[10px] font-mono px-1.5 py-0.5 border ${
@@ -392,7 +398,7 @@ export const HeritageMap: React.FC<HeritageMapProps> = ({
                       ? 'border-brass/50 bg-forest-dark text-brass' 
                       : 'border-paper-border bg-paper-warm text-charcoal-muted'
                   }`}>
-                    {site.scale}
+                    {site.mapLabel}
                   </span>
                 </button>
               );
@@ -420,19 +426,22 @@ export const HeritageMap: React.FC<HeritageMapProps> = ({
             {activeSite.description}
           </p>
 
-          <div className="pt-2 flex items-center justify-between border-t border-paper/15 text-xs font-mono">
-            <span className="flex items-center gap-1 text-brass text-[11px]">
-              <MapPin className="w-3.5 h-3.5" />
-              <span className="truncate max-w-[150px]">{activeSite.location}</span>
-            </span>
+          <div className="pt-2 border-t border-paper/15 text-xs font-mono">
+            <div className="flex items-center justify-between gap-3">
+              <span className="flex min-w-0 items-center gap-1 text-brass text-[11px]">
+                <MapPin className="w-3.5 h-3.5 shrink-0" />
+                <span className="truncate">{activeSite.location}</span>
+              </span>
 
-            <Link
-              to={`/products/${activeSite.slug}`}
-              className="text-brass hover:text-brass-light flex items-center gap-1 font-bold group"
-            >
-              <span>Khảo cứu</span>
-              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-            </Link>
+              <Link
+                to={`/products/${activeSite.slug}`}
+                className="shrink-0 text-brass hover:text-brass-light flex items-center gap-1 font-bold group"
+              >
+                <span>Khảo cứu</span>
+                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
+            <p className="mt-2 pl-5 text-[10px] text-paper/70">{formatCoordinates(activeSite)}</p>
           </div>
         </div>
       </div>

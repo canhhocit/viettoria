@@ -16,7 +16,7 @@ export const HeritageMapPage: React.FC = () => {
             Bản Đồ Di Sản Kiến Trúc Việt Nam
           </h1>
           <p className="text-base text-charcoal/80 font-light leading-relaxed">
-            Hành trình khảo cứu thực địa từ Thăng Long nghìn năm văn hiến, qua Quần thể Di tích Cố đô Huế, đến Thương cảng Sài Gòn phương Nam. Khám phá tọa độ GPS nguyên bản và thông số kiến trúc của từng kiệt tác.
+            Tìm vị trí từng công trình trên bản đồ, xem địa chỉ và tọa độ vĩ độ · kinh độ rồi mở trang di sản để đọc thêm.
           </p>
         </div>
 
@@ -40,20 +40,20 @@ export const HeritageMapPage: React.FC = () => {
           <div className="p-5 bg-paper-warm border border-paper-border space-y-2">
             <div className="flex items-center gap-2 text-brass font-bold">
               <Layers className="w-4 h-4" />
-              <span>5 TỌA ĐỘ THỰC ĐỊA CHUẨN XÁC</span>
+              <span>5 ĐỊA ĐIỂM DI SẢN</span>
             </div>
             <p className="text-charcoal/80 font-light text-[11px] leading-relaxed">
-              Mỗi tọa độ được đối soát chuẩn xác với vị trí thực tế tại thực địa, liên kết trực tiếp với mô hình thu nhỏ 1:120 và Audio Guide.
+              Mỗi ghim có mã chữ khớp với danh sách bên cạnh; chọn một điểm để xem tọa độ và địa chỉ.
             </p>
           </div>
 
           <div className="p-5 bg-paper-warm border border-paper-border space-y-2">
             <div className="flex items-center gap-2 text-brass font-bold">
               <Compass className="w-4 h-4" />
-              <span>CÔNG NGHỆ BẢN ĐỒ LEAFLET</span>
+              <span>NỀN CARTO VOYAGER</span>
             </div>
             <p className="text-charcoal/80 font-light text-[11px] leading-relaxed">
-              Vận hành trên nền tảng bản đồ mã nguồn mở Leaflet kết hợp lớp phủ Carto Voyager, bảo đảm tốc độ phản hồi tức thì và không phụ thuộc API độc quyền.
+              Bản đồ tương tác dùng Leaflet; lớp nền CARTO Voyager ghi nhận nguồn dữ liệu OpenStreetMap ngay trên bản đồ.
             </p>
           </div>
         </div>

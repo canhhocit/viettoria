@@ -8,6 +8,9 @@ interface AudioPlayerProps {
   heritageName: string;
 }
 
+const SAMPLE_AUDIO_URL = '/audio/heritage-guide-sample.wav';
+const SAMPLE_TRANSCRIPT = 'Xin kính chào quý khách. Chúng ta đang cùng khám phá những dấu ấn kiến trúc Việt Nam qua các câu chuyện được lưu giữ trong từng công trình. Xin mời quý khách lắng nghe, quan sát và cảm nhận vẻ đẹp của di sản. Cảm ơn quý khách đã cùng Viettoria bắt đầu hành trình này.';
+
 const parseDuration = (value?: string) => {
   if (!value) return 0;
   const parts = value.split(':').map(Number);
@@ -29,16 +32,21 @@ const formatTime = (seconds: number) => {
 export const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioGuide, heritageName }) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const [audioFallbackActive, setAudioFallbackActive] = useState(false);
+  const configuredAudioUrl = resolveAudioUrl(audioGuide.audioUrl);
+  const audioUrl = configuredAudioUrl && !audioFallbackActive ? configuredAudioUrl : SAMPLE_AUDIO_URL;
+  const isSampleAudio = audioUrl === SAMPLE_AUDIO_URL;
+  const narratorLabel = isSampleAudio ? 'Hướng dẫn viên Viettoria' : audioGuide.narrator || 'Hướng dẫn viên Viettoria';
+  const titleLabel = isSampleAudio ? 'Lời dẫn trải nghiệm Viettoria' : audioGuide.title || `Lời kể về ${heritageName}`;
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(() => parseDuration(audioGuide.duration));
+  const [duration, setDuration] = useState(() => configuredAudioUrl ? parseDuration(audioGuide.duration) : 0);
   const [showTranscript, setShowTranscript] = useState(false);
   const [isOutOfView, setIsOutOfView] = useState(false);
   const [dismissSticky, setDismissSticky] = useState(false);
   const [audioError, setAudioError] = useState(false);
 
-  const audioUrl = resolveAudioUrl(audioGuide.audioUrl);
   const hasAudio = Boolean(audioUrl);
 
   useEffect(() => {
@@ -52,11 +60,12 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioGuide, heritageNa
   useEffect(() => {
     setIsPlaying(false);
     setCurrentTime(0);
-    setDuration(parseDuration(audioGuide.duration));
+    setDuration(configuredAudioUrl ? parseDuration(audioGuide.duration) : 0);
     setAudioError(false);
     setDismissSticky(false);
+    setAudioFallbackActive(false);
     if (audioRef.current) audioRef.current.pause();
-  }, [audioUrl, audioGuide.duration]);
+  }, [configuredAudioUrl, audioGuide.duration]);
 
   const togglePlay = async () => {
     const audio = audioRef.current;
@@ -66,7 +75,13 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioGuide, heritageNa
       try {
         await audio.play();
       } catch {
-        setAudioError(true);
+        if (audioUrl !== SAMPLE_AUDIO_URL) {
+          setAudioFallbackActive(true);
+          setAudioError(false);
+          setCurrentTime(0);
+        } else {
+          setAudioError(true);
+        }
         setIsPlaying(false);
       }
     } else {
@@ -107,6 +122,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioGuide, heritageNa
             ref={audioRef}
             src={audioUrl}
             preload="metadata"
+            loop
             onPlay={() => setIsPlaying(true)}
             onPause={() => setIsPlaying(false)}
             onTimeUpdate={(event) => setCurrentTime(event.currentTarget.currentTime)}
@@ -119,7 +135,17 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioGuide, heritageNa
               if (Number.isFinite(actualDuration)) setDuration(actualDuration);
             }}
             onEnded={() => setIsPlaying(false)}
-            onError={() => { setAudioError(true); setIsPlaying(false); }}
+            onError={() => {
+              if (audioUrl !== SAMPLE_AUDIO_URL) {
+                setAudioFallbackActive(true);
+                setAudioError(false);
+                setIsPlaying(false);
+                setCurrentTime(0);
+                return;
+              }
+              setAudioError(true);
+              setIsPlaying(false);
+            }}
           />
         )}
 
@@ -133,7 +159,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioGuide, heritageNa
             </div>
             <div className="min-w-0 lg:mt-auto">
               <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#D4AF67]">Hướng dẫn viên di sản</p>
-              <p className="mt-1 truncate font-serif text-base font-semibold text-[#FAF7F0]">{audioGuide.narrator || 'Viettoria'}</p>
+              <p className="mt-1 truncate font-serif text-base font-semibold text-[#FAF7F0]">{narratorLabel}</p>
               <p className="mt-2 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-wider text-[#FAF7F0]/55" role="status">
                 <span className={`h-1.5 w-1.5 ${isPlaying ? 'bg-[#D4AF67]' : hasAudio && !audioError ? 'bg-[#7E9A75]' : 'bg-[#9C3D28]'}`} />
                 {isPlaying ? 'Đang kể chuyện' : audioError ? 'Bản thu lỗi' : hasAudio ? 'Sẵn sàng dẫn chuyện' : 'Đang chờ bản thu'}
@@ -150,7 +176,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioGuide, heritageNa
                 </p>
                 <h3 className="mt-3 font-display text-2xl leading-tight text-[#FAF7F0] sm:text-3xl">{audioGuide.title || `Lời kể về ${heritageName}`}</h3>
                 <p className="mt-2 text-xs leading-5 text-[#FAF7F0]/65">
-                  Giọng đọc <span className="text-[#E3C989]">{audioGuide.narrator || 'Hướng dẫn viên Viettoria'}</span>
+                  Giọng đọc <span className="text-[#E3C989]">{narratorLabel}</span>
                   <span className="mx-2 text-[#B88A44]">·</span>
                   Thời lượng <span className="font-mono text-[#FAF7F0]/80">{durationLabel}</span>
                 </p>
@@ -179,7 +205,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioGuide, heritageNa
 
             {!hasAudio || audioError ? (
               <p className="mt-4 border-t border-[#FAF7F0]/10 pt-3 text-xs leading-relaxed text-[#FAF7F0]/60" role="status">
-                {audioError ? 'Không tải được bản thu này. Vui lòng báo quản trị viên kiểm tra URL audio.' : 'Bản thu đang được chuẩn bị. Bạn có thể đọc lời thoại bên dưới.'}
+                {audioError ? 'Không mở được bản thu mẫu trên thiết bị này.' : 'Không tải được audio. Đang chuyển sang bản đọc mẫu.'}
               </p>
             ) : null}
 
@@ -199,7 +225,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioGuide, heritageNa
             <div className="mx-auto max-w-4xl">
               <h4 className="font-mono text-[10px] uppercase tracking-[0.17em] text-[#D4AF67]">Lời dẫn · {heritageName}</h4>
               {audioGuide.transcript?.trim() ? (
-                <p className="mt-4 whitespace-pre-line font-serif text-sm leading-7 text-[#FAF7F0]/85 sm:text-base sm:leading-8">{audioGuide.transcript}</p>
+                <p className="mt-4 whitespace-pre-line font-serif text-sm leading-7 text-[#FAF7F0]/85 sm:text-base sm:leading-8">{isSampleAudio ? SAMPLE_TRANSCRIPT : audioGuide.transcript}</p>
               ) : (
                 <p className="mt-4 text-sm text-[#FAF7F0]/55">Bản chép lời đang được cập nhật.</p>
               )}
@@ -213,7 +239,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioGuide, heritageNa
           <div className="mx-auto flex max-w-7xl items-center gap-3 sm:gap-5">
             <div className="hidden h-9 w-9 shrink-0 items-center justify-center border border-[#B88A44]/50 text-[#D4AF67] sm:flex"><Headphones className="h-4 w-4" /></div>
             <div className="min-w-0 flex-1">
-              <p className="truncate font-serif text-sm font-semibold">{audioGuide.title}</p>
+              <p className="truncate font-serif text-sm font-semibold">{titleLabel}</p>
               <p className="mt-0.5 truncate font-mono text-[9px] uppercase tracking-wider text-[#D4AF67]">Đang dẫn chuyện · {heritageName}</p>
             </div>
             <span className="hidden font-mono text-[10px] text-[#FAF7F0]/65 md:block">{formatTime(currentTime)} / {durationLabel}</span>

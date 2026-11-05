@@ -18,7 +18,6 @@ import {
   resolveImageUrl,
   VIETTORIA_IMAGES,
 } from '../../utils/mediaResolver';
-import { HeritageSpinner } from './HeritageLoader';
 
 interface ArchitecturalViewerProps {
   product: Product;
@@ -34,14 +33,14 @@ export const ArchitecturalViewer: React.FC<ArchitecturalViewerProps> = ({ produc
   const [modelLoaded, setModelLoaded] = useState(false);
   const [modelFailed, setModelFailed] = useState(false);
   const [previewFailed, setPreviewFailed] = useState(false);
+  const [previewPlaying, setPreviewPlaying] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(() =>
     typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches,
   );
-  const [autoRotate, setAutoRotate] = useState(() =>
-    typeof window !== 'undefined' && !window.matchMedia('(prefers-reduced-motion: reduce)').matches,
-  );
+  const [autoRotate, setAutoRotate] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const viewportRef = useRef<HTMLDivElement>(null);
+  const modelViewerRef = useRef<HTMLElement | null>(null);
 
   const preview = resolve3DPreview(product.slug);
   const modelUrl = resolve3DModelUrl(product.model3dUrl || product.slug);
@@ -93,12 +92,31 @@ export const ArchitecturalViewer: React.FC<ArchitecturalViewerProps> = ({ produc
     setModelLoaded(false);
     setModelFailed(false);
     setPreviewFailed(false);
+    setPreviewPlaying(false);
     setSelectedPhoto(0);
   }, [modelUrl, product.id]);
 
   useEffect(() => {
+    const modelViewer = modelViewerRef.current;
+    if (!viewerAvailable || !modelViewer) return;
+
+    const handleLoad = () => {
+      setModelLoaded(true);
+      setModelFailed(false);
+    };
+    const handleError = () => setModelFailed(true);
+
+    modelViewer.addEventListener('load', handleLoad);
+    modelViewer.addEventListener('error', handleError);
+    return () => {
+      modelViewer.removeEventListener('load', handleLoad);
+      modelViewer.removeEventListener('error', handleError);
+    };
+  }, [modelUrl, product.id, viewerAvailable]);
+
+  useEffect(() => {
     if (!viewerAvailable || modelLoaded || modelFailed) return;
-    const loadTimeout = window.setTimeout(() => setModelFailed(true), 30000);
+    const loadTimeout = window.setTimeout(() => setModelFailed(true), 20000);
     return () => window.clearTimeout(loadTimeout);
   }, [modelFailed, modelLoaded, modelUrl, viewerAvailable]);
 
@@ -127,13 +145,15 @@ export const ArchitecturalViewer: React.FC<ArchitecturalViewerProps> = ({ produc
     await viewportRef.current.requestFullscreen?.();
   };
 
-  const showTurntable = Boolean(turntableUrl && !reducedMotion && !previewFailed && !modelLoaded);
+  const showTurntable = Boolean(turntableUrl && previewPlaying && !previewFailed && !modelLoaded);
   const isAutoRotating = autoRotate && !reducedMotion;
   const stageLabel = modelLoaded
     ? 'Mô hình 3D · kéo để xoay'
-    : modelFailed || !viewerAvailable
-      ? showTurntable ? 'Video xem trước' : 'Ảnh xem trước'
-      : 'Đang tải mô hình 3D';
+    : showTurntable
+      ? 'Video xem trước'
+      : modelFailed || !viewerAvailable
+        ? 'Ảnh xem trước'
+        : 'Đang tải mô hình 3D';
 
   return (
     <div className="architectural-viewer-shell relative overflow-hidden border border-[#D8CCB8] bg-[#F3EBDD] shadow-sm">
@@ -184,12 +204,12 @@ export const ArchitecturalViewer: React.FC<ArchitecturalViewerProps> = ({ produc
               src={turntableUrl}
               poster={posterUrl}
               autoPlay
-              loop
               muted
               playsInline
               preload="metadata"
               aria-hidden="true"
-              onError={() => setPreviewFailed(true)}
+              onEnded={() => setPreviewPlaying(false)}
+              onError={() => { setPreviewFailed(true); setPreviewPlaying(false); }}
               className="pointer-events-none absolute inset-0 h-full w-full object-contain mix-blend-multiply transition-opacity duration-700 ease-out"
             />
           )}
@@ -209,9 +229,8 @@ export const ArchitecturalViewer: React.FC<ArchitecturalViewerProps> = ({ produc
               loading="eager"
               reveal="auto"
               interaction-prompt="none"
-              style={{ width: '100%', height: '100%', backgroundColor: 'transparent', touchAction: 'pan-y' }}
-              onLoad={() => setModelLoaded(true)}
-              onError={() => setModelFailed(true)}
+              ref={modelViewerRef}
+              style={{ width: '100%', height: '100%', backgroundColor: '#EAE2D3', touchAction: 'pan-y' }}
               className={`architectural-model-viewer absolute inset-0 h-full w-full transition-opacity duration-700 ease-out ${modelLoaded ? 'opacity-100' : 'opacity-0'}`}
             />
           )}
@@ -222,6 +241,19 @@ export const ArchitecturalViewer: React.FC<ArchitecturalViewerProps> = ({ produc
           </div>
 
           <div className="absolute right-3 top-3 z-10 flex items-center gap-1.5 sm:right-4 sm:top-4">
+            {turntableUrl && !reducedMotion && !previewFailed && !modelLoaded && (
+              <button
+                type="button"
+                onClick={() => setPreviewPlaying((playing) => !playing)}
+                aria-label={previewPlaying ? 'Dừng video xem trước mô hình' : 'Phát video xem trước mô hình'}
+                aria-pressed={previewPlaying}
+                title={previewPlaying ? 'Dừng video xem trước' : 'Phát video xem trước'}
+                className="flex h-9 items-center gap-1.5 border border-[#D8CCB8] bg-[#FAF7F0]/90 px-2.5 text-[9px] font-mono uppercase tracking-[0.08em] text-[#554231] shadow-sm backdrop-blur-sm transition-colors hover:border-brass hover:text-forest focus-visible:outline focus-visible:outline-2 focus-visible:outline-brass"
+              >
+                {previewPlaying ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
+                {previewPlaying ? 'Dừng' : 'Video mẫu'}
+              </button>
+            )}
             <button
               type="button"
               onClick={() => setAutoRotate((current) => !current)}
@@ -244,11 +276,11 @@ export const ArchitecturalViewer: React.FC<ArchitecturalViewerProps> = ({ produc
             </button>
           </div>
 
-          {!modelLoaded && !modelFailed && viewerAvailable && (
-            <div className="pointer-events-none absolute inset-0 z-[5] flex items-center justify-center">
-              <div className="flex items-center gap-3 border border-[#D8CCB8]/80 bg-[#FAF7F0]/85 px-4 py-3 text-xs text-forest shadow-sm backdrop-blur-sm">
-                <HeritageSpinner size="sm" />
-                <span className="font-mono">Đang mở mô hình…</span>
+          {!modelLoaded && !modelFailed && viewerAvailable && !previewPlaying && (
+            <div className="pointer-events-none absolute inset-x-0 top-[4.2rem] z-[5] flex justify-center px-4">
+              <div className="flex items-center gap-2 border border-[#D8CCB8]/80 bg-[#FAF7F0]/85 px-3 py-2 text-[11px] text-forest shadow-sm backdrop-blur-sm">
+                <span className="h-1.5 w-1.5 bg-[#B88A44]" aria-hidden="true" />
+                <span className="font-mono">Đang mở mô hình 3D…</span>
               </div>
             </div>
           )}

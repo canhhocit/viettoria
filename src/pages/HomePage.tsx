@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowDown, ArrowRight } from 'lucide-react';
+import { ArrowDown, ArrowRight, Pause, Play } from 'lucide-react';
 import { publicApi } from '../services/api';
 import type { Product, Collection, BlogPost } from '../types';
 import { FALLBACK_BLOGS, FALLBACK_COLLECTIONS, FALLBACK_PRODUCTS } from '../data/fallbackData';
@@ -63,6 +63,8 @@ const InteractiveModelStage: React.FC<{ product: Product; reducedMotion: boolean
   );
   const [loadedModelKey, setLoadedModelKey] = useState<string | null>(null);
   const [failedModelKey, setFailedModelKey] = useState<string | null>(null);
+  const [previewPlaying, setPreviewPlaying] = useState(false);
+  const modelViewerRef = useRef<HTMLElement | null>(null);
   const preview = resolve3DPreview(product.slug);
   const poster = preview?.poster || imageFor(product.heroImage);
   const modelUrl = resolve3DModelUrl(product.model3dUrl || product.slug);
@@ -95,12 +97,33 @@ const InteractiveModelStage: React.FC<{ product: Product; reducedMotion: boolean
   }, []);
 
   useEffect(() => {
+    setPreviewPlaying(false);
+  }, [modelKey]);
+
+  useEffect(() => {
+    const modelViewer = modelViewerRef.current;
+    if (!viewerAvailable || !modelViewer) return;
+
+    const handleLoad = () => {
+      setLoadedModelKey(modelKey);
+      setFailedModelKey(null);
+    };
+    const handleError = () => setFailedModelKey(modelKey);
+
+    modelViewer.addEventListener('load', handleLoad);
+    modelViewer.addEventListener('error', handleError);
+    return () => {
+      modelViewer.removeEventListener('load', handleLoad);
+      modelViewer.removeEventListener('error', handleError);
+    };
+  }, [modelKey, viewerAvailable]);
+
+  useEffect(() => {
     if (!viewerAvailable || modelLoaded || modelFailed) return;
-    const loadTimeout = window.setTimeout(() => setFailedModelKey(modelKey), 30000);
+    const loadTimeout = window.setTimeout(() => setFailedModelKey(modelKey), 20000);
     return () => window.clearTimeout(loadTimeout);
   }, [modelFailed, modelKey, modelLoaded, viewerAvailable]);
-
-  const useTurntableFallback = reducedMotion === false && Boolean(turntable) && (!viewerAvailable || modelFailed || !modelLoaded);
+  const useTurntableFallback = previewPlaying && Boolean(turntable) && !modelLoaded;
 
   return (
     <>
@@ -117,11 +140,12 @@ const InteractiveModelStage: React.FC<{ product: Product; reducedMotion: boolean
           src={turntable}
           poster={poster}
           autoPlay
-          loop
           muted
           playsInline
           preload="metadata"
           aria-hidden="true"
+          onEnded={() => setPreviewPlaying(false)}
+          onError={() => setPreviewPlaying(false)}
           className={`absolute inset-0 h-full w-full object-contain mix-blend-multiply transition-opacity duration-700 ${modelLoaded ? 'opacity-0' : 'opacity-100'}`}
         />
       )}
@@ -132,26 +156,37 @@ const InteractiveModelStage: React.FC<{ product: Product; reducedMotion: boolean
           src={modelUrl}
           alt={`Mô hình 3D có thể xoay của ${product.name}`}
           camera-controls
-          auto-rotate={reducedMotion ? undefined : ''}
-          rotation-per-second="8deg"
           shadow-intensity="0.75"
           exposure="1"
           interaction-prompt="none"
           loading="eager"
           reveal="auto"
-          style={{ width: '100%', height: '100%', backgroundColor: 'transparent', touchAction: 'pan-y' }}
-          onLoad={() => setLoadedModelKey(modelKey)}
-          onError={() => setFailedModelKey(modelKey)}
+          ref={modelViewerRef}
+          style={{ width: '100%', height: '100%', backgroundColor: '#EAE2D3', touchAction: 'pan-y' }}
           className={`home-model-viewer absolute inset-0 h-full w-full transition-opacity duration-700 ${modelLoaded ? 'opacity-100' : 'opacity-0'}`}
         />
       )}
       <div className="pointer-events-none absolute left-4 top-4 z-10 bg-[#F7F3EA]/90 px-3 py-1.5 text-[11px] text-[#5D4A31]">
         {modelLoaded
           ? 'Mô hình 3D · Kéo để xoay'
-          : modelFailed || !viewerAvailable
-            ? !reducedMotion && turntable ? 'Video xem trước' : 'Ảnh xem trước'
-            : 'Đang tải mô hình 3D…'}
+          : previewPlaying
+            ? 'Video xem trước'
+            : modelFailed || !viewerAvailable
+              ? 'Ảnh xem trước'
+              : 'Đang tải mô hình 3D…'}
       </div>
+      {turntable && !reducedMotion && !modelLoaded && (
+        <button
+          type="button"
+          onClick={() => setPreviewPlaying((playing) => !playing)}
+          aria-label={previewPlaying ? 'Dừng video xem trước mô hình' : 'Phát video xem trước mô hình'}
+          aria-pressed={previewPlaying}
+          className="absolute right-4 top-4 z-10 inline-flex min-h-8 items-center gap-2 border border-[#D8CCB8] bg-[#F7F3EA]/95 px-3 text-[10px] font-mono uppercase tracking-[0.08em] text-[#554A39] transition-colors hover:border-[#B88A44] hover:text-[#142820] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B88A44]"
+        >
+          {previewPlaying ? <Pause size={13} /> : <Play size={13} />}
+          {previewPlaying ? 'Dừng video' : 'Xem chuyển động'}
+        </button>
+      )}
     </>
   );
 };
@@ -355,12 +390,12 @@ export const HomePage: React.FC = () => {
         <div className="relative z-10 mx-auto flex w-full max-w-[1440px] items-center px-5 pb-24 pt-16 sm:px-8 lg:px-16">
           <div className="max-w-[760px] animate-fade-up py-10">
             
-            <h1 className="font-display text-[clamp(3rem,5.5vw,5.2rem)] font-medium leading-[1.04] tracking-[-0.035em] text-[#FAF7F0]">
-              Di sản Việt Nam,<br />
-              <em className="font-normal text-[#E2C681]">thu nhỏ trên tay.</em>
+            <h1 className="font-display text-[clamp(3.25rem,8vw,7rem)] font-normal leading-[0.94] tracking-[-0.045em] text-[#FAF7F0]">
+              Văn Minh<br />
+              <em className="font-normal text-[#E2C681]">Di Sản Việt</em>
             </h1>
-            <p className="mt-6 max-w-[540px] text-base leading-7 text-white/85 sm:text-lg sm:leading-8">
-              Khám phá những công trình tiêu biểu qua mô hình 3D, câu chuyện lịch sử và những góc nhìn mới về di sản Việt.
+            <p className="mt-6 max-w-[700px] text-lg leading-8 text-white/90 sm:text-xl sm:leading-9">
+              Hành trình số hóa bảo tàng, di tích và ký ức văn hóa Việt Nam qua các câu chuyện lịch sử
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Link to="/collections" className="inline-flex min-h-12 items-center gap-3 bg-[#B88A44] px-6 py-3 text-sm font-semibold text-[#142820] transition-colors hover:bg-[#D4AF67]">

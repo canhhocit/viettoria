@@ -567,8 +567,22 @@
 }
 
 /* Warm sepia vintage filter for map tiles */
-.leaflet-tile-pane {
+.heritage-standard-tiles {
   filter: sepia(18%) contrast(102%) brightness(98%) hue-rotate(-5deg);
+}
+
+.heritage-map .leaflet-control-layers {
+  border: 1px solid var(--heritage-brass) !important;
+  border-radius: 0 !important;
+  background: var(--color-paper) !important;
+  color: var(--heritage-ink) !important;
+  box-shadow: 0 2px 8px rgba(13, 28, 22, 0.18) !important;
+  font-family: "Be Vietnam Pro", sans-serif;
+  font-size: 12px;
+}
+
+.heritage-map .leaflet-control-layers label {
+  color: var(--heritage-ink);
 }
 
 /* WCAG 2.2 AA Accessibility Guard: Prefers Reduced Motion */

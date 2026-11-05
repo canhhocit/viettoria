@@ -124,55 +124,38 @@ export const HeritageMap: React.FC<HeritageMapProps> = ({
     HERITAGE_SITES.find(s => s.id === initialSiteId) || HERITAGE_SITES[0]
   );
   const [activeRegion, setActiveRegion] = useState<'all' | 'hanoi' | 'hue' | 'saigon'>('all');
-  const [mapTilesUnavailable, setMapTilesUnavailable] = useState(false);
 
   useEffect(() => {
     if (!mapContainerRef.current) return;
     if (mapRef.current) return; // Map already initialized
 
-    // Initialize Leaflet map
+    const osmStandard = L.tileLayer('https://tile.openstreetmap.de/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>',
+      className: 'heritage-standard-tiles',
+    });
+    const esriSatellite = L.tileLayer(
+      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      {
+        maxZoom: 18,
+        attribution: 'Tiles &copy; Esri — Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community',
+      },
+    );
+
     const map = L.map(mapContainerRef.current, {
       center: [16.5, 107.0],
       zoom: 6,
       zoomControl: false,
       scrollWheelZoom: true,
       attributionControl: true,
+      layers: [osmStandard],
     });
 
-    // Custom Zoom control at bottom right
     L.control.zoom({ position: 'bottomright' }).addTo(map);
-
-    const tileProviders = [
-      {
-        url: 'https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png',
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
-      },
-      {
-        url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>',
-      },
-    ];
-    let tileProviderIndex = 0;
-    const createTileLayer = (providerIndex: number) => L.tileLayer(tileProviders[providerIndex].url, {
-      attribution: tileProviders[providerIndex].attribution,
-      maxZoom: 19,
-      crossOrigin: true,
-    });
-    let tileLayer = createTileLayer(tileProviderIndex);
-    const switchTileProvider = () => {
-      if (tileProviderIndex >= tileProviders.length - 1) {
-        setMapTilesUnavailable(true);
-        return;
-      }
-      tileLayer.off('tileerror', switchTileProvider);
-      map.removeLayer(tileLayer);
-      tileProviderIndex += 1;
-      tileLayer = createTileLayer(tileProviderIndex);
-      tileLayer.on('tileerror', switchTileProvider);
-      tileLayer.addTo(map);
-    };
-    tileLayer.on('tileerror', switchTileProvider);
-    tileLayer.addTo(map);
+    L.control.layers({
+      'Bản đồ Tiêu chuẩn': osmStandard,
+      'Bản đồ Vệ tinh': esriSatellite,
+    }, undefined, { position: 'topright' }).addTo(map);
 
     mapRef.current = map;
 
@@ -302,7 +285,7 @@ export const HeritageMap: React.FC<HeritageMapProps> = ({
   };
 
   return (
-    <div className="bg-paper border border-brass/40 corner-frame shadow-xl overflow-hidden flex flex-col lg:flex-row">
+    <div className="heritage-map bg-paper border border-brass/40 corner-frame shadow-xl overflow-hidden flex flex-col lg:flex-row">
       {/* Left Sidebar: Heritage Site Navigator */}
       <div className="w-full lg:w-96 bg-paper-warm border-b lg:border-b-0 lg:border-r border-paper-border p-6 flex flex-col justify-between space-y-6 shrink-0">
         <div className="space-y-4">
@@ -436,12 +419,6 @@ export const HeritageMap: React.FC<HeritageMapProps> = ({
           ref={mapContainerRef} 
           className="absolute inset-0 w-full h-full z-10"
         />
-      {mapTilesUnavailable && (
-        <div className="pointer-events-none absolute bottom-4 left-4 z-[500] border border-brass/40 bg-paper/95 px-3 py-2 text-xs text-brown-dark shadow-sm" role="status">
-          Nền bản đồ tạm thời không tải được. Các điểm di sản vẫn có thể chọn từ danh sách.
-        </div>
-      )}
-
         
       </div>
     </div>

@@ -476,6 +476,56 @@
 }
 
 /* Leaflet Custom Heritage Atelier Styling */
+.heritage-custom-pin {
+  border: 0 !important;
+  background: transparent !important;
+}
+
+.heritage-map-pin {
+  position: relative;
+  display: flex;
+  width: 38px;
+  height: 38px;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--heritage-paper-light);
+  background: var(--heritage-forest);
+  color: var(--heritage-paper-light);
+  box-shadow: 0 4px 12px rgba(13, 28, 22, 0.45);
+  font-family: "Be Vietnam Pro", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.heritage-map-pin--featured {
+  border-color: var(--heritage-paper-light);
+  background: var(--heritage-brass);
+  color: var(--heritage-forest);
+}
+
+.heritage-map-pin > i {
+  position: absolute;
+  bottom: -7px;
+  left: 50%;
+  width: 0;
+  height: 0;
+  transform: translateX(-50%);
+  border-top: 6px solid var(--heritage-forest);
+  border-right: 5px solid transparent;
+  border-left: 5px solid transparent;
+}
+
+.heritage-map-pin--featured > i {
+  border-top-color: var(--heritage-brass);
+}
+
+.heritage-custom-pin:hover .heritage-map-pin {
+  transform: translateY(-2px);
+  box-shadow: 0 7px 16px rgba(13, 28, 22, 0.38);
+}
+
 .heritage-atelier-popup .leaflet-popup-content-wrapper {
   background: var(--color-paper) !important;
   color: #1B1E1B !important;
